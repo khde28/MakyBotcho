@@ -1019,6 +1019,10 @@ int main()
 
             if (mapas[mapaActual][posXIso][posYISo] == -1 && posXIso!=-1 && posYISo!=-1 )
             {
+                contadorMovimientos = 0;
+                contadorMovf1 = 0;
+                contadorMovbucle = 0;
+                booliniciar = false;
                 bloques.clear();
 
                 for (int i = 0; i < gridSize; ++i)
