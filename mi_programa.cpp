@@ -3,7 +3,6 @@
 #include <vector>
 #include <cmath>
 #include <iostream>
-#include <thread> // Para std::this_thread::sleep_for
 #include "mapas.h"
 #include "analizador.h"
 #include "converttxt.h"
@@ -13,11 +12,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <sstream>
-//---------------------------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------------------------
-
-//--------------------------------------------------------------------------------------------------
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
 const float BUTTON_SCALE = 1.06f;
@@ -541,6 +536,7 @@ int main()
     // Configurar los sonidos
     for (size_t i = 0; i < sounds.size(); ++i)
     {
+        sounds[i].setVolume(25.f);
         sounds[i].setBuffer(soundBuffers[i]);
         sounds[i].setLoop(false); // No repetir en bucle
     }
@@ -702,6 +698,7 @@ int main()
         // Lógica de reproducción de sonido
         if (!soundPlaying)
         {
+            sounds[currentSound].setVolume(5.f);
             sounds[currentSound].play();
             soundPlaying = true;
             clock.restart(); // Reiniciar el reloj
@@ -819,7 +816,7 @@ int main()
                 {
                     if (mainbot[contadorMovimientos - 1] == 7)
                     {
-                        cout << "cambio "<< endl ;
+                        cout << "cambio " << endl;
                         mainbot[contadorMovimientos - 1] = lastmov;
                     }
                 }
@@ -910,7 +907,8 @@ int main()
 
                         // Avanzar en el array de movimientos
                     }
-                    else if (contadorMovf1 >= 8){
+                    else if (contadorMovf1 >= 8)
+                    {
                         f1bot[contadorMovf1 - 1] = lastmovf1;
                         contadorMovf1 = 0;
                         contadorMovimientos++;
@@ -969,17 +967,17 @@ int main()
                             contadorMovbucle = 0;
                             currentIteraciones++;
                         }
-                        
 
                         // Avanzar en el array de movimientos
                     }
-                    else if (contadorMovbucle >= 4){
+                    else if (contadorMovbucle >= 4)
+                    {
                         buclebot[contadorMovbucle - 1] = lastmovbucle;
                         contadorMovbucle = 0;
                         currentIteraciones++;
                     }
                 }
-                
+
                 else if (currentIteraciones = counter)
                 {
                     contadorMovimientos++;
@@ -1018,7 +1016,7 @@ int main()
 
             cout << posXIso << posYISo << endl;
 
-            if (mapas[mapaActual][posXIso][posYISo] == -1)
+            if (mapas[mapaActual][posXIso][posYISo] == -1 && posXIso!=-1 && posYISo!=-1 )
             {
                 bloques.clear();
 
@@ -1100,7 +1098,7 @@ int main()
                         animationClock.restart();
                     }
 
-                    // movimeinto del profesor
+                    // movimeinto del car
                     Vector2f currentPosition = makibot.getPosition();
                     moveRobot(makibot, targetPosition, currentPosition, xIso, yIso);
 
