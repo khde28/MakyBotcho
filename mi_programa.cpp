@@ -977,18 +977,19 @@ int main()
                         currentIteraciones++;
                     }
                 }
-
-                else if (currentIteraciones = counter)
-                {
-                    contadorMovimientos++;
-                    currentIteraciones = 0;
-                }
                 else if (movimiento == 0)
                 {
-                    cout << "Llegue al final del array de movimientos" << endl;
-                    contadorMovimientos++;
+                    cout << "Llegue al final del array de movimientos 0000" << endl;
+                    mainbot[contadorMovimientos - 1] = lastmov;
+
                     contadorMovimientos = 0;
                     booliniciar = false;
+                }
+                else if (currentIteraciones == counter)
+                {
+                    cout<< "ups entre conter" <<endl;
+                    contadorMovimientos++;
+                    currentIteraciones = 0;
                 }
 
                 // Avanzar en el array de movimientos
