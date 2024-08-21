@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <sstream>
 
+using namespace std;
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
 const float BUTTON_SCALE = 1.06f;
@@ -355,12 +356,12 @@ void stopMovement(Sprite &makibot, const Vector2f &targetPosition, const Vector2
         if (miraNE || miraNO)
         {
             makibot.setTextureRect(framesB[currentFrame]);
-            cout << "arriba" << endl;
+            std::cout << "arriba" << endl;
         }
         else if (miraSE || miraSO)
         {
             makibot.setTextureRect(framesF[currentFrame]);
-            cout << "abajo" << endl;
+            std::cout << "abajo" << endl;
         }
     }
 }
@@ -440,10 +441,77 @@ void move2(Vector2f &targetPosition, bool &moving, const Estado &estado, float x
     }
     moving = true;
 }
+//------------------------------------------Screen Management---------------------------------
+class SplashScreen {
+public:
+    SplashScreen() {
+        //if (!font.loadFromFile("arial.ttf")) {}
 
+        // Configurar el texto de bienvenida
+        //welcomeText.setFont(font);
+        welcomeText.setString("Welcome to the Game!");
+        welcomeText.setCharacterSize(24);
+        welcomeText.setFillColor(sf::Color::White);
+        welcomeText.setPosition(200, 150);
+
+        // Configurar el botón
+        button.setSize(sf::Vector2f(200, 50));
+        button.setFillColor(sf::Color::Green);
+        button.setPosition(200, 250);
+
+       // buttonText.setFont(font);
+        buttonText.setString("Start Game");
+        buttonText.setCharacterSize(24);
+        buttonText.setFillColor(sf::Color::Black);
+        buttonText.setPosition(220, 260);
+    }
+
+    void handleEvent(const sf::Event& event, bool& isGame, RenderWindow& window) {
+        if (event.type == sf::Event::MouseButtonPressed) {
+            //sf::Vector2i mousePos = sf::Mouse::getPosition();
+            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+            std::cout << "Mouse position: " << mousePos.x << ", " << mousePos.y << std::endl;
+            std::cout << "Button position: " << button.getPosition().x << ", " << button.getPosition().y << std::endl;
+
+
+            sf::FloatRect bounds = button.getGlobalBounds();
+            std::cout << "Button bounds: Left: " << bounds.left << ", Top: " << bounds.top << ", Width: " << bounds.width << ", Height: " << bounds.height << std::endl;
+            
+            if (button.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                isGame = true; 
+                cout<<"presiona"<<endl;
+            }
+        }
+    }
+
+    void draw(sf::RenderWindow& window) {
+        window.clear(sf::Color::Blue);
+        window.draw(welcomeText);
+        window.draw(button);
+        window.draw(buttonText);
+    }
+
+private:
+    //sf::Font font;
+    sf::Text welcomeText;
+    sf::RectangleShape button;
+    sf::Text buttonText;
+};
+
+// Clase para manejar el juego
+class GameScreen {
+public:
+    void draw(sf::RenderWindow& window) {
+        window.clear(sf::Color::Black);
+        // Aquí dibuja la pantalla del juego
+    }
+};
+
+
+
+//--------------------------------------MAIN---------------------------------------------------------------------
 int main()
 {
-    //-----------------------------------------------------------------------------------------------------------
     // contador
     sf::Texture textures[6];
     for (int i = 0; i < 6; ++i)
@@ -693,6 +761,10 @@ int main()
     int lastmovbucle;
 
     bool colisionando = false;
+
+
+    SplashScreen splashScreen;
+    bool isGame=false;
     while (window.isOpen())
     {
         // Lógica de reproducción de sonido
@@ -719,39 +791,50 @@ int main()
             {
                 window.close();
             }
-            //-------------------------intrucciones-----------------------------------------
-            if (event.type == sf::Event::MouseButtonPressed)
-            {
-                if (iniciarButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
-                {
-                    guardarInstrucciones(mainbot, 12, f1bot, 8, buclebot, 4, "instrucciones.txt", counter);
-                    lenguajeintermedio = txtConvertstring("instrucciones.txt");
-                    analizadorSyx(lenguajeintermedio);
-                    cout << lenguajeintermedio << endl;
-                    booliniciar = true;
-                }
-                if (incrementButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
-                {
-                    if (counter < 5)
-                    {
-                        counter++;
-                        numberSprite.setTexture(textures[counter]);
-                    }
-                }
-
-                if (decrementButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
-                {
-                    if (counter > 0)
-                    {
-                        counter--;
-                        numberSprite.setTexture(textures[counter]);
-                    }
-                }
+            if (!isGame) {
+                splashScreen.handleEvent(event, isGame, window);
             }
+            if (isGame)
+            {
+                
+                //-------------------------intrucciones-----------------------------------------
+                if (event.type == sf::Event::MouseButtonPressed)
+                {
+                    if (iniciarButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                    {
+                        guardarInstrucciones(mainbot, 12, f1bot, 8, buclebot, 4, "instrucciones.txt", counter);
+                        lenguajeintermedio = txtConvertstring("instrucciones.txt");
+                        analizadorSyx(lenguajeintermedio);
+                        cout << lenguajeintermedio << endl;
+                        booliniciar = true;
+                    }
+                    if (incrementButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                    {
+                        if (counter < 5)
+                        {
+                            counter++;
+                            numberSprite.setTexture(textures[counter]);
+                        }
+                    }
+
+                    if (decrementButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                    {
+                        if (counter > 0)
+                        {
+                            counter--;
+                            numberSprite.setTexture(textures[counter]);
+                        }
+                    }
+                }
+            
+                
+            }
+            
         }
         //-------------------------intrucciones-----------------------------------------
         // Procesar interacción del ratón
-        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+        if (isGame)
+        {sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         for (auto &button : buttons)
         {
             sf::FloatRect bounds = button.sprite.getGlobalBounds();
@@ -1202,7 +1285,10 @@ int main()
         dibujarImagenes(window, buttonTexture, mainbot, sizeof(mainbot) / sizeof(mainbot[0]), 720, 100, event, boolmain);
         dibujarImagenes(window, buttonTexture, f1bot, sizeof(f1bot) / sizeof(f1bot[0]), 720, 320, event, boolf1);
         dibujarImagenes(window, buttonTexture, buclebot, sizeof(buclebot) / sizeof(buclebot[0]), 720, 470, event, boolbucle);
-
+        }else if(!isGame)
+            {
+                splashScreen.draw(window);
+            }
         window.display();
     }
 
