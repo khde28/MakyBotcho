@@ -475,23 +475,29 @@ public:
         buttonCustomText.setFillColor(sf::Color(255, 255, 255));
     }
 
-    void handleEvent(const sf::Event &event, bool &isGame, RenderWindow &window)
+    void handleEvent(const sf::Event &event, int &mode, RenderWindow &window)
     {
         if (event.type == sf::Event::MouseButtonPressed)
         {
             // sf::Vector2i mousePos = sf::Mouse::getPosition();
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            std::cout << "Mouse position: " << mousePos.x << ", " << mousePos.y << std::endl;
-            std::cout << "Button position: " << buttonGame.getPosition().x << ", " << buttonGame.getPosition().y << std::endl;
+            //std::cout << "Mouse position: " << mousePos.x << ", " << mousePos.y << std::endl;
+            //std::cout << "Button position: " << buttonGame.getPosition().x << ", " << buttonGame.getPosition().y << std::endl;
 
-            sf::FloatRect bounds = buttonGame.getGlobalBounds();
-            std::cout << "Button bounds: Left: " << bounds.left << ", Top: " << bounds.top << ", Width: " << bounds.width << ", Height: " << bounds.height << std::endl;
+            //sf::FloatRect bounds = buttonGame.getGlobalBounds();
+            //std::cout << "Button bounds: Left: " << bounds.left << ", Top: " << bounds.top << ", Width: " << bounds.width << ", Height: " << bounds.height << std::endl;
 
             if (buttonGame.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)))
             {
-                isGame = true;
-                cout << "presiona" << endl;
+                mode = 1;
+                cout << "presiona game" << endl;
+            }else if(buttonCustom.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)))
+            {
+                mode = 2;
+                cout << "presiona custom" << endl;
+
             }
+            
         }
     }
 
@@ -572,10 +578,10 @@ public:
         // Aquí dibuja la pantalla del juego
     }
 };
+//--------------------------------------------------------Game Mode ---------------------------------------------
 
-//--------------------------------------MAIN---------------------------------------------------------------------
-int main()
-{
+void gameMode(sf::RenderWindow& window){
+
     // contador
     sf::Texture textures[6];
     for (int i = 0; i < 6; ++i)
@@ -583,7 +589,7 @@ int main()
         if (!textures[i].loadFromFile("images/" + std::to_string(i) + ".png"))
         {
             std::cerr << "Error cargando la imagen " << i << ".png" << std::endl;
-            return -1;
+            return;
         }
     }
 
@@ -593,7 +599,7 @@ int main()
     if (!iniciarTexture.loadFromFile("images/go.png") || !incrementTexture.loadFromFile("images/imageincrement.png") || !decrementTexture.loadFromFile("images/imagendecrement.png"))
     {
         std::cerr << "Error cargando la imagen imageincrement.png o decrement" << std::endl;
-        return -1;
+        return;
     }
 
     int clicks = 0;
@@ -625,7 +631,7 @@ int main()
         !buttonTexture[4].loadFromFile("images/foco.png") ||
         !buttonTexture[7].loadFromFile("images/current.png"))
     {
-        return -1;
+        return;
     }
 
     std::vector<Button> buttons(6);
@@ -662,7 +668,7 @@ int main()
         !soundBuffers[2].loadFromFile("sonido_mapa3.ogg"))
     {
         std::cerr << "Error al cargar los archivos de audio" << std::endl;
-        return -1;
+        return;
     }
 
     // Configurar los sonidos
@@ -680,7 +686,6 @@ int main()
     int mapaActual = 0; // Índice del mapa actual
 
     // Crear la ventana
-    RenderWindow window(VideoMode(1000, 600), "Makibot");
     window.setFramerateLimit(60);
     // Establecer el color gris oscuro
     sf::Color grisOscuro(169, 169, 169); // RGB para gris oscuro
@@ -695,30 +700,30 @@ int main()
     Texture texturaPiso;
     if (!texturaPiso.loadFromFile("images/loza_verde.png"))
     {
-        return -1;
+        return;
     }
     Texture texturaPiso2d;
     if (!texturaPiso2d.loadFromFile("images/loza_verde2d.png"))
     {
-        return -1;
+        return;
     }
     // Cargar la textura del bloque
     Texture texturaBloque;
     if (!texturaBloque.loadFromFile("images/loza_naranja.png"))
     {
-        return -1;
+        return;
     }
     Texture texturaBloque2d;
     if (!texturaBloque2d.loadFromFile("images/loza_naranja2d.png"))
     {
-        return -1;
+        return;
     }
 
     // Cargar la textura del punto final del mapa3D
     Texture texturaLozaAzul;
     if (!texturaLozaAzul.loadFromFile("images/loza_azul.png"))
     {
-        return -1;
+        return;
     }
 
     // Crear el sprite del piso
@@ -745,7 +750,7 @@ int main()
     Texture texturaLozaAzul2D;
     if (!texturaLozaAzul2D.loadFromFile("images/loza_azul2d.png"))
     {
-        return -1;
+        return;
     }
 
     // crear el minimapa en 2d
@@ -758,7 +763,7 @@ int main()
     Texture spriteMaki;
     if (!spriteMaki.loadFromFile("images/sprite_carritos.png"))
     {
-        return -1;
+        return;
     }
 
     // Crear el sprite de la animación
@@ -854,12 +859,7 @@ int main()
             {
                 window.close();
             }
-            if (!isGame)
-            {
-                mainPage.handleEvent(event, isGame, window);
-            }
-            if (isGame)
-            {
+            
 
                 //-------------------------intrucciones-----------------------------------------
                 if (event.type == sf::Event::MouseButtonPressed)
@@ -890,12 +890,11 @@ int main()
                         }
                     }
                 }
-            }
+            
         }
         //-------------------------intrucciones-----------------------------------------
         // Procesar interacción del ratón
-        if (isGame)
-        {
+        
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
             for (auto &button : buttons)
             {
@@ -1347,14 +1346,55 @@ int main()
             dibujarImagenes(window, buttonTexture, mainbot, sizeof(mainbot) / sizeof(mainbot[0]), 720, 100, event, boolmain);
             dibujarImagenes(window, buttonTexture, f1bot, sizeof(f1bot) / sizeof(f1bot[0]), 720, 320, event, boolf1);
             dibujarImagenes(window, buttonTexture, buclebot, sizeof(buclebot) / sizeof(buclebot[0]), 720, 470, event, boolbucle);
-        }
-        else if (!isGame)
-        {
-            mainPage.allSetPosition(window);
-            mainPage.draw(window);
-        }
+        
+        
         window.display();
     }
 
+    return;
+
+}
+void customMode(sf::RenderWindow& Window){
+    return;
+}
+
+//--------------------------------------MAIN---------------------------------------------------------------------
+int main()
+{
+    sf::RenderWindow window(VideoMode(1000, 600), "Makibot");
+    MainPage mainpage;
+    int mode = 0;
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+            {
+                window.close();
+            }
+            mainpage.handleEvent(event, mode, window);
+            
+        }
+        mainpage.allSetPosition(window);
+
+
+
+        if (mode==1)
+        {
+            gameMode(window);
+            
+        }else if (mode==2)
+        {
+            customMode(window);
+            
+        }
+
+        mainpage.draw(window);
+        window.display();
+        
+    }
+    
+    
     return 0;
 }
