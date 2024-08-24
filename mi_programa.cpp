@@ -12,10 +12,76 @@
 #include <string.h>
 #include <stdio.h>
 #include <sstream>
+using namespace std;
+using namespace sf;
 
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
 const float BUTTON_SCALE = 1.06f;
+
+bool loadImage(sf::Texture& texture, sf::Sprite& sprite, const std::string& filePath) {
+    if (!texture.loadFromFile(filePath)) {
+        std::cerr << "Error al cargar la imagen" << std::endl;
+        return false;
+    }
+    sprite.setTexture(texture);
+
+    // Centrar la imagen
+    sf::Vector2u windowSize(800, 600); // Tamaño de la ventana
+    sf::Vector2u imageSize = texture.getSize(); // Tamaño de la imagen
+    sprite.setPosition((windowSize.x - imageSize.x) / 2.0f, (windowSize.y - imageSize.y) / 2.0f);
+
+    return true;
+}
+
+// Función para leer una línea y almacenarla en un array de enteros
+void parseLineToArray(const std::string& line, int* arr, int& size, int maxSize) {
+    std::istringstream iss(line);
+    int num;
+    size = 0;
+    while (iss >> num && size < maxSize) {
+        arr[size++] = num;
+    }
+}
+
+// Función para leer el archivo y almacenar los datos
+bool readDataFromFile(const std::string& filePath, int* mainbot, int& mainbotSize, int* f1bot, int& f1botSize, int* buclebot, int& buclebotSize, int& counter) {
+    std::ifstream file(filePath);
+    if (!file.is_open()) {
+        std::cerr << "Error al abrir el archivo " << filePath << std::endl;
+        return false;
+    }
+
+    std::string line;
+    int lineNumber = 0;
+
+    while (std::getline(file, line)) {
+        switch (lineNumber) {
+            case 0:
+                parseLineToArray(line, mainbot, mainbotSize, 100); // Se asume un tamaño máximo de 100
+                break;
+            case 1:
+                parseLineToArray(line, f1bot, f1botSize, 100);
+                break;
+            case 2:
+                parseLineToArray(line, buclebot, buclebotSize, 100);
+                break;
+            case 3:
+                counter = std::stoi(line);
+                break;
+            default:
+                break;
+        }
+        lineNumber++;
+    }
+    return true;
+}
+
+// Función para verificar si se ha hecho clic en la imagen
+bool isSpriteClicked(const sf::Sprite& sprite, const sf::Vector2i& mousePos) {
+    return sprite.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+}
+//_____________-----------------------------------------------____________________
 
 void escribirInstruccion(int numero, std::ofstream &archivo)
 {
@@ -222,8 +288,7 @@ void scaleOnHover(sf::Sprite &sprite, sf::RenderWindow &window)
 
 #define PI 3.14159265f
 
-using namespace std;
-using namespace sf;
+
 
 const float lado = 50.f;
 const int gridSize = 8;
@@ -443,6 +508,12 @@ void move2(Vector2f &targetPosition, bool &moving, const Estado &estado, float x
 
 int main()
 {
+    sf::Texture cargartexture;
+    sf::Sprite cargarsprite;
+    if (!loadImage(cargartexture, cargarsprite, "images/cargar.png")) {
+        return -1;
+    }
+    int mainbotSize = 0, f1botSize = 0, buclebotSize = 0;
     //-----------------------------------------------------------------------------------------------------------
     // contador
     sf::Texture textures[6];
@@ -722,6 +793,15 @@ int main()
             //-------------------------intrucciones-----------------------------------------
             if (event.type == sf::Event::MouseButtonPressed)
             {
+                //cargar archivo
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                if (isSpriteClicked(cargarsprite, mousePos)) {
+                    // Leer el archivo
+                    if (readDataFromFile("datos.txt", mainbot, mainbotSize, f1bot, f1botSize, buclebot, buclebotSize, counter)) {
+                        std::cout << "Datos leídos correctamente" << std::endl;
+                        numberSprite.setTexture(textures[counter]);
+                    }
+                }
                 if (iniciarButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
                     guardarInstrucciones(mainbot, 12, f1bot, 8, buclebot, 4, "instrucciones.txt", counter);
@@ -1163,6 +1243,7 @@ int main()
         }
 
         window.clear(grisOscuro);
+        window.draw(cargarsprite);
         // dibujar piso 2d
         for (int i = 0; i < gridSize; ++i)
         {
@@ -1207,7 +1288,7 @@ int main()
         dibujarImagenes(window, buttonTexture, mainbot, sizeof(mainbot) / sizeof(mainbot[0]), 720, 100, event, boolmain);
         dibujarImagenes(window, buttonTexture, f1bot, sizeof(f1bot) / sizeof(f1bot[0]), 720, 320, event, boolf1);
         dibujarImagenes(window, buttonTexture, buclebot, sizeof(buclebot) / sizeof(buclebot[0]), 720, 470, event, boolbucle);
-
+        window.draw(cargarsprite);
         window.display();
     }
 
