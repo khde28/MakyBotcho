@@ -8,7 +8,20 @@ Para abordar este desafío, hemos creado Makybot, un juego interactivo diseñado
 Este enfoque interactivo no solo facilita la comprensión de conceptos clave, sino que también mantiene el interés del estudiante al combinar el aprendizaje con elementos de juego.
 
 ## Objetivo del Juego
-El objetivo principal del juego es que el automóvil llegue a la casilla azul evitando los obstáculos en el camino. Para ello, el jugador debe programar una serie de instrucciones que se ejecutarán en secuencia para mover el automóvil en el mapa.
+
+El objetivo principal del juego es que el automóvil llegue a la casilla azul evitando los obstáculos en el camino. Para lograrlo, el jugador debe programar una serie de instrucciones que se ejecutarán en secuencia para mover el automóvil en el mapa.
+
+### Otros objetivos clave:
+
+1. **Desarrollar habilidades de pensamiento algorítmico:**  
+   A través de la creación y organización de instrucciones, los jugadores aprenderán a descomponer problemas complejos en pasos más simples, fomentando el desarrollo del pensamiento algorítmico.
+
+2. **Fomentar la comprensión de estructuras de control:**  
+   El juego introduce a los jugadores en el uso de estructuras de control fundamentales como bucles y funciones personalizadas, permitiéndoles repetir acciones y optimizar sus soluciones.
+
+3. **Estimular la creatividad y la resolución de problemas:**  
+   Los jugadores son incentivados a experimentar con diferentes combinaciones de instrucciones para encontrar la solución más eficiente y creativa, reforzando sus habilidades de resolución de problemas en un entorno lúdico.
+
 
 ## Funcionalidades Principales
 
@@ -24,6 +37,7 @@ El objetivo principal del juego es que el automóvil llegue a la casilla azul ev
 
 4. **Ejecución de Instrucciones**:
    - Después de que el jugador selecciona y organiza las instrucciones en las casillas, puede presionar el botón "Go" para ejecutar la secuencia de instrucciones. El automóvil se moverá según las indicaciones dadas.
+   - Las instrucciones programadas se guardan en un archivo de texto (`instrucciones.txt`).
 
 5. **Casillas para Instrucciones**:
    - **Arreglo Principal**: Contiene la secuencia de instrucciones que se ejecutará.
