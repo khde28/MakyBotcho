@@ -6,7 +6,7 @@
 #include <sstream>
 
 namespace mapLoaded {
-    inline int mapa2[1][8][8] = {{{0}}}; // Matriz global
+    inline int mapa2[1][8][8] = {{{0}}}; 
 
     inline bool loadFile(const std::string& filename) {
         std::ifstream file(filename);

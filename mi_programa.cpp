@@ -313,7 +313,7 @@ void configurarSprites(sf::Sprite tiles2d[][gridSize], const int matriz2D[][grid
     {
         for (int j = 0; j < gridSize; ++j)
         {
-            if (matriz2D[i][j] == 1)
+            if (matriz2D[i][j] >= 1)
             {
                 tiles2d[i][j].setTexture(texturaBloque2d);
             }
@@ -1527,7 +1527,7 @@ void customMode(sf::RenderWindow &window)
 
     // crear el minimapa en 2d
     Sprite tiles2d[gridSize][gridSize];
-    configurarSprites(tiles2d, matrices2d[mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d);
+    configurarSprites(tiles2d, mapLoaded::mapa2[mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d);
 
     const int frameWidth = 40;
     const int frameHeight = 30;
@@ -1605,6 +1605,20 @@ void customMode(sf::RenderWindow &window)
 
     MainPage mainPage;
     bool isGame = false;
+
+        //pause's variables
+    sf::Texture gameTexture;
+    sf::Sprite gameSprite;
+    sf::RectangleShape overlayBox(sf::Vector2f(300, 200));
+    overlayBox.setFillColor(sf::Color(0, 0, 0, 150)); 
+    overlayBox.setPosition(250, 200); 
+    
+    sf::Texture overlayImageTexture;
+    overlayImageTexture.loadFromFile("images/jump.png"); 
+    sf::Sprite overlayImage(overlayImageTexture);
+    overlayImage.setPosition(overlayBox.getPosition().x + 50, overlayBox.getPosition().y + 50);
+
+    bool isPaused = false;
     while (window.isOpen())
     {
         // Lógica de reproducción de sonido
@@ -1661,7 +1675,34 @@ void customMode(sf::RenderWindow &window)
                     }
                 }
             }
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::S) {
+                isPaused = !isPaused; 
+                if (isPaused) {
+                    // Captura la pantalla actual del juego
+                    gameTexture.create(window.getSize().x, window.getSize().y);
+                    gameTexture.update(window);
+                    gameSprite.setTexture(gameTexture);
+                }
+            }
         }
+        //----------------------------------isPAused---------------------------------------------
+        while (isPaused) {
+            while (window.pollEvent(event)){
+                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::S) {
+                    isPaused = !isPaused; 
+                    
+                }
+
+
+            }
+            window.clear();
+            window.draw(gameSprite); // Dibuja la imagen congelada del juego
+            window.draw(overlayBox); // Dibuja el cuadro
+            window.draw(overlayImage); // Dibuja la imagen dentro del cuadro
+            window.display();
+        }
+
+
         //-------------------------intrucciones-----------------------------------------
         // Procesar interacción del ratón
 
@@ -1982,7 +2023,7 @@ void customMode(sf::RenderWindow &window)
 
                 // Detener movimiento
                 moving = false;
-            }
+            }   
 
             if (!colisionando)
             {
@@ -2123,19 +2164,18 @@ void customMode(sf::RenderWindow &window)
     return;
 }
 
-
-void textInputInterface(sf::RenderWindow& window){
+void textInputInterface(sf::RenderWindow &window)
+{
     sf::Font font;
-    if (!font.loadFromFile("digital.ttf")) {
+    if (!font.loadFromFile("digital.ttf"))
+    {
         std::cerr << "Error al cargar la fuente" << std::endl;
         return;
     }
 
-    // Texto de instrucciones
     sf::Text instructionText("Ingrese la direccion del archivo:", font, 20);
     instructionText.setPosition(50, 50);
 
-    // Texto para mostrar la entrada del usuario
     sf::Text inputText("", font, 20);
     inputText.setPosition(50, 100);
     inputText.setFillColor(sf::Color::White);
@@ -2143,28 +2183,41 @@ void textInputInterface(sf::RenderWindow& window){
     std::string inputString;
     bool fileLoaded = false;
 
-    while (window.isOpen()) {
+    while (window.isOpen())
+    {
         sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+            {
                 window.close();
             }
-            if (event.type == sf::Event::TextEntered) {
-                if (event.text.unicode == '\b') {
+            if (event.type == sf::Event::TextEntered)
+            {
+                if (event.text.unicode == '\b')
+                {
                     // Backspace
-                    if (!inputString.empty()) {
+                    if (!inputString.empty())
+                    {
                         inputString.pop_back();
                     }
-                } else if (event.text.unicode == '\r') {
+                }
+                else if (event.text.unicode == '\r')
+                {
                     // Enter key, intentar cargar el archivo
                     fileLoaded = mapLoaded::loadFile(inputString);
-                    if (fileLoaded) {
+                    if (fileLoaded)
+                    {
                         std::cout << "Matriz cargada correctamente desde " << inputString << std::endl;
                         return;
-                    } else {
+                    }
+                    else
+                    {
                         std::cerr << "Error al cargar la matriz desde " << inputString << std::endl;
                     }
-                } else if (event.text.unicode < 128) {
+                }
+                else if (event.text.unicode < 128)
+                {
                     inputString += static_cast<char>(event.text.unicode);
                 }
                 inputText.setString(inputString);
@@ -2175,22 +2228,8 @@ void textInputInterface(sf::RenderWindow& window){
         window.draw(instructionText);
         window.draw(inputText);
         window.display();
-
-        // Si el archivo se ha cargado, puedes usar la matriz cargada aquí
-        if (fileLoaded) {
-            // Ejemplo: Imprimir la matriz en la consola
-            for (int i = 0; i < 8; ++i) {
-                for (int j = 0; j < 8; ++j) {
-                    std::cout << mapLoaded::mapa2[0][i][j] << " ";
-                }
-                std::cout << std::endl;
-            }
-            fileLoaded = false;  // Evita imprimir en cada frame
-        }
     }
-    
 }
-
 
 //--------------------------------------MAIN---------------------------------------------------------------------
 int main()
