@@ -37,15 +37,18 @@ Este enfoque interactivo no solo facilita la comprensión de conceptos clave, si
 3. **Casillas de Instrucciones**:
    - En la esquina superior derecha de la pantalla se encuentra un panel de instrucciones donde el jugador puede seleccionar y ordenar las acciones que desea que el automóvil realice.
    - Las instrucciones disponibles incluyen: girar a la izquierda, girar a la derecha, avanzar una casilla, crear una función personalizada, y establecer un bucle para repetir instrucciones.
+   - ![instruciones1 1](https://github.com/user-attachments/assets/042bd362-4083-4e67-8099-6b6c49ffef4a)
 
-4. **Ejecución de Instrucciones**:
-   - Después de que el jugador selecciona y organiza las instrucciones en las casillas, puede presionar el botón "Go" para ejecutar la secuencia de instrucciones. El automóvil se moverá según las indicaciones dadas.
-   - Las instrucciones programadas se guardan en un archivo de texto (`instrucciones.txt`).
-
-5. **Casillas para Instrucciones**:
+4. **Casillas para Instrucciones**:
    - **Arreglo Principal**: Contiene la secuencia de instrucciones que se ejecutará.
    - **Arreglo de Función**: Almacena una serie de instrucciones personalizadas que pueden ser ejecutadas dentro del arreglo principal.
    - **Arreglo de Bucle**: Contiene instrucciones que el jugador desea repetir un número específico de veces.
+   - ![instruciones2 1](https://github.com/user-attachments/assets/8c8ff883-1094-48a1-a4a3-dd63e59c7f14)
+
+5. **Ejecución de Instrucciones**:
+   - Después de que el jugador selecciona y organiza las instrucciones en las casillas, puede presionar el botón "Go" para ejecutar la secuencia de instrucciones. El automóvil se moverá según las indicaciones dadas.
+   - Las instrucciones programadas se guardan en un archivo de texto (`instrucciones.txt`).
+   -  ![image](https://github.com/user-attachments/assets/72cf7cad-41ff-4232-8cf6-ec301ae1a6c0)
 
 
 ## Flujo de Juego
