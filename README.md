@@ -9,7 +9,8 @@ Este enfoque interactivo no solo facilita la comprensión de conceptos clave, si
 
 ## Objetivo del Juego
 
-El objetivo principal del juego es que el automóvil llegue a la casilla azul evitando los obstáculos en el camino. Para lograrlo, el jugador debe programar una serie de instrucciones que se ejecutarán en secuencia para mover el automóvil en el mapa.
+Este enfoque interactivo no solo facilita la comprensión de conceptos clave, sino que también mantiene el interés del estudiante al combinar el aprendizaje con elementos de juego. Para el desarrollo de este proyecto, utilizamos C++ como lenguaje de programación, la biblioteca SFML para la gestión de gráficos y eventos, y GitHub para la gestión del control de versiones y la colaboración en el código.
+
 
 ### Otros objetivos clave:
 
