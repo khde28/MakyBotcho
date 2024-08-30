@@ -28,9 +28,11 @@ Este enfoque interactivo no solo facilita la comprensión de conceptos clave, si
 
 1. **Mapa Isométrico y Mapa 2D**:
    - El mapa isométrico simula un entorno en 3D, mientras que el mapa 2D sirve como referencia para que el jugador vea la posición actual del automóvil.
+   - ![mapa3D_2D](https://github.com/user-attachments/assets/7772a479-fec6-42c2-9afa-adad02a30b54)
 
 2. **Personaje (Automóvil)**:
    - El automóvil es el personaje principal que el jugador controla mediante una serie de instrucciones predefinidas.
+   - ![mapa3D_2D_CARRO](https://github.com/user-attachments/assets/3e681e5b-b33e-4158-b8e5-f71fefff8a55)
 
 3. **Casillas de Instrucciones**:
    - En la esquina superior derecha de la pantalla se encuentra un panel de instrucciones donde el jugador puede seleccionar y ordenar las acciones que desea que el automóvil realice.
