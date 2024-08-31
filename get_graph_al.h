@@ -1,6 +1,8 @@
+#pragma once
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include "mapas2.h"
 
 using namespace std;
 //directions
@@ -18,49 +20,36 @@ struct Nodito{
 };
 
 //adjacency list
-unordered_map<int, vector<Edge>> graph;
-unordered_map<int, int> nodeWeights;
-unordered_map<int, Nodito> noditos;
+inline unordered_map<int, vector<Edge>> graph;
+inline unordered_map<int, int> nodeWeights;
+inline unordered_map<int, Nodito> noditos;
 
-void addNodito(int x, int y, vector<vector<int>>& matrix) {
-    int nodito_name = x * matrix[0].size() + y;
+inline void addNodito(int x, int y, int matrix[8][8]) {
+    int nodito_name = x * 8 + y;
     nodeWeights[nodito_name] = 0; 
 
     vector<pair<int, int>> directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
     for (auto& dir : directions) {
         int newX = x + dir.first;
         int newY = y + dir.second;
-        if ((newX >= 0) && (newX < int(matrix.size())) && (newY >= 0) && (newY < int(matrix[0].size())) &&
+        if ((newX >= 0) && (newX < 8) && (newY >= 0) && (newY < 8) &&
             (matrix[newX][newY] == 0 || matrix[newX][newY] == -1)) {
-            int adjNodeName = newX * matrix[0].size() + newY;
+            int adjNodeName = newX * 8 + newY;
             graph[nodito_name].push_back({adjNodeName, 1});
             noditos[nodito_name] = {nodito_name,x,y};
             
         }
     }   
 }
-
-int main() {
-    vector<vector<int>> matrix = {
-        {0, 1, 2, 3, 4, 5, 6, 20},
-        {0, 0, 0, 0, 0, 0, 0, 0},
-        {7, 6, 5, 4, 3, 2, 1, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 1, 2, 3, 4, 5, 6, 7},
-        {0, 0, 0, 0, 0, 0, 0, 0},
-        {7, 6, 5, 4, 3, 2, 1, 0},
-        {-1, 0, 0, 0, 0, 0, 0, 0}
-    };
-
-
-    for (int i = 0; i < int(matrix.size()); ++i) {
-        for (int j = 0; j < int(matrix[0].size()); ++j) {
-            if (matrix[i][j] == 0 || matrix[i][j] == -1) {
-                addNodito(i, j, matrix);
+inline void generando(){
+    mapLoaded::loadFile("mc.txt");
+        for (int i = 0; i < 8; ++i) {
+            for (int j = 0; j < 8; ++j) {
+                if (mapLoaded::mapa2[0][i][j] == 0 || mapLoaded::mapa2[0][i][j] == -1) {
+                    addNodito(i, j, mapLoaded::mapa2[0]);
+                }
             }
         }
-    }
-
     /* cout << "Grafo:" << endl;
     for (auto& node : graph) {
         cout << "Nodo " << noditos[node.first].cx<<" , "<<noditos[node.first].cy << " tiene conexiones: ";
@@ -69,8 +58,8 @@ int main() {
         }
         cout << endl;
     } */
+}
 
     
 
-    return 0;
-}
+ 

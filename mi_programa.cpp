@@ -7,6 +7,7 @@
 #include "mapas2.h"
 #include "analizador.h"
 #include "converttxt.h"
+#include "get_map_sol.h"
 //------------------------------------------------------------------------------------------------------------
 #include <fstream>
 #include <string>
@@ -329,7 +330,10 @@ void configurarSprites(sf::Sprite tiles2d[][gridSize], const int matriz2D[][grid
         }
     }
 }
-void configurarSpritesPaused(sf::Sprite tiles2d[][gridSize], const int matriz2D[][gridSize], sf::Texture &texturaBloque2d, sf::Texture &texturaLozaAzul2D, sf::Texture &texturaPiso2d, sf::Texture)
+bool isThere(const std::vector<int>& vec, int value) {
+    return std::find(vec.begin(), vec.end(), value) != vec.end();
+}
+void configurarSpritesPaused(vector<int>& optPath, sf::Sprite tiles2d[][gridSize], const int matriz2D[][gridSize], sf::Texture &texturaBloque2d, sf::Texture &texturaLozaAzul2D, sf::Texture &texturaPiso2d, sf::Texture &textureLozaRojo2D)
 {
     for (int i = 0; i < gridSize; ++i)
     {
@@ -345,7 +349,15 @@ void configurarSpritesPaused(sf::Sprite tiles2d[][gridSize], const int matriz2D[
             }
             else
             {
-                tiles2d[i][j].setTexture(texturaPiso2d);
+
+                if (isThere(optPath, i*8+j))
+                {
+                    tiles2d[i][j].setTexture(textureLozaRojo2D);
+                }else{
+
+                    tiles2d[i][j].setTexture(texturaPiso2d);
+                }
+                
             }
             tiles2d[i][j].setPosition(50 + i * 15, 40 + j * 15);
         }
@@ -1628,7 +1640,16 @@ void customMode(sf::RenderWindow &window)
     MainPage mainPage;
     bool isGame = false;
 
-        //pause's variables
+    //pause's variables
+    Texture texturaLozaRojo2D;
+    if (!texturaLozaRojo2D.loadFromFile("images/loza_rojo2d.png"))
+    {
+        return;
+    }
+    Sprite tilesPaused2d[gridSize][gridSize];
+    
+
+
     sf::Texture gameTexture;
     sf::Sprite gameSprite;
     sf::RectangleShape overlayBox(sf::Vector2f(300, 200));
@@ -1641,6 +1662,10 @@ void customMode(sf::RenderWindow &window)
     overlayImage.setPosition(overlayBox.getPosition().x + 50, overlayBox.getPosition().y + 50);
 
     bool isPaused = false;
+
+
+
+
     while (window.isOpen())
     {
         // Lógica de reproducción de sonido
@@ -1704,6 +1729,10 @@ void customMode(sf::RenderWindow &window)
                     gameTexture.create(window.getSize().x, window.getSize().y);
                     gameTexture.update(window);
                     gameSprite.setTexture(gameTexture);
+                    vector<int> optPaths = optPath();
+                    cout<<optPaths[1];
+                    cout<<"antes f"<<endl;
+                    configurarSpritesPaused(optPaths, tilesPaused2d, mapLoaded::mapa2[mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d, texturaLozaRojo2D);
                 }
             }
         }
@@ -1714,13 +1743,18 @@ void customMode(sf::RenderWindow &window)
                     isPaused = !isPaused; 
                     
                 }
-
-
             }
             window.clear();
             window.draw(gameSprite); // Dibuja la imagen congelada del juego
             window.draw(overlayBox); // Dibuja el cuadro
-            window.draw(overlayImage); // Dibuja la imagen dentro del cuadro
+            for (int i = 0; i < gridSize; ++i)
+        {
+            for (int j = 0; j < gridSize; ++j)
+            {
+                window.draw(tilesPaused2d[i][j]);
+            }
+        }
+            
             window.display();
         }
 

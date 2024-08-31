@@ -4,9 +4,11 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 namespace mapLoaded {
     inline int mapa2[1][8][8] = {{{0}}}; 
+    //inline std::vector<std::vector<std::vector<int>>> mapa2(1, std::vector<std::vector<int>>(8, std::vector<int>(8, 0)));
 
     inline bool loadFile(const std::string& filename) {
         std::ifstream file(filename);
