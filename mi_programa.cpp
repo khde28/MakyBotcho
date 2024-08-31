@@ -329,6 +329,28 @@ void configurarSprites(sf::Sprite tiles2d[][gridSize], const int matriz2D[][grid
         }
     }
 }
+void configurarSpritesPaused(sf::Sprite tiles2d[][gridSize], const int matriz2D[][gridSize], sf::Texture &texturaBloque2d, sf::Texture &texturaLozaAzul2D, sf::Texture &texturaPiso2d, sf::Texture)
+{
+    for (int i = 0; i < gridSize; ++i)
+    {
+        for (int j = 0; j < gridSize; ++j)
+        {
+            if (matriz2D[i][j] >= 1)
+            {
+                tiles2d[i][j].setTexture(texturaBloque2d);
+            }
+            else if (matriz2D[i][j] == -1)
+            {
+                tiles2d[i][j].setTexture(texturaLozaAzul2D);
+            }
+            else
+            {
+                tiles2d[i][j].setTexture(texturaPiso2d);
+            }
+            tiles2d[i][j].setPosition(50 + i * 15, 40 + j * 15);
+        }
+    }
+}
 void moveRobot(Sprite &makibot, const Vector2f &targetPosition, Vector2f &currentPosition, float xIso, float yIso)
 {
     Vector2f movement(0.f, 0.f);
