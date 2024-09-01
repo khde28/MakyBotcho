@@ -333,8 +333,18 @@ void configurarSprites(sf::Sprite tiles2d[][gridSize], const int matriz2D[][grid
 bool isThere(const std::vector<int>& vec, int value) {
     return std::find(vec.begin(), vec.end(), value) != vec.end();
 }
-void configurarSpritesPaused(vector<int>& optPath, sf::Sprite tiles2d[][gridSize], const int matriz2D[][gridSize], sf::Texture &texturaBloque2d, sf::Texture &texturaLozaAzul2D, sf::Texture &texturaPiso2d, sf::Texture &textureLozaRojo2D)
+void configurarSpritesPaused(sf::RenderWindow& window,vector<int>& optPath, sf::Sprite tiles2d[][gridSize], const int matriz2D[][gridSize], sf::Texture &texturaBloque2d, sf::Texture &texturaLozaAzul2D, sf::Texture &texturaPiso2d, sf::Texture &textureLozaRojo2D)
 {
+    const int gridSize = 8; 
+    const float scale = 3.f; 
+    const float tileSize = 15.f; 
+    
+    
+    float totalWidth = gridSize * tileSize * scale;
+    float totalHeight = gridSize * tileSize * scale;
+    float offsetX = (window.getSize().x - totalWidth) / 2;
+    float offsetY = (window.getSize().y - totalHeight) / 2;
+
     for (int i = 0; i < gridSize; ++i)
     {
         for (int j = 0; j < gridSize; ++j)
@@ -359,7 +369,8 @@ void configurarSpritesPaused(vector<int>& optPath, sf::Sprite tiles2d[][gridSize
                 }
                 
             }
-            tiles2d[i][j].setPosition(50 + i * 15, 40 + j * 15);
+            tiles2d[i][j].setScale(3.f, 3.f);
+            tiles2d[i][j].setPosition(offsetX + i * tileSize * scale, offsetY + j * tileSize * scale);
         }
     }
 }
@@ -1648,13 +1659,11 @@ void customMode(sf::RenderWindow &window)
     }
     Sprite tilesPaused2d[gridSize][gridSize];
     
-
-
     sf::Texture gameTexture;
     sf::Sprite gameSprite;
-    sf::RectangleShape overlayBox(sf::Vector2f(300, 200));
+    sf::RectangleShape overlayBox(sf::Vector2f(window.getSize().x, window.getSize().y));
     overlayBox.setFillColor(sf::Color(0, 0, 0, 150)); 
-    overlayBox.setPosition(250, 200); 
+    overlayBox.setPosition(0, 0); 
     
     sf::Texture overlayImageTexture;
     overlayImageTexture.loadFromFile("images/jump.png"); 
@@ -1732,7 +1741,7 @@ void customMode(sf::RenderWindow &window)
                     vector<int> optPaths = optPath();
                     cout<<optPaths[1];
                     cout<<"antes f"<<endl;
-                    configurarSpritesPaused(optPaths, tilesPaused2d, mapLoaded::mapa2[mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d, texturaLozaRojo2D);
+                    configurarSpritesPaused(window,optPaths, tilesPaused2d, mapLoaded::mapa2[mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d, texturaLozaRojo2D);
                 }
             }
         }
