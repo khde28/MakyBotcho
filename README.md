@@ -80,16 +80,23 @@ En cada casillero de los arreglos, hay dos cuadrados pequeños en la parte izqui
 
 - **Arreglo Principal**: Este arreglo contiene la secuencia completa de instrucciones que se ejecutará en el juego. Es la base sobre la cual se desarrollan las acciones del automóvil y también define el orden de los movimientos.
 
-![Arreglo Principal](https://github.com/user-attachments/assets/d5f5afd5-343a-4430-b568-1410a78151ce)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/d5f5afd5-343a-4430-b568-1410a78151ce" alt="Arreglo Principal" />
+</p>
+
 
 - **Arreglo de Función**: Este arreglo permite al jugador almacenar una serie de instrucciones personalizadas que pueden ser llamadas desde el arreglo principal. Es útil para definir rutinas o secuencias de movimientos complejos que se usan repetidamente, optimizando así la gestión de acciones y evitando tener que reescribir las mismas instrucciones múltiples veces.
 
-![Arreglo de Función](https://github.com/user-attachments/assets/d3daaf78-dd31-4464-9b1b-613b0ef788c3)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/d3daaf78-dd31-4464-9b1b-613b0ef788c3" alt="Arreglo de Función" />
+</p>
 
 - **Arreglo de Bucle**: En este arreglo, el jugador puede colocar instrucciones que desea repetir un número específico de veces, permitiendo la ejecución de bucles de acciones dentro del juego. Es ideal para automatizar movimientos cíclicos, como giros continuos o avances repetidos, proporcionando una forma eficiente de ejecutar patrones sin necesidad de escribir las mismas instrucciones repetidamente.
   - **Botón de Repeticiones**: Al lado izquierdo del casillero de bucle, hay un botón que permite incrementar o decrementar el número de repeticiones del bucle. Al hacer clic en este botón, el jugador puede ajustar fácilmente la cantidad de veces que se ejecutarán las instrucciones dentro del bucle.
 
-![Arreglo de Bucle](https://github.com/user-attachments/assets/5bdfc24e-1792-4d22-a843-e8de5ec22080)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/5bdfc24e-1792-4d22-a843-e8de5ec22080" alt="Arreglo de Bucle" />
+</p>
 
 
 6. **Ejecución de Instrucciones**:
