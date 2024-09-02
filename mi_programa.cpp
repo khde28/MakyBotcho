@@ -113,7 +113,7 @@ void FIFOdelete(int array[], int &tamano)
 }
 
 // Función para dibujar las imágenes en base al array
-void dibujarImagenes(sf::RenderWindow &window, const std::vector<sf::Texture> &texturas, int array[], int tamano, int xx, int yy, sf::Event event, bool &estado)
+void renderImagesBlocksWithControls(sf::RenderWindow &window, const std::vector<sf::Texture> &texturas, int array[], int tamano, int xx, int yy, sf::Event event, bool &estado)
 {
     // Tamaño de cada imagen (asumimos que todas tienen el mismo tamaño)
     sf::Vector2u imageSize = texturas[0].getSize();
@@ -1207,9 +1207,9 @@ int main()
         {
             window.draw(button.sprite);
         }
-        dibujarImagenes(window, buttonTexture, mainbot, sizeof(mainbot) / sizeof(mainbot[0]), 720, 100, event, boolmain);
-        dibujarImagenes(window, buttonTexture, f1bot, sizeof(f1bot) / sizeof(f1bot[0]), 720, 320, event, boolf1);
-        dibujarImagenes(window, buttonTexture, buclebot, sizeof(buclebot) / sizeof(buclebot[0]), 720, 470, event, boolbucle);
+        renderImagesBlocksWithControls(window, buttonTexture, mainbot, sizeof(mainbot) / sizeof(mainbot[0]), 720, 100, event, boolmain);
+        renderImagesBlocksWithControls(window, buttonTexture, f1bot, sizeof(f1bot) / sizeof(f1bot[0]), 720, 320, event, boolf1);
+        renderImagesBlocksWithControls(window, buttonTexture, buclebot, sizeof(buclebot) / sizeof(buclebot[0]), 720, 470, event, boolbucle);
 
         window.display();
     }
