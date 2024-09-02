@@ -39,55 +39,57 @@ Este enfoque interactivo no solo facilita la comprensión de conceptos clave, si
 ## Funcionalidades Principales
 
 
-1. **Mapa Isométrico**:
-  - El mapa isométrico es el principal en el juego y está diseñado para simular un entorno en 3D, proporcionando una experiencia visual más inmersiva. Este mapa está conformado por una cuadrícula de 8 x 8, lo que permite una representación detallada y atractiva del espacio de juego, donde los objetos y personajes tienen una apariencia tridimensional a pesar de ser un plano bidimensional.
-   ![mapa3d](https://github.com/user-attachments/assets/ecece153-816b-4ae7-8962-8dd609669b7d)
+**1. Mapa Isométrico**
 
+El mapa isométrico es el principal en el juego y está diseñado para simular un entorno en 3D, proporcionando una experiencia visual más inmersiva. Este mapa está conformado por una cuadrícula de 8 x 8, lo que permite una representación detallada y atractiva del espacio de juego, donde los objetos y personajes tienen una apariencia tridimensional a pesar de ser un plano bidimensional.
 
-2. **Mapa 2D**:
-  - El mapa 2D sirve como referencia para el jugador, mostrando de manera clara y sencilla la posición actual del automóvil dentro del entorno del juego. Al igual que el mapa isométrico, el mapa 2D está conformado por una cuadrícula de 8 x 8, pero su principal función es brindar una vista simplificada y directa de la ubicación y movimientos del jugador dentro del espacio de juego.
-   ![mapa2d](https://github.com/user-attachments/assets/b6fe8e55-05be-4be3-9c01-6fce336bc479)
+![Mapa Isométrico](https://github.com/user-attachments/assets/ecece153-816b-4ae7-8962-8dd609669b7d)
 
+**2. Mapa 2D**
 
-3. **Personaje (Automóvil)**:
-  - El automóvil es el personaje principal que el jugador controla mediante una serie de instrucciones predefinidas.
-   ![mapa3D_2D_CARRO](https://github.com/user-attachments/assets/3e681e5b-b33e-4158-b8e5-f71fefff8a55)
+El mapa 2D sirve como referencia para el jugador, mostrando de manera clara y sencilla la posición actual del automóvil dentro del entorno del juego. Al igual que el mapa isométrico, el mapa 2D está conformado por una cuadrícula de 8 x 8, pero su principal función es brindar una vista simplificada y directa de la ubicación y movimientos del jugador dentro del espacio de juego.
 
+![Mapa 2D](https://github.com/user-attachments/assets/b6fe8e55-05be-4be3-9c01-6fce336bc479)
 
-4. **Casillas de Instrucciones**:
-  - En la esquina superior derecha de la pantalla se encuentra un **panel de instrucciones** donde el jugador puede seleccionar y ordenar las acciones que desea que el automóvil realice. Las instrucciones disponibles permiten al jugador planificar el movimiento del automóvil dentro del mapa. A continuación, se describen las funciones de cada casillero:
-    - **Primer Casillero**: El automóvil avanza una celda hacia adelante.
-    - **Segundo Casillero**: El automóvil gira 90 grados en sentido horario.
-    - **Tercer Casillero**: El automóvil gira 90 grados en sentido antihorario.
-    - **Cuarto Casillero**: Instrucción de función; permite llamar a las instrucciones definidas en el arreglo de función dentro del arreglo principal.
-    - **Quinto Casillero**: Casillero para llamar al arreglo de bucle dentro del arreglo principal, permitiendo repetir las instrucciones según lo definido.
-   ![instruciones1 1](https://github.com/user-attachments/assets/042bd362-4083-4e67-8099-6b6c49ffef4a)
+**3. Personaje (Automóvil)**
 
+El automóvil es el personaje principal que el jugador controla mediante una serie de instrucciones predefinidas.
 
-5. **Casillas para Instrucciones**:
+![Automóvil](https://github.com/user-attachments/assets/3e681e5b-b33e-4158-b8e5-f71fefff8a55)
 
+**4. Casillas de Instrucciones**
 
-  - En cada casillero de los arreglos, hay dos cuadrados pequeños en la parte izquierda:
-     - **Cuadrado Superior (Rojo)**: Este cuadro sirve para eliminar una instrucción del casillero. Al hacer clic en él, se borra la instrucción actualmente asignada, permitiendo al jugador reorganizar o limpiar la secuencia de acciones fácilmente.
-     - **Cuadrado Inferior (Verde/Amarillo)**: Este cuadro controla la habilitación de cada casillero para recibir instrucciones. Cuando está de color verde, significa que el casillero está bloqueado y no puede recibir instrucciones. Al hacer clic en este cuadro, cambia a color amarillo, lo que indica que el casillero está desbloqueado y listo para recibir nuevas instrucciones. Si se vuelve a hacer clic, regresa a verde, bloqueando nuevamente el casillero.
+En la esquina superior derecha de la pantalla se encuentra un **panel de instrucciones** donde el jugador puede seleccionar y ordenar las acciones que desea que el automóvil realice. Las instrucciones disponibles permiten al jugador planificar el movimiento del automóvil dentro del mapa. A continuación, se describen las funciones de cada casillero:
 
+- **Primer Casillero**: El automóvil avanza una celda hacia adelante.
+- **Segundo Casillero**: El automóvil gira 90 grados en sentido horario.
+- **Tercer Casillero**: El automóvil gira 90 grados en sentido antihorario.
+- **Cuarto Casillero**: Instrucción de función; permite llamar a las instrucciones definidas en el arreglo de función dentro del arreglo principal.
+- **Quinto Casillero**: Casillero para llamar al arreglo de bucle dentro del arreglo principal, permitiendo repetir las instrucciones según lo definido.
 
-   ![boton_rojo_verde](https://github.com/user-attachments/assets/0ca7cdc4-6cce-4530-9fb2-459ed81da142)
+![Casillas de Instrucciones](https://github.com/user-attachments/assets/042bd362-4083-4e67-8099-6b6c49ffef4a)
 
+**5. Casillas para Instrucciones**
 
-  - **Arreglo Principal**: Este arreglo contiene la secuencia completa de instrucciones que se ejecutará en el juego. Es la base sobre la cual se desarrollan las acciones del automóvil y también define el orden de los movimientos.
-   ![array_bucle2](https://github.com/user-attachments/assets/d5f5afd5-343a-4430-b568-1410a78151ce)
+En cada casillero de los arreglos, hay dos cuadrados pequeños en la parte izquierda:
 
+- **Cuadrado Superior (Rojo)**: Este cuadro sirve para eliminar una instrucción del casillero. Al hacer clic en él, se borra la instrucción actualmente asignada, permitiendo al jugador reorganizar o limpiar la secuencia de acciones fácilmente.
+- **Cuadrado Inferior (Verde/Amarillo)**: Este cuadro controla la habilitación de cada casillero para recibir instrucciones. Cuando está de color verde, significa que el casillero está bloqueado y no puede recibir instrucciones. Al hacer clic en este cuadro, cambia a color amarillo, lo que indica que el casillero está desbloqueado y listo para recibir nuevas instrucciones. Si se vuelve a hacer clic, regresa a verde, bloqueando nuevamente el casillero.
 
+![Casillas para Instrucciones](https://github.com/user-attachments/assets/0ca7cdc4-6cce-4530-9fb2-459ed81da142)
 
+- **Arreglo Principal**: Este arreglo contiene la secuencia completa de instrucciones que se ejecutará en el juego. Es la base sobre la cual se desarrollan las acciones del automóvil y también define el orden de los movimientos.
 
-  - **Arreglo de Función**: Este arreglo permite al jugador almacenar una serie de instrucciones personalizadas que pueden ser llamadas desde el arreglo principal. Es útil para definir rutinas o secuencias de movimientos complejos que se usan repetidamente, optimizando así la gestión de acciones y evitando tener que reescribir las mismas instrucciones múltiples veces.
-   ![array_fuuncion2](https://github.com/user-attachments/assets/d3daaf78-dd31-4464-9b1b-613b0ef788c3)
+![Arreglo Principal](https://github.com/user-attachments/assets/d5f5afd5-343a-4430-b568-1410a78151ce)
 
+- **Arreglo de Función**: Este arreglo permite al jugador almacenar una serie de instrucciones personalizadas que pueden ser llamadas desde el arreglo principal. Es útil para definir rutinas o secuencias de movimientos complejos que se usan repetidamente, optimizando así la gestión de acciones y evitando tener que reescribir las mismas instrucciones múltiples veces.
 
-  - **Arreglo de Bucle**: En este arreglo, el jugador puede colocar instrucciones que desea repetir un número específico de veces, permitiendo la ejecución de bucles de acciones dentro del juego. Es ideal para automatizar movimientos cíclicos, como giros continuos o avances repetidos, proporcionando una forma eficiente de ejecutar patrones sin necesidad de escribir las mismas instrucciones repetidamente.
-   - **Botón de Repeticiones**: Al lado izquierdo del casillero de bucle, hay un botón que permite incrementar o decrementar el número de repeticiones del bucle. Al hacer clic en este botón, el jugador puede ajustar fácilmente la cantidad de veces que se ejecutarán las instrucciones dentro del bucle.
-   ![array_bucle2 2](https://github.com/user-attachments/assets/5bdfc24e-1792-4d22-a843-e8de5ec22080)
+![Arreglo de Función](https://github.com/user-attachments/assets/d3daaf78-dd31-4464-9b1b-613b0ef788c3)
+
+- **Arreglo de Bucle**: En este arreglo, el jugador puede colocar instrucciones que desea repetir un número específico de veces, permitiendo la ejecución de bucles de acciones dentro del juego. Es ideal para automatizar movimientos cíclicos, como giros continuos o avances repetidos, proporcionando una forma eficiente de ejecutar patrones sin necesidad de escribir las mismas instrucciones repetidamente.
+  - **Botón de Repeticiones**: Al lado izquierdo del casillero de bucle, hay un botón que permite incrementar o decrementar el número de repeticiones del bucle. Al hacer clic en este botón, el jugador puede ajustar fácilmente la cantidad de veces que se ejecutarán las instrucciones dentro del bucle.
+
+![Arreglo de Bucle](https://github.com/user-attachments/assets/5bdfc24e-1792-4d22-a843-e8de5ec22080)
 
 
 6. **Ejecución de Instrucciones**:
@@ -97,7 +99,6 @@ Este enfoque interactivo no solo facilita la comprensión de conceptos clave, si
    
    
     [Screencast from 01-09-24 21_08_59.webm](https://github.com/user-attachments/assets/9bc84f70-2e84-4d99-96f7-ecfde04423f9)
-
 
 
 ## Flujo de Juego
