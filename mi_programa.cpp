@@ -693,6 +693,10 @@ int main()
     int lastmovbucle;
 
     bool colisionando = false;
+
+
+
+
     while (window.isOpen())
     {
         // Lógica de reproducción de sonido
@@ -1005,8 +1009,7 @@ int main()
         }
 
         // Actualizar la animación del sprite
-        if (moving || colisionando)
-        {
+        if (moving || colisionando){
             // Verificar colisión con bloques
             Vector2f newPosition = targetPosition;
             int posXIso, posYISo;
