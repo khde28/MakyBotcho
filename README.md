@@ -59,7 +59,9 @@ El mapa 2D sirve como referencia para el jugador, mostrando de manera clara y se
 
 El automóvil es el personaje principal que el jugador controla mediante una serie de instrucciones predefinidas.
 
-![Automóvil](https://github.com/user-attachments/assets/3e681e5b-b33e-4158-b8e5-f71fefff8a55)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3e681e5b-b33e-4158-b8e5-f71fefff8a55" alt="Automóvil" />
+</p>
 
 **4. Casillas de Instrucciones**
 
