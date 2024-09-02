@@ -40,20 +40,31 @@ Este enfoque interactivo no solo facilita la comprensión de conceptos clave, si
 
 4. **Casillas de Instrucciones**:
    - En la esquina superior derecha de la pantalla se encuentra un **panel de instrucciones** donde el jugador puede seleccionar y ordenar las acciones que desea que el automóvil realice. Las instrucciones disponibles permiten al jugador planificar el movimiento del automóvil dentro del mapa. A continuación, se describen las funciones de cada casillero:
-
-   1. *Primer Casillero*: El automóvil avanza una celda hacia adelante.
-   2. *Segundo Casillero*: El automóvil gira 90 grados en sentido horario.
-   3. *Tercer Casillero*: El automóvil gira 90 grados en sentido antihorario.
-   4. *Cuarto Casillero*: Instrucción de función; permite llamar a las instrucciones definidas en el arreglo de función dentro del arreglo principal.
-   5. *Quinto Casillero*: Casillero para llamar al arreglo de bucle dentro del arreglo principal, permitiendo repetir las instrucciones según lo definido.
-
+     - **Primer Casillero**: El automóvil avanza una celda hacia adelante.
+     - **Segundo Casillero**: El automóvil gira 90 grados en sentido horario.
+     - **Tercer Casillero**: El automóvil gira 90 grados en sentido antihorario.
+     - **Cuarto Casillero**: Instrucción de función; permite llamar a las instrucciones definidas en el arreglo de función dentro del arreglo principal.
+     - **Quinto Casillero**: Casillero para llamar al arreglo de bucle dentro del arreglo principal, permitiendo repetir las instrucciones según lo definido.
    - ![instruciones1 1](https://github.com/user-attachments/assets/042bd362-4083-4e67-8099-6b6c49ffef4a)
 
 5. **Casillas para Instrucciones**:
-   - **Arreglo Principal**: Contiene la secuencia de instrucciones que se ejecutará.
-   - **Arreglo de Función**: Almacena una serie de instrucciones personalizadas que pueden ser ejecutadas dentro del arreglo principal.
-   - **Arreglo de Bucle**: Contiene instrucciones que el jugador desea repetir un número específico de veces.
-   - ![instruciones2 1](https://github.com/user-attachments/assets/8c8ff883-1094-48a1-a4a3-dd63e59c7f14)
+
+   - En cada casillero de los arreglos, hay dos cuadrados pequeños en la parte izquierda:
+   - **Cuadrado Superior (Rojo)**: Este cuadro sirve para eliminar una instrucción del casillero. Al hacer clic en él, se borra la instrucción actualmente asignada, permitiendo al jugador reorganizar o limpiar la secuencia de acciones fácilmente.
+   - **Cuadrado Inferior (Verde/Amarillo)**: Este cuadro controla la habilitación de cada casillero para recibir instrucciones. Cuando está de color verde, significa que el casillero está bloqueado y no puede recibir instrucciones. Al hacer clic en este cuadro, cambia a color amarillo, lo que indica que el casillero está desbloqueado y listo para recibir nuevas instrucciones. Si se vuelve a hacer clic, regresa a verde, bloqueando nuevamente el casillero.
+
+   - ![boton_rojo_verde](https://github.com/user-attachments/assets/0ca7cdc4-6cce-4530-9fb2-459ed81da142)
+
+   - **Arreglo Principal**: Este arreglo contiene la secuencia completa de instrucciones que se ejecutará en el juego. Es la base sobre la cual se desarrollan las acciones del automóvil y también define el orden de los movimientos.
+   - ![array_principal](https://github.com/user-attachments/assets/5a9a86fe-86ea-42f2-9354-0566db05ca38)
+
+
+   - **Arreglo de Función**: Este arreglo permite al jugador almacenar una serie de instrucciones personalizadas que pueden ser llamadas desde el arreglo principal. Es útil para definir rutinas o secuencias de movimientos complejos que se usan repetidamente, optimizando así la gestión de acciones y evitando tener que reescribir las mismas instrucciones múltiples veces.
+   - ![array_funcion](https://github.com/user-attachments/assets/379f42af-6cdd-468c-92bf-80adc3d8d309)
+
+   - **Arreglo de Bucle**: En este arreglo, el jugador puede colocar instrucciones que desea repetir un número específico de veces, permitiendo la ejecución de bucles de acciones dentro del juego. Es ideal para automatizar movimientos cíclicos, como giros continuos o avances repetidos, proporcionando una forma eficiente de ejecutar patrones sin necesidad de escribir las mismas instrucciones repetidamente.
+   - ![array_bucle](https://github.com/user-attachments/assets/364ee835-be17-445c-8c55-455e25796a4a)
+
 
 6. **Ejecución de Instrucciones**:
    - Después de que el jugador selecciona y organiza las instrucciones en las casillas, puede presionar el botón "Go" para ejecutar la secuencia de instrucciones. El automóvil se moverá según las indicaciones dadas.
