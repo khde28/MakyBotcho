@@ -26,26 +26,47 @@ Este enfoque interactivo no solo facilita la comprensión de conceptos clave, si
 
 ## Funcionalidades Principales
 
-1. **Mapa Isométrico y Mapa 2D**:
-   - El mapa isométrico simula un entorno en 3D, mientras que el mapa 2D sirve como referencia para que el jugador vea la posición actual del automóvil.
-   - ![mapa3D_2D](https://github.com/user-attachments/assets/7772a479-fec6-42c2-9afa-adad02a30b54)
+1. **Mapa Isométrico**:
+   - El mapa isométrico es el principal en el juego y está diseñado para simular un entorno en 3D, proporcionando una experiencia visual más inmersiva. Este mapa está conformado por una cuadrícula de 8 x 8, lo que permite una representación detallada y atractiva del espacio de juego, donde los objetos y personajes tienen una apariencia tridimensional a pesar de ser un plano bidimensional.
+   - ![mapa3d](https://github.com/user-attachments/assets/ecece153-816b-4ae7-8962-8dd609669b7d)
 
-2. **Personaje (Automóvil)**:
+2. **Mapa 2D**:
+   - El mapa 2D sirve como referencia para el jugador, mostrando de manera clara y sencilla la posición actual del automóvil dentro del entorno del juego. Al igual que el mapa isométrico, el mapa 2D está conformado por una cuadrícula de 8 x 8, pero su principal función es brindar una vista simplificada y directa de la ubicación y movimientos del jugador dentro del espacio de juego.
+   - ![mapa2d](https://github.com/user-attachments/assets/b6fe8e55-05be-4be3-9c01-6fce336bc479)
+
+3. **Personaje (Automóvil)**:
    - El automóvil es el personaje principal que el jugador controla mediante una serie de instrucciones predefinidas.
    - ![mapa3D_2D_CARRO](https://github.com/user-attachments/assets/3e681e5b-b33e-4158-b8e5-f71fefff8a55)
 
-3. **Casillas de Instrucciones**:
-   - En la esquina superior derecha de la pantalla se encuentra un panel de instrucciones donde el jugador puede seleccionar y ordenar las acciones que desea que el automóvil realice.
-   - Las instrucciones disponibles incluyen: girar a la izquierda, girar a la derecha, avanzar una casilla, crear una función personalizada, y establecer un bucle para repetir instrucciones.
+4. **Casillas de Instrucciones**:
+   - En la esquina superior derecha de la pantalla se encuentra un **panel de instrucciones** donde el jugador puede seleccionar y ordenar las acciones que desea que el automóvil realice. Las instrucciones disponibles permiten al jugador planificar el movimiento del automóvil dentro del mapa. A continuación, se describen las funciones de cada casillero:
+     - **Primer Casillero**: El automóvil avanza una celda hacia adelante.
+     - **Segundo Casillero**: El automóvil gira 90 grados en sentido horario.
+     - **Tercer Casillero**: El automóvil gira 90 grados en sentido antihorario.
+     - **Cuarto Casillero**: Instrucción de función; permite llamar a las instrucciones definidas en el arreglo de función dentro del arreglo principal.
+     - **Quinto Casillero**: Casillero para llamar al arreglo de bucle dentro del arreglo principal, permitiendo repetir las instrucciones según lo definido.
    - ![instruciones1 1](https://github.com/user-attachments/assets/042bd362-4083-4e67-8099-6b6c49ffef4a)
 
-4. **Casillas para Instrucciones**:
-   - **Arreglo Principal**: Contiene la secuencia de instrucciones que se ejecutará.
-   - **Arreglo de Función**: Almacena una serie de instrucciones personalizadas que pueden ser ejecutadas dentro del arreglo principal.
-   - **Arreglo de Bucle**: Contiene instrucciones que el jugador desea repetir un número específico de veces.
-   - ![instruciones2 1](https://github.com/user-attachments/assets/8c8ff883-1094-48a1-a4a3-dd63e59c7f14)
+5. **Casillas para Instrucciones**:
 
-5. **Ejecución de Instrucciones**:
+   - En cada casillero de los arreglos, hay dos cuadrados pequeños en la parte izquierda:
+   - **Cuadrado Superior (Rojo)**: Este cuadro sirve para eliminar una instrucción del casillero. Al hacer clic en él, se borra la instrucción actualmente asignada, permitiendo al jugador reorganizar o limpiar la secuencia de acciones fácilmente.
+   - **Cuadrado Inferior (Verde/Amarillo)**: Este cuadro controla la habilitación de cada casillero para recibir instrucciones. Cuando está de color verde, significa que el casillero está bloqueado y no puede recibir instrucciones. Al hacer clic en este cuadro, cambia a color amarillo, lo que indica que el casillero está desbloqueado y listo para recibir nuevas instrucciones. Si se vuelve a hacer clic, regresa a verde, bloqueando nuevamente el casillero.
+
+   - ![boton_rojo_verde](https://github.com/user-attachments/assets/0ca7cdc4-6cce-4530-9fb2-459ed81da142)
+
+   - **Arreglo Principal**: Este arreglo contiene la secuencia completa de instrucciones que se ejecutará en el juego. Es la base sobre la cual se desarrollan las acciones del automóvil y también define el orden de los movimientos.
+   - ![array_principal](https://github.com/user-attachments/assets/5a9a86fe-86ea-42f2-9354-0566db05ca38)
+
+
+   - **Arreglo de Función**: Este arreglo permite al jugador almacenar una serie de instrucciones personalizadas que pueden ser llamadas desde el arreglo principal. Es útil para definir rutinas o secuencias de movimientos complejos que se usan repetidamente, optimizando así la gestión de acciones y evitando tener que reescribir las mismas instrucciones múltiples veces.
+   - ![array_funcion](https://github.com/user-attachments/assets/379f42af-6cdd-468c-92bf-80adc3d8d309)
+
+   - **Arreglo de Bucle**: En este arreglo, el jugador puede colocar instrucciones que desea repetir un número específico de veces, permitiendo la ejecución de bucles de acciones dentro del juego. Es ideal para automatizar movimientos cíclicos, como giros continuos o avances repetidos, proporcionando una forma eficiente de ejecutar patrones sin necesidad de escribir las mismas instrucciones repetidamente.
+   - ![array_bucle](https://github.com/user-attachments/assets/364ee835-be17-445c-8c55-455e25796a4a)
+
+
+6. **Ejecución de Instrucciones**:
    - Después de que el jugador selecciona y organiza las instrucciones en las casillas, puede presionar el botón "Go" para ejecutar la secuencia de instrucciones. El automóvil se moverá según las indicaciones dadas.
    - Las instrucciones programadas se guardan en un archivo de texto (`instrucciones.txt`).
    -  ![image](https://github.com/user-attachments/assets/72cf7cad-41ff-4232-8cf6-ec301ae1a6c0)
