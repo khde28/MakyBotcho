@@ -76,24 +76,25 @@ Este enfoque interactivo no solo facilita la comprensión de conceptos clave, si
 
 
   - **Arreglo Principal**: Este arreglo contiene la secuencia completa de instrucciones que se ejecutará en el juego. Es la base sobre la cual se desarrollan las acciones del automóvil y también define el orden de los movimientos.
-   ![array_principal](https://github.com/user-attachments/assets/5a9a86fe-86ea-42f2-9354-0566db05ca38)
+   ![array_bucle2](https://github.com/user-attachments/assets/d5f5afd5-343a-4430-b568-1410a78151ce)
 
 
 
 
   - **Arreglo de Función**: Este arreglo permite al jugador almacenar una serie de instrucciones personalizadas que pueden ser llamadas desde el arreglo principal. Es útil para definir rutinas o secuencias de movimientos complejos que se usan repetidamente, optimizando así la gestión de acciones y evitando tener que reescribir las mismas instrucciones múltiples veces.
-   ![array_funcion](https://github.com/user-attachments/assets/379f42af-6cdd-468c-92bf-80adc3d8d309)
+   ![array_fuuncion2](https://github.com/user-attachments/assets/d3daaf78-dd31-4464-9b1b-613b0ef788c3)
 
 
   - **Arreglo de Bucle**: En este arreglo, el jugador puede colocar instrucciones que desea repetir un número específico de veces, permitiendo la ejecución de bucles de acciones dentro del juego. Es ideal para automatizar movimientos cíclicos, como giros continuos o avances repetidos, proporcionando una forma eficiente de ejecutar patrones sin necesidad de escribir las mismas instrucciones repetidamente.
-   ![array_bucle](https://github.com/user-attachments/assets/364ee835-be17-445c-8c55-455e25796a4a)
-
+   - **Botón de Repeticiones**: Al lado izquierdo del casillero de bucle, hay un botón que permite incrementar o decrementar el número de repeticiones del bucle. Al hacer clic en este botón, el jugador puede ajustar fácilmente la cantidad de veces que se ejecutarán las instrucciones dentro del bucle.
+   ![array_bucle2 2](https://github.com/user-attachments/assets/5bdfc24e-1792-4d22-a843-e8de5ec22080)
 
 
 6. **Ejecución de Instrucciones**:
    - Después de que el jugador selecciona y organiza las instrucciones en las casillas, puede presionar el botón "Go" para ejecutar la secuencia de comandos. El automóvil seguirá las indicaciones dadas, moviéndose por el mapa según las instrucciones programadas.
    - Las instrucciones programadas se guardan en un archivo de texto (`instrucciones.txt`), permitiendo revisar y ajustar las secuencias de movimiento cuando sea necesario.
-   - Como ejemplo de ejecución, incluiremos un video en el que se muestra una secuencia específica: primero, se le da al automóvil una instrucción para girar 90 grados en sentido horario, seguida de una instrucción para avanzar una casilla hacia adelante. Luego, se utiliza una instrucción de función que llama a las acciones definidas en el arreglo de función; en este caso, tres flechas que indican avanzar hacia adelante. Al llegar a una casilla azul, el automóvil cambia automáticamente de mapa, avanzando al siguiente nivel del juego.
+   - Como ejemplo de ejecución, incluiremos un video en el que se muestra una secuencia específica: primero, se le da al automóvil una instrucción para girar 90 grados en sentido horario, seguida de una instrucción para avanzar una casilla hacia adelante. Luego, se utiliza una instrucción de función que llama a las acciones definidas en el arreglo de función; en este caso, tres flechas que indican avanzar hacia adelante. Al llegar a una casilla azul, el automóvil cambia automáticamente de mapa, avanzando al siguiente nivel del juego, mientras se ejecutan las instrucciones, las imágenes correspondientes a cada instrucción también cambian dinámicamente para mostrar cuál instrucción está siendo procesada en ese momento. Esto permite al jugador seguir visualmente el progreso de la ejecución y entender qué acción se está llevando a cabo en cada etapa.
+   
    
     [Screencast from 01-09-24 21_08_59.webm](https://github.com/user-attachments/assets/9bc84f70-2e84-4d99-96f7-ecfde04423f9)
 
