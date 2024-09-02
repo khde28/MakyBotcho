@@ -43,13 +43,17 @@ Este enfoque interactivo no solo facilita la comprensión de conceptos clave, si
 
 El mapa isométrico es el principal en el juego y está diseñado para simular un entorno en 3D, proporcionando una experiencia visual más inmersiva. Este mapa está conformado por una cuadrícula de 8 x 8, lo que permite una representación detallada y atractiva del espacio de juego, donde los objetos y personajes tienen una apariencia tridimensional a pesar de ser un plano bidimensional.
 
-![Mapa Isométrico](https://github.com/user-attachments/assets/ecece153-816b-4ae7-8962-8dd609669b7d)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/17a46aeb-ca7f-4f46-be43-619fde70c2de" alt="mapa_grande" />
+</p>
 
 **2. Mapa 2D**
 
 El mapa 2D sirve como referencia para el jugador, mostrando de manera clara y sencilla la posición actual del automóvil dentro del entorno del juego. Al igual que el mapa isométrico, el mapa 2D está conformado por una cuadrícula de 8 x 8, pero su principal función es brindar una vista simplificada y directa de la ubicación y movimientos del jugador dentro del espacio de juego.
 
-![Mapa 2D](https://github.com/user-attachments/assets/b6fe8e55-05be-4be3-9c01-6fce336bc479)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/bbfa9be6-c07d-4d56-86e7-907964a0cc5c" alt="mini_mapa" />
+</p>
 
 **3. Personaje (Automóvil)**
 
@@ -64,10 +68,13 @@ En la esquina superior derecha de la pantalla se encuentra un **panel de instruc
 - **Primer Casillero**: El automóvil avanza una celda hacia adelante.
 - **Segundo Casillero**: El automóvil gira 90 grados en sentido horario.
 - **Tercer Casillero**: El automóvil gira 90 grados en sentido antihorario.
-- **Cuarto Casillero**: Instrucción de función; permite llamar a las instrucciones definidas en el arreglo de función dentro del arreglo principal.
-- **Quinto Casillero**: Casillero para llamar al arreglo de bucle dentro del arreglo principal, permitiendo repetir las instrucciones según lo definido.
+- **Quinto Casillero**: Instrucción de función; permite llamar a las instrucciones definidas en el arreglo de función dentro del arreglo principal.
+- **Sexto Casillero**: Casillero para llamar al arreglo de bucle dentro del arreglo principal, permitiendo repetir las instrucciones según lo definido.
 
-![Casillas de Instrucciones](https://github.com/user-attachments/assets/042bd362-4083-4e67-8099-6b6c49ffef4a)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/53be0500-8b95-4f8a-8a4f-b85e9f7410f6" alt="casillerosttop" />
+</p>
+
 
 **5. Casillas para Instrucciones**
 
