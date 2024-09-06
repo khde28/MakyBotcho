@@ -748,6 +748,7 @@ int main()
             {
                 if (iniciarButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
+                    clickSound2.play();
                     guardarInstrucciones(mainbot, 12, f1bot, 8, buclebot, 4, "instrucciones.txt", counter);
                     lenguajeintermedio = txtConvertstring("instrucciones.txt");
                     analizadorSyx(lenguajeintermedio);
