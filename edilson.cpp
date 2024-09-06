@@ -93,7 +93,7 @@ void FIFOdelete(int array[], int& tamano) {
 }
 
 // Función para dibujar las imágenes en base al array
-void dibujarImagenes(sf::RenderWindow& window, const std::vector<sf::Texture>& texturas, int array[], int tamano, int xx, int yy, sf::Event event , bool &estado ) {
+void dibujarImagenes(sf::RenderWindow& window, const std::vector<sf::Texture>& texturas, int array[], int tamano, int xx, int yy, sf::Event event , bool &estado) {
     // Tamaño de cada imagen (asumimos que todas tienen el mismo tamaño)
     sf::Vector2u imageSize = texturas[0].getSize();
     int imageWidth = imageSize.x;
@@ -123,6 +123,8 @@ void dibujarImagenes(sf::RenderWindow& window, const std::vector<sf::Texture>& t
 
     static bool buttonPressed = false;
     static bool button2Pressed = false;
+
+
     
     if (event.type == sf::Event::MouseButtonPressed) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
@@ -151,8 +153,6 @@ void dibujarImagenes(sf::RenderWindow& window, const std::vector<sf::Texture>& t
         }
 
     }
-
-
 
     window.draw(button);
     window.draw(button2);
