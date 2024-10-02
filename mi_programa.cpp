@@ -477,14 +477,14 @@ int main()
     sf::Sound clickSound2;
 
     // Cargar y asignar el primer sonido
-    if (!clickBuffer.loadFromFile("click1.ogg")) {
+    if (!clickBuffer.loadFromFile("sounds\\click1.ogg")) {
         std::cerr << "Error al cargar el sonido click1.ogg" << std::endl;
         return -1; // Maneja el error adecuadamente
     }
     clickSound.setBuffer(clickBuffer);
 
     // Cargar y asignar el segundo sonido
-    if (!clickBuffer2.loadFromFile("click2.ogg")) {
+    if (!clickBuffer2.loadFromFile("sounds\\click2.ogg")) {
         std::cerr << "Error al cargar el sonido click2.ogg" << std::endl;
         return -1; // Maneja el error adecuadamente
     }
@@ -573,9 +573,9 @@ int main()
     std::vector<sf::Sound> sounds(3);
 
     // Cargar los archivos de audio
-    if (!soundBuffers[0].loadFromFile("sonido_mapa.ogg") ||
-        !soundBuffers[1].loadFromFile("sonido_mapa2.ogg") ||
-        !soundBuffers[2].loadFromFile("sonido_mapa3.ogg"))
+    if (!soundBuffers[0].loadFromFile("sounds\\sonido_mapa.ogg") ||
+        !soundBuffers[1].loadFromFile("sounds\\sonido_mapa2.ogg") ||
+        !soundBuffers[2].loadFromFile("sounds\\sonido_mapa3.ogg"))
     {
         std::cerr << "Error al cargar los archivos de audio" << std::endl;
         return -1;
@@ -741,6 +741,10 @@ int main()
     int lastmovbucle;
 
     bool colisionando = false;
+
+
+
+
     while (window.isOpen())
     {
         // Lógica de reproducción de sonido
@@ -1077,8 +1081,7 @@ int main()
         }
 
         // Actualizar la animación del sprite
-        if (moving || colisionando)
-        {
+        if (moving || colisionando){
             // Verificar colisión con bloques
             Vector2f newPosition = targetPosition;
             int posXIso, posYISo;

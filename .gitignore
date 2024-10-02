@@ -1,6 +1,7 @@
-# Ignorar la carpeta .vscode
+# Ignorar las carpetas
 .vscode/
 output/
+build/
 # Ignorar todos los archivos .dll
 *.dll
 *.exe
