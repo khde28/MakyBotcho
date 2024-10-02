@@ -113,7 +113,7 @@ void FIFOdelete(int array[], int &tamano)
 }
 
 // Función para dibujar las imágenes en base al array
-void renderImagesBlocksWithControls(sf::RenderWindow &window, const std::vector<sf::Texture> &texturas, int array[], int tamano, int xx, int yy, sf::Event event, bool &estado)
+void renderImagesBlocksWithControls(sf::RenderWindow &window, const std::vector<sf::Texture> &texturas, int array[], int tamano, int xx, int yy, sf::Event event, bool &estado, sf::Sound& clickSound)
 {
     // Tamaño de cada imagen (asumimos que todas tienen el mismo tamaño)
     sf::Vector2u imageSize = texturas[0].getSize();
@@ -160,6 +160,7 @@ void renderImagesBlocksWithControls(sf::RenderWindow &window, const std::vector<
             FIFOdelete(array, tamano);
             button.setFillColor(sf::Color::White);
             esc = 28;
+            clickSound.play();
         }
 
         if (button2.getGlobalBounds().contains(mousePosF) && !button2Pressed)
@@ -167,6 +168,7 @@ void renderImagesBlocksWithControls(sf::RenderWindow &window, const std::vector<
             button2Pressed = true;
             estado = !estado; // Cambia el estado
             esc2 = 28;
+            clickSound.play();
         }
     }
     else if (event.type == sf::Event::MouseButtonReleased)
@@ -443,6 +445,28 @@ void move2(Vector2f &targetPosition, bool &moving, const Estado &estado, float x
 
 int main()
 {
+    //--------------------------------------- Configuración de sonidos --------------------------------------
+    sf::SoundBuffer clickBuffer;
+    sf::Sound clickSound;
+
+    sf::SoundBuffer clickBuffer2;
+    sf::Sound clickSound2;
+
+    // Cargar y asignar el primer sonido
+    if (!clickBuffer.loadFromFile("sounds\\click1.ogg")) {
+        std::cerr << "Error al cargar el sonido click1.ogg" << std::endl;
+        return -1; // Maneja el error adecuadamente
+    }
+    clickSound.setBuffer(clickBuffer);
+
+    // Cargar y asignar el segundo sonido
+    if (!clickBuffer2.loadFromFile("sounds\\click2.ogg")) {
+        std::cerr << "Error al cargar el sonido click2.ogg" << std::endl;
+        return -1; // Maneja el error adecuadamente
+    }
+    clickSound2.setBuffer(clickBuffer2);
+    //--------------------------------------- Fin de configuración de sonidos --------------------------------------
+
     //-----------------------------------------------------------------------------------------------------------
     // contador
     sf::Texture textures[6];
@@ -728,6 +752,7 @@ int main()
             {
                 if (iniciarButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
+                    clickSound2.play();
                     guardarInstrucciones(mainbot, 12, f1bot, 8, buclebot, 4, "instrucciones.txt", counter);
                     lenguajeintermedio = txtConvertstring("instrucciones.txt");
                     analizadorSyx(lenguajeintermedio);
@@ -782,16 +807,19 @@ int main()
                         {
                             InsertarInstru(mainbot, 12, button.id);
                             imprimirArray(mainbot, 12);
+                            clickSound.play();
                         }
                         if (boolf1)
                         {
                             InsertarInstru(f1bot, 8, button.id);
                             imprimirArray(f1bot, 8);
+                            clickSound.play();
                         }
                         if (boolbucle)
                         {
                             InsertarInstru(buclebot, 4, button.id);
                             imprimirArray(buclebot, 4);
+                            clickSound.play();  
                         }
                         clicDerechoPresionado = false;
                     }
@@ -1207,12 +1235,13 @@ int main()
         {
             window.draw(button.sprite);
         }
-        renderImagesBlocksWithControls(window, buttonTexture, mainbot, sizeof(mainbot) / sizeof(mainbot[0]), 720, 100, event, boolmain);
-        renderImagesBlocksWithControls(window, buttonTexture, f1bot, sizeof(f1bot) / sizeof(f1bot[0]), 720, 320, event, boolf1);
-        renderImagesBlocksWithControls(window, buttonTexture, buclebot, sizeof(buclebot) / sizeof(buclebot[0]), 720, 470, event, boolbucle);
+        renderImagesBlocksWithControls(window, buttonTexture, mainbot, sizeof(mainbot) / sizeof(mainbot[0]), 720, 100, event, boolmain, clickSound2);
+        renderImagesBlocksWithControls(window, buttonTexture, f1bot, sizeof(f1bot) / sizeof(f1bot[0]), 720, 320, event, boolf1, clickSound2);
+        renderImagesBlocksWithControls(window, buttonTexture, buclebot, sizeof(buclebot) / sizeof(buclebot[0]), 720, 470, event, boolbucle, clickSound2);
 
         window.display();
     }
 
     return 0;
 }
+//...........
