@@ -525,9 +525,9 @@ int main()
     std::vector<sf::Sound> sounds(3);
 
     // Cargar los archivos de audio
-    if (!soundBuffers[0].loadFromFile("sonido_mapa.ogg") ||
-        !soundBuffers[1].loadFromFile("sonido_mapa2.ogg") ||
-        !soundBuffers[2].loadFromFile("sonido_mapa3.ogg"))
+    if (!soundBuffers[0].loadFromFile("sounds\\sonido_mapa.ogg") ||
+        !soundBuffers[1].loadFromFile("sounds\\sonido_mapa2.ogg") ||
+        !soundBuffers[2].loadFromFile("sounds\\sonido_mapa3.ogg"))
     {
         std::cerr << "Error al cargar los archivos de audio" << std::endl;
         return -1;
@@ -1165,7 +1165,7 @@ int main()
             }
         }
 
-        window.clear(grisOscuro);
+        window.clear(grisOscuro);       
         // dibujar piso 2d
         for (int i = 0; i < gridSize; ++i)
         {
