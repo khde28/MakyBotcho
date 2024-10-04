@@ -443,6 +443,30 @@ void move2(Vector2f &targetPosition, bool &moving, const Estado &estado, float x
 
 int main()
 {
+
+    //--------------------------------------- Configuración del Semaforo --------------------------------------
+    sf::Texture redTexture, orangeTexture, greenTexture;
+
+    if (!redTexture.loadFromFile("images/srojo.png") ||
+        !orangeTexture.loadFromFile("images/snaranja.png") ||
+        !greenTexture.loadFromFile("images/sverde.png")) {
+        std::cerr << "Error al cargar las imágenes del semáforo" << std::endl;
+        return -1;
+    }
+
+    sf::Sprite SpriteSemaforo(redTexture);
+
+    SpriteSemaforo.setPosition(30,350);
+
+    // Temporizador
+    sf::Clock clockSemaforo;
+    int state = 0;  // 0: Rojo, 1: Naranja, 2: Verde
+    float redTime = 5.0f;    // 5 segundos en rojo
+    float orangeTime = 2.0f; // 2 segundos en naranja
+    float greenTime = 5.0f;  // 5 segundos en verde
+    //--------------------------------------- Fin de configuración del Semaforo --------------------------------------
+
+
     //--------------------------------------- Configuración de sonidos --------------------------------------
     sf::SoundBuffer clickBuffer;
     sf::Sound clickSound;
@@ -775,6 +799,26 @@ int main()
                 }
             }
         }
+        //--------------------------------Semaforo-----------------------------------------
+        // Actualizar temporizador
+        float timeSemaforo = clockSemaforo.getElapsedTime().asSeconds();
+
+        // Cambiar de estado según el tiempo
+        if (state == 0 && timeSemaforo >= redTime) {
+            state = 1;
+            SpriteSemaforo.setTexture(orangeTexture);
+            clockSemaforo.restart();
+        } else if (state == 1 && timeSemaforo >= orangeTime) {
+            state = 2;
+            SpriteSemaforo.setTexture(greenTexture);
+            clockSemaforo.restart();
+        } else if (state == 2 && timeSemaforo >= greenTime) {
+            SpriteSemaforo.setTexture(redTexture);
+            state = 0;
+            clockSemaforo.restart();
+        }
+        //--------------------------------Fin_Semaforo-----------------------------------------
+
         //-------------------------intrucciones-----------------------------------------
         // Procesar interacción del ratón
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
@@ -835,7 +879,7 @@ int main()
 
         if (booliniciar)
         {
-            if (contadorMovimientos < sizeof(mainbot) / sizeof(mainbot[0]) && moving == false && girando == false && colisionando == false)
+            if (contadorMovimientos < sizeof(mainbot) / sizeof(mainbot[0]) && moving == false && girando == false && colisionando == false && state == 2)
             {
                 if (mainbot[contadorMovimientos] != 7)
                 {
@@ -1024,7 +1068,7 @@ int main()
                 // Avanzar en el array de movimientos
                 // contadorMovimientos++;
             }
-            else if (!moving && !girando && !colisionando)
+            else if (!moving && !girando && !colisionando && state == 2)
             {
                 cout << "Llegue al final del array de movimientos" << endl;
                 mainbot[contadorMovimientos - 1] = lastmov;
@@ -1190,7 +1234,11 @@ int main()
             }
         }
 
-        window.clear(grisOscuro);       
+        window.clear(grisOscuro);
+
+        //sprite semaforo
+        window.draw(SpriteSemaforo);
+
         // dibujar piso 2d
         for (int i = 0; i < gridSize; ++i)
         {
