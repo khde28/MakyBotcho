@@ -4,8 +4,6 @@
 #include <cmath>
 #include <iostream>
 #include "mapas.h"
-#include "analizador.h"
-#include "converttxt.h"
 //------------------------------------------------------------------------------------------------------------
 #include <fstream>
 #include <string>
@@ -453,7 +451,7 @@ int main()
     sf::Sound clickSound2;
 
     // Cargar y asignar el primer sonido
-    if (!clickBuffer.loadFromFile("sounds\\click1.ogg")) {
+    if (!clickBuffer.loadFromFile("sounds/click1.ogg")) {
         std::cerr << "Error al cargar el sonido click1.ogg" << std::endl;
         return -1; // Maneja el error adecuadamente
     }
@@ -754,8 +752,7 @@ int main()
                 {
                     clickSound2.play();
                     guardarInstrucciones(mainbot, 12, f1bot, 8, buclebot, 4, "instrucciones.txt", counter);
-                    lenguajeintermedio = txtConvertstring("instrucciones.txt");
-                    analizadorSyx(lenguajeintermedio);
+                    
                     cout << lenguajeintermedio << endl;
                     booliniciar = true;
                 }

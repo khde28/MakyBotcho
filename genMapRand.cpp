@@ -1,4 +1,4 @@
-#include "funciones.h"
+#include "genMapRand.h"
 using namespace std;
 int randFun(int beg, int end)
 {
@@ -10,7 +10,8 @@ int randFun(int beg, int end)
 
     return distrib(gen);
 }
-vector<pair<int, int>> genPathRand(pair<int, int> startPoint,  int size)
+
+vector<pair<int, int>> genPathRand2(pair<int, int> startPoint,  int size)
 {
 
     
@@ -106,7 +107,7 @@ void printVectorPair(vector<pair<int, int>> v, int size)
         cout << endl;
     }
 }
-void printMatriz(vector<vector<int>> mk)
+void printMatriz2(vector<vector<int>> mk)
 {
     for (int i = 0; i < mk.size(); i++)
     {
@@ -117,7 +118,7 @@ void printMatriz(vector<vector<int>> mk)
         cout << endl;
     }
 }
-void randomMapGen(int size, int finishPointFila, int startPointFila)
+void randomMapGen2(int size, int finishPointFila, int startPointFila)
 {
 
     
@@ -126,11 +127,60 @@ void randomMapGen(int size, int finishPointFila, int startPointFila)
     int startPoy = startPointFila;
     cout << startPox;
 
-    genPathRand(make_pair(startPoy, startPox), size);
+    genPathRand2(make_pair(startPoy, startPox), size);
     
 }
+//---------------------------------------------------------
 
-int main(){
-    randomMapGen(7, 6, 0);
-    return 1;
+const int WIDTH = 15;   
+const int HEIGHT = 15;  
+
+std::vector<std::vector<int>> maze(HEIGHT, std::vector<int>(WIDTH, 1));  
+
+std::vector<std::pair<int, int>> movements = { {0, 2}, {0, -2}, {2, 0}, {-2, 0} };
+
+void printMaze() {
+    for (int i = 0; i < HEIGHT; ++i) {
+        for (int j = 0; j < WIDTH; ++j) {
+            std::cout << (maze[i][j] == 1 ? "#" : " ");
+        }
+        std::cout << std::endl;
+    }
 }
+
+void generateMaze(int x, int y) {
+    maze[y][x] = 0;  
+
+    std::random_shuffle(movements.begin(), movements.end());
+
+    std::default_random_engine engine(static_cast<unsigned int>(std::time(nullptr)));
+
+    std::shuffle(movements.begin(), movements.end(), engine);
+    for (auto& move : movements) {
+        int nx = x + move.first;   
+        int ny = y + move.second;  
+
+        if (nx >= 0 && nx < WIDTH && ny >= 0 && ny < HEIGHT && maze[ny][nx] == 1) {
+            maze[y + move.second / 2][x + move.first / 2] = 0;
+            generateMaze(nx, ny);
+        }
+    }
+}
+//-----------------------------------------------------
+
+
+
+
+/* int main(){
+
+    int startX = 0;
+    int startY = 0;
+    generateMaze(1, randFun(1,14));
+
+    maze[0][1] = 0;  
+    maze[HEIGHT - 1][WIDTH - 2] = 0; 
+
+    printMaze();
+    //randomMapGen2(7, 6, 0);
+    return 1;
+} */
