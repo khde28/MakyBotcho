@@ -116,35 +116,34 @@ En cada casillero de los arreglos, hay dos cuadrados pequeños en la parte izqui
    
     [Screencast from 01-09-24 21_08_59.webm](https://github.com/user-attachments/assets/9bc84f70-2e84-4d99-96f7-ecfde04423f9)
 
+**7. Función Dijkstra**
 
-7. **Función Dijkstra**:
-   La función `dijkstra` es una parte clave del juego que permite al jugador encontrar el camino más corto para llegar a su destino final. Utiliza un algoritmo que evalúa las distancias entre los diferentes nodos del mapa, asegurándose de que el automóvil siga la ruta más eficiente.
+La función `dijkstra` es una parte clave del juego que permite al jugador encontrar el camino más corto para llegar a su destino final. Utiliza un algoritmo que evalúa las distancias entre los diferentes nodos del mapa, asegurándose de que el automóvil siga la ruta más eficiente.
 
-   ### ¿Cómo Funciona?
-   - Comienza desde el nodo donde se encuentra el automóvil y asigna distancias a todos los demás nodos en el mapa.
-   - Utiliza una cola de prioridad para explorar primero los nodos más cercanos, actualizando las distancias a medida que avanza.
-   - A medida que encuentra nodos más cercanos, guarda información sobre cómo llegar a cada uno de ellos, lo que le permite determinar la mejor ruta.
+### **¿Cómo Funciona?**
+- **Inicio en el Nodo Actual**: Comienza desde el nodo donde se encuentra el automóvil y asigna distancias a todos los demás nodos en el mapa.
+- **Exploración de Nodos**: Utiliza una cola de prioridad para explorar primero los nodos más cercanos, actualizando las distancias a medida que avanza.
+- **Determinación de la Mejor Ruta**: A medida que encuentra nodos más cercanos, guarda información sobre cómo llegar a cada uno de ellos, lo que le permite determinar la mejor ruta.
 
-   ### ¿Por Qué este algoritmo es importante?
-   Este algoritmo es fundamental para la experiencia del jugador, ya que le permite identificar la ruta más óptima para alcanzar su objetivo. Además, le brinda la posibilidad de descubrir que puede existir un camino más corto que el que él mismo ha propuesto o diseñado, facilitando la exploración de alternativas en la estrategia de juego.
+### **¿Por Qué este algoritmo es importante?**
+Este algoritmo es fundamental para la experiencia del jugador, ya que le permite identificar la ruta más óptima para alcanzar su objetivo. Además, le brinda la posibilidad de descubrir que puede existir un camino más corto que el que él mismo ha propuesto o diseñado, facilitando la exploración de alternativas en la estrategia de juego.
 
-   Al final, al ejecutar la función, se obtiene un conjunto de instrucciones que guían al automóvil a través del mapa, haciendo que la experiencia de juego sea más fluida y emocionante.
+Al final, al ejecutar la función, se obtiene un conjunto de instrucciones que guían al automóvil a través del mapa, haciendo que la experiencia de juego sea más fluida y emocionante.
 
-8. **Sistema de Semáforo**:
+**8. Sistema de Semáforo**
 
-    El sistema de semáforos es una característica importante del juego que regula el movimiento del automóvil en el mapa. Este sistema incluye semáforos de color rojo, amarillo y verde, y juega un papel crucial en la jugabilidad, ya que controla cuándo el automóvil puede avanzar y cuándo debe detenerse.
+El sistema de semáforos es una característica importante del juego que regula el movimiento del automóvil en el mapa. Este sistema incluye semáforos de color rojo, amarillo y verde, y juega un papel crucial en la jugabilidad, ya que controla cuándo el automóvil puede avanzar y cuándo debe detenerse.
 
-    ### ¿Cómo Funciona?
+### **¿Cómo Funciona?**
+- **Semáforo Rojo**: Cuando el semáforo está en rojo, el automóvil se detiene por completo y no puede avanzar. Este estado obliga al jugador a esperar hasta que el semáforo cambie, añadiendo una capa de estrategia en la toma de decisiones.
+- **Semáforo Naranja**: Al igual que el semáforo rojo, el automóvil se detiene por completo y no puede avanzar.
+- **Semáforo Verde**: Solo cuando el semáforo se pone en verde, el automóvil puede moverse nuevamente. Este cambio indica que es seguro avanzar y permite que el jugador continúe su viaje hacia el objetivo.
 
-    - **Semáforo Rojo**: Cuando el semáforo está en rojo, el automóvil se detiene por completo y no puede avanzar. Este estado obliga al jugador a esperar hasta que el semáforo cambie, añadiendo una capa de estrategia en la toma de decisiones.
-    - **Semáforo Naranja**: Al igual que el semaforo rojo, el automóvil se detiene por completo y no puede avanzar.
-    - **Semáforo Verde**: Solo cuando el semáforo se pone en verde, el automóvil puede moverse nuevamente. Este cambio indica que es seguro avanzar y permite que el jugador continúe su viaje hacia el objetivo.
+### **¿Por Qué es Importante?**
+Este sistema de semáforo no solo añade realismo al juego, sino que también obliga a los jugadores a planificar sus movimientos y estrategias con más cuidado. Al implementar este mecanismo, se fomenta la toma de decisiones, ya que el jugador debe considerar el tiempo que pasará detenido y cómo esto afecta su ruta y su tiempo de llegada.
 
-    ### ¿Por Qué es Importante?
+Además, el semáforo refuerza la importancia de la seguridad en el juego, enseñando a los jugadores a respetar la señal del semáforo. La interacción entre el semáforo y el automóvil proporciona una experiencia de juego más dinámica y emocionante, incrementando el desafío y la diversión.
 
-    Este sistema de semáforo no solo añade realismo al juego, sino que también obliga a los jugadores a planificar sus movimientos y estrategias con más cuidado. Al implementar este mecanismo, se fomenta la toma de decisiones, ya que el jugador debe considerar el tiempo que pasará detenido y cómo esto afecta su ruta y su tiempo de llegada.
-
-    Además, el semáforo refuerza la importancia de la seguridad en el juego, enseñando a los jugadores a respetar la señal del semaforo. La interacción entre el semáforo y el automóvil proporciona una experiencia de juego más dinámica y emocionante, incrementando el desafío y la diversión.
     
 ## Flujo de Juego
 
