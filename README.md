@@ -19,7 +19,7 @@ Este enfoque interactivo no solo facilita la comprensión de conceptos clave, si
 
 
 
-### Otros objetivos clave:
+### El juego nos permitira::
 
 
 1. **Desarrollar habilidades de pensamiento algorítmico:** 
@@ -144,7 +144,11 @@ Este sistema de semáforo no solo añade realismo al juego, sino que también ob
 
 Además, el semáforo refuerza la importancia de la seguridad en el juego, enseñando a los jugadores a respetar la señal del semáforo. La interacción entre el semáforo y el automóvil proporciona una experiencia de juego más dinámica y emocionante, incrementando el desafío y la diversión.
 
-    
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/15382553-7b5e-40d7-a57f-b5b167d88d6a" alt="Semáforo" />
+</p>
+
+
 ## Flujo de Juego
 
 
