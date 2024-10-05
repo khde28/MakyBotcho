@@ -117,24 +117,6 @@ En cada casillero de los arreglos, hay dos cuadrados pequeños en la parte izqui
     [Screencast from 01-09-24 21_08_59.webm](https://github.com/user-attachments/assets/9bc84f70-2e84-4d99-96f7-ecfde04423f9)
 
 
-## Flujo de Juego
-
-
-1. El jugador observa el mapa isométrico y el mapa 2D para planificar la ruta del automóvil.
-
-
-2. Selecciona las instrucciones deseadas y las organiza en el orden adecuado dentro de las casillas de instrucciones.
-
-
-3. Puede crear funciones personalizadas y bucles para simplificar la secuencia de acciones.
-
-
-4. Presiona el botón "Go" para que el automóvil ejecute las instrucciones en el orden programado.
-
-
-5. El automóvil se moverá según las instrucciones, y el objetivo es alcanzar la casilla azul sin chocar con los obstáculos.
-
-
 7. **Función Dijkstra**:
    La función `dijkstra` es una parte clave del juego que permite al jugador encontrar el camino más corto para llegar a su destino final. Utiliza un algoritmo que evalúa las distancias entre los diferentes nodos del mapa, asegurándose de que el automóvil siga la ruta más eficiente.
 
@@ -163,6 +145,25 @@ En cada casillero de los arreglos, hay dos cuadrados pequeños en la parte izqui
     Este sistema de semáforo no solo añade realismo al juego, sino que también obliga a los jugadores a planificar sus movimientos y estrategias con más cuidado. Al implementar este mecanismo, se fomenta la toma de decisiones, ya que el jugador debe considerar el tiempo que pasará detenido y cómo esto afecta su ruta y su tiempo de llegada.
 
     Además, el semáforo refuerza la importancia de la seguridad en el juego, enseñando a los jugadores a respetar la señal del semaforo. La interacción entre el semáforo y el automóvil proporciona una experiencia de juego más dinámica y emocionante, incrementando el desafío y la diversión.
+    
+## Flujo de Juego
+
+
+1. El jugador observa el mapa isométrico y el mapa 2D para planificar la ruta del automóvil.
+
+
+2. Selecciona las instrucciones deseadas y las organiza en el orden adecuado dentro de las casillas de instrucciones.
+
+
+3. Puede crear funciones personalizadas y bucles para simplificar la secuencia de acciones.
+
+
+4. Presiona el botón "Go" para que el automóvil ejecute las instrucciones en el orden programado.
+
+
+5. El automóvil se moverá según las instrucciones, y el objetivo es alcanzar la casilla azul sin chocar con los obstáculos.
+
+
 
 ## Conclusión
 
