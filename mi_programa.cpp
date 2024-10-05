@@ -482,7 +482,7 @@ int main()
     clickSound.setBuffer(clickBuffer);
 
     // Cargar y asignar el segundo sonido
-    if (!clickBuffer2.loadFromFile("sounds\\click2.ogg")) {
+    if (!clickBuffer2.loadFromFile("sounds/click2.ogg")) {
         std::cerr << "Error al cargar el sonido click2.ogg" << std::endl;
         return -1; // Maneja el error adecuadamente
     }
@@ -571,9 +571,9 @@ int main()
     std::vector<sf::Sound> sounds(3);
 
     // Cargar los archivos de audio
-    if (!soundBuffers[0].loadFromFile("sounds\\sonido_mapa.ogg") ||
-        !soundBuffers[1].loadFromFile("sounds\\sonido_mapa2.ogg") ||
-        !soundBuffers[2].loadFromFile("sounds\\sonido_mapa3.ogg"))
+    if (!soundBuffers[0].loadFromFile("sounds/sonido_mapa.ogg") ||
+        !soundBuffers[1].loadFromFile("sounds/sonido_mapa2.ogg") ||
+        !soundBuffers[2].loadFromFile("sounds/sonido_mapa3.ogg"))
     {
         std::cerr << "Error al cargar los archivos de audio" << std::endl;
         return -1;
