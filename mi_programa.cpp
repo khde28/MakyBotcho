@@ -4,8 +4,6 @@
 #include <cmath>
 #include <iostream>
 #include "mapas.h"
-#include "analizador.h"
-#include "converttxt.h"
 //------------------------------------------------------------------------------------------------------------
 #include <fstream>
 #include <string>
@@ -803,8 +801,7 @@ int main()
                 {
                     clickSound2.play();
                     guardarInstrucciones(mainbot, 12, f1bot, 8, buclebot, 4, "instrucciones.txt", counter);
-                    lenguajeintermedio = txtConvertstring("instrucciones.txt");
-                    analizadorSyx(lenguajeintermedio);
+                    
                     cout << lenguajeintermedio << endl;
                     booliniciar = true;
                 }
