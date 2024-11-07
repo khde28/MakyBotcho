@@ -477,14 +477,14 @@ int main()
     sf::Sound clickSound2;
 
     // Cargar y asignar el primer sonido
-    if (!clickBuffer.loadFromFile("sounds\\click1.ogg")) {
+    if (!clickBuffer.loadFromFile("sounds/click1.ogg")) {
         std::cerr << "Error al cargar el sonido click1.ogg" << std::endl;
         return -1; // Maneja el error adecuadamente
     }
     clickSound.setBuffer(clickBuffer);
 
     // Cargar y asignar el segundo sonido
-    if (!clickBuffer2.loadFromFile("sounds\\click2.ogg")) {
+    if (!clickBuffer2.loadFromFile("sounds/click2.ogg")) {
         std::cerr << "Error al cargar el sonido click2.ogg" << std::endl;
         return -1; // Maneja el error adecuadamente
     }
@@ -511,6 +511,17 @@ int main()
         std::cerr << "Error cargando la imagen imageincrement.png o decrement" << std::endl;
         return -1;
     }
+
+    sf::Texture ifTexture;
+    sf::Texture elseTexture;
+    if (!ifTexture.loadFromFile("images/if.png") || !elseTexture.loadFromFile("images/else.png") ){
+        std::cerr << "Error cargando la imagen if.png o else.png" << std::endl;
+        return -1;
+    }
+    //imagen if and else
+
+    sf::Sprite IfandElseSprite(ifTexture);
+    IfandElseSprite.setPosition(620, 590);
 
     int clicks = 0;
     sf::Sprite iniciarButton(iniciarTexture);
@@ -561,11 +572,15 @@ int main()
     int mainbot[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // importante
     int f1bot[8] = {0, 0, 0, 0, 0, 0, 0, 0};
     int buclebot[4] = {0, 0, 0, 0};
+    int ifbot[8] = {};
+    int elsebot[8] = {};
 
     bool boolmain = false;
     bool boolf1 = false;
     bool boolbucle = false;
+    bool boolcondicional = false;
     bool clicDerechoPresionado = false;
+
 
     //-----------------------------------------------------------------------------------------------------------
 
@@ -573,9 +588,9 @@ int main()
     std::vector<sf::Sound> sounds(3);
 
     // Cargar los archivos de audio
-    if (!soundBuffers[0].loadFromFile("sounds\\sonido_mapa.ogg") ||
-        !soundBuffers[1].loadFromFile("sounds\\sonido_mapa2.ogg") ||
-        !soundBuffers[2].loadFromFile("sounds\\sonido_mapa3.ogg"))
+    if (!soundBuffers[0].loadFromFile("sounds/sonido_mapa.ogg") ||
+        !soundBuffers[1].loadFromFile("sounds/sonido_mapa2.ogg") ||
+        !soundBuffers[2].loadFromFile("sounds/sonido_mapa3.ogg"))
     {
         std::cerr << "Error al cargar los archivos de audio" << std::endl;
         return -1;
@@ -596,7 +611,7 @@ int main()
     int mapaActual = 0; // Índice del mapa actual
 
     // Crear la ventana
-    RenderWindow window(VideoMode(1000, 600), "Makibot");
+    RenderWindow window(VideoMode(1000, 750), "Makibot");
     window.setFramerateLimit(60);
     // Establecer el color gris oscuro
     sf::Color grisOscuro(169, 169, 169); // RGB para gris oscuro
@@ -725,6 +740,8 @@ int main()
     int contadorMovimientos = 0;
     int contadorMovf1 = 0;
     int contadorMovbucle = 0;
+    int contadorMovIf = 0;
+    int contadorMovElse = 0;
 
     int currentIteraciones = 0;
 
@@ -735,15 +752,23 @@ int main()
     int movimiento = 0;
     int movimientof1 = 0;
     int movimientoBucle = 0;
+    int movimientoIf = 0;
+    int movimientoElse = 0;
 
     int lastmov;
     int lastmovf1;
     int lastmovbucle;
+    int lastmovIf;
+    int lastmovElse;
+
 
     bool colisionando = false;
 
 
+    bool ifCondition = true;
 
+    bool isBlockSemaforo = false;
+    int laststate = -1;
 
     while (window.isOpen())
     {
@@ -799,6 +824,13 @@ int main()
                         counter--;
                         numberSprite.setTexture(textures[counter]);
                     }
+                }
+                if (IfandElseSprite.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    ifCondition = !ifCondition;
+                    if(ifCondition)IfandElseSprite.setTexture(ifTexture);
+                    else IfandElseSprite.setTexture(elseTexture);
+
                 }
             }
         }
@@ -865,6 +897,17 @@ int main()
                             imprimirArray(buclebot, 4);
                             clickSound.play();  
                         }
+                        if (boolcondicional)
+                        {
+                            if(ifCondition){
+                                InsertarInstru(ifbot, 8, button.id);
+                                imprimirArray(ifbot, 4);
+                            }else{
+                                InsertarInstru(elsebot, 8, button.id);
+                                imprimirArray(elsebot, 4);
+                            }
+                            clickSound.play();
+                        }
                         clicDerechoPresionado = false;
                     }
                 }
@@ -879,10 +922,10 @@ int main()
             }
         }
         //-------------------------intrucciones-----------------------------------------
-
+        bool boolsemaforo = true;
         if (booliniciar)
         {
-            if (contadorMovimientos < sizeof(mainbot) / sizeof(mainbot[0]) && moving == false && girando == false && colisionando == false && state == 2)
+            if (contadorMovimientos < sizeof(mainbot) / sizeof(mainbot[0]) && moving == false && girando == false && colisionando == false)
             {
                 if (mainbot[contadorMovimientos] != 7)
                 {
@@ -926,68 +969,138 @@ int main()
                     move2(targetPosition, moving, estado, xIso, yIso);
                     contadorMovimientos++;
                 }
-                else if (movimiento == 5)
+                //
+                else if (movimiento == 4)
                 {
-                    lastmov = movimiento;
-                    mainbot[contadorMovimientos] = 7;
-
-                    cout << "gaaaa" << endl;
-                    if (contadorMovf1 < sizeof(f1bot) / sizeof(f1bot[0]) && moving == false && girando == false)
-                    {
-
-                        if (f1bot[contadorMovf1] != 7)
-                        {
-                            movimientof1 = f1bot[contadorMovf1];
-                        }
-                        if (contadorMovf1 != 0)
-                        {
-                            if (f1bot[contadorMovf1 - 1] == 7)
-                            {
-                                f1bot[contadorMovf1 - 1] = lastmovf1;
-                            }
-                        }
-
-                        if (movimientof1 == 2 || movimientof1 == 3)
-                        {
-                            lastmovf1 = movimientof1;
-                            f1bot[contadorMovf1] = 7;
-                            // Cambia la dirección cíclicamente
-                            updateDirection(contador, movimientof1);
-                            cout << contador << "----------------------" << endl;
-                            miraNE = estados[contador].miraNE;
-                            miraNO = estados[contador].miraNO;
-                            miraSO = estados[contador].miraSO;
-                            miraSE = estados[contador].miraSE;
-                            girando = true;
-                            contadorMovf1++;
-                        }
-                        else if (movimientof1 == 1)
-                        {
-                            lastmovf1 = movimientof1;
-                            f1bot[contadorMovf1] = 7;
-                            // Mover en la dirección actual
-                            Estado estado;
-                            estado.miraNE = miraNE;
-                            estado.miraNO = miraNO;
-                            estado.miraSO = miraSO;
-                            estado.miraSE = miraSE;
-
-                            move2(targetPosition, moving, estado, xIso, yIso);
-                            contadorMovf1++;
-                        }
-                        else if (movimientof1 == 0)
-                        {
-                            contadorMovf1 = 0;
-                            contadorMovimientos++;
-                        }
-
-                        // Avanzar en el array de movimientos
+                    if(laststate == -1){
+                        laststate = state;
                     }
-                    else if (contadorMovf1 >= 8)
-                    {
-                        f1bot[contadorMovf1 - 1] = lastmovf1;
-                        contadorMovf1 = 0;
-                        contadorMovimientos++;
+                    if(laststate == 2 || laststate == 1 && isBlockSemaforo){
+                        lastmov = movimiento;
+                        mainbot[contadorMovimientos] = 7;
+
+                        cout << "entre en condicional" << endl;
+                        if (contadorMovIf < sizeof(ifbot) / sizeof(ifbot[0]) && moving == false && girando == false)
+                        {
+
+                            if (ifbot[contadorMovIf] != 7)
+                            {
+                                movimientoIf = ifbot[contadorMovIf];
+                            }
+                            if (contadorMovIf != 0)
+                            {
+                                if (ifbot[contadorMovIf - 1] == 7)
+                                {
+                                    ifbot[contadorMovIf - 1] = lastmovIf;
+                                }
+                            }
+
+                            if (movimientoIf == 2 || movimientoIf == 3)
+                            {
+                                lastmovIf = movimientoIf;
+                                ifbot[contadorMovIf] = 7;
+                                // Cambia la dirección cíclicamente
+                                updateDirection(contador, movimientoIf);
+                                cout << contador << "----------------------" << endl;
+                                miraNE = estados[contador].miraNE;
+                                miraNO = estados[contador].miraNO;
+                                miraSO = estados[contador].miraSO;
+                                miraSE = estados[contador].miraSE;
+                                girando = true;
+                                contadorMovIf++;
+                            }
+                            else if (movimientoIf == 1)
+                            {
+                                lastmovIf = movimientoIf;
+                                ifbot[contadorMovIf] = 7;
+                                // Mover en la dirección actual
+                                Estado estado;
+                                estado.miraNE = miraNE;
+                                estado.miraNO = miraNO;
+                                estado.miraSO = miraSO;
+                                estado.miraSE = miraSE;
+
+                                move2(targetPosition, moving, estado, xIso, yIso);
+                                contadorMovIf++;
+                            }
+                            else if (movimientoIf == 0)
+                            {
+                                contadorMovIf = 0;
+                                contadorMovimientos++;
+                            }
+
+                            // Avanzar en el array de movimientos
+                        }
+                        else if (contadorMovIf >= 8)
+                        {
+                            ifbot[contadorMovIf - 1] = lastmovIf;
+                            contadorMovIf = 0;
+                            contadorMovimientos++;
+                            int laststate = -1;
+                        }
+                    } //-----------------------------ELSE-----------------------------------
+                    else if(laststate == 0 && isBlockSemaforo){
+                        lastmov = movimiento;
+                        mainbot[contadorMovimientos] = 7;
+
+                        cout << "entre en condicional" << endl;
+                        if (contadorMovElse < sizeof(elsebot) / sizeof(elsebot[0]) && moving == false && girando == false)
+                        {
+                            if (elsebot[contadorMovElse] != 7)
+                            {
+                                movimientoElse = elsebot[contadorMovElse];
+                            }
+                            if (contadorMovElse != 0)
+                            {
+                                if (elsebot[contadorMovElse - 1] == 7)
+                                {
+                                    elsebot[contadorMovElse - 1] = lastmovElse;
+                                }
+                            }
+
+                            if (movimientoElse == 2 || movimientoElse == 3)
+                            {
+                                lastmovElse = movimientoElse;
+                                elsebot[contadorMovElse] = 7;
+                                // Cambia la dirección cíclicamente
+                                updateDirection(contador, movimientoElse);
+                                cout << contador << "----------------------" << endl;
+                                miraNE = estados[contador].miraNE;
+                                miraNO = estados[contador].miraNO;
+                                miraSO = estados[contador].miraSO;
+                                miraSE = estados[contador].miraSE;
+                                girando = true;
+                                contadorMovElse++;
+                            }
+                            else if (movimientoElse == 1)
+                            {
+                                lastmovElse = movimientoElse;
+                                elsebot[contadorMovElse] = 7;
+                                // Mover en la dirección actual
+                                Estado estado;
+                                estado.miraNE = miraNE;
+                                estado.miraNO = miraNO;
+                                estado.miraSO = miraSO;
+                                estado.miraSE = miraSE;
+
+                                move2(targetPosition, moving, estado, xIso, yIso);
+                                contadorMovElse++;
+                            }
+                            else if (movimientoElse == 0)
+                            {
+                                contadorMovElse = 0;
+                                contadorMovimientos++;
+                            }
+
+                            // Avanzar en el array de movimientos
+                        }
+                        else if (contadorMovElse >= 8)
+                        {
+                            elsebot[contadorMovElse - 1] = lastmovElse;
+                            contadorMovElse = 0;
+                            contadorMovimientos++;
+                            int laststate = -1;
+                        }
                     }
                 }
                 else if (movimiento == 6 && currentIteraciones < counter)
@@ -1134,6 +1247,14 @@ int main()
                 {
                     buclebot[i] = 0;
                 }
+                for (int i = 0; i < 8; ++i)
+                {
+                    ifbot[i] = 0;
+                }
+                for (int i = 0; i < 8; ++i)
+                {
+                    elsebot[i] = 0;
+                }
                 contador = 0;
                 cout << "hhhhh" << endl;
                 makibot.setOrigin(20.f, 30.f);
@@ -1279,6 +1400,7 @@ int main()
         window.draw(numberSprite);
         window.draw(incrementButton);
         window.draw(decrementButton);
+        window.draw(IfandElseSprite);
         for (const auto &button : buttons)
         {
             window.draw(button.sprite);
@@ -1286,7 +1408,8 @@ int main()
         renderImagesBlocksWithControls(window, buttonTexture, mainbot, sizeof(mainbot) / sizeof(mainbot[0]), 720, 100, event, boolmain, clickSound2);
         renderImagesBlocksWithControls(window, buttonTexture, f1bot, sizeof(f1bot) / sizeof(f1bot[0]), 720, 320, event, boolf1, clickSound2);
         renderImagesBlocksWithControls(window, buttonTexture, buclebot, sizeof(buclebot) / sizeof(buclebot[0]), 720, 470, event, boolbucle, clickSound2);
-
+        if(ifCondition)renderImagesBlocksWithControls(window, buttonTexture, ifbot, sizeof(ifbot) / sizeof(ifbot[0]), 720, 570, event, boolcondicional, clickSound2);
+        else renderImagesBlocksWithControls(window, buttonTexture, elsebot, sizeof(elsebot) / sizeof(elsebot[0]), 720, 570, event, boolcondicional, clickSound2);
         window.display();
     }
 
