@@ -234,6 +234,8 @@ const float angXY = atan2f(xIso, yIso);
 const float angYX = atan2f(yIso, xIso);
 const Vector2f pos_origin(300.f, 150.f);
 
+
+
 Vector2i calculateGridIndices(const Vector2f &position, const Vector2f &gridOrigin)
 {
     Vector2f relativePosition = position - gridOrigin;
@@ -383,6 +385,33 @@ void updateBlocks(vector<Sprite> &bloques2, const int mapas[][gridSize], int gri
             }
         }
     }
+}
+struct Semaforo{
+    vector<IntRect> seccionSemaforo;
+    float posX;
+    float posY;
+};
+void crearSemaforos(vector<Semaforo>& semaforos, const int matriz3D[][gridSize], vector<IntRect> &seccionSemaforo){
+    semaforos.clear();
+    for (int i = 0; i < gridSize; i++)
+    {
+        for (int j = 0; j < gridSize; j++)
+        {
+            if (matriz3D[i][j] == -2)
+            {
+                cout<<"cont"<<endl;
+                Semaforo sem;
+                sem.posX=i*lado;
+                sem.posY=j*lado;
+                sem.seccionSemaforo = seccionSemaforo;
+                
+                semaforos.push_back(sem);
+            }
+            
+        }
+        
+    }
+    
 }
 
 struct Estado
@@ -709,6 +738,25 @@ int main()
     framesB.push_back(IntRect(2 * frameWidth, frameHeight, frameWidth, frameHeight));
 
     IntRect focoB = IntRect(3 * frameWidth, frameHeight, frameWidth, frameHeight);
+//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
+    Texture spriteSemaforo;
+    if (!spriteSemaforo.loadFromFile("images/semaforo.png"))
+    {
+        return -1;
+    }
+    vector<IntRect> framesSemaforo;
+    framesSemaforo.push_back(IntRect(0, 0, 54, 54));
+    framesSemaforo.push_back(IntRect(54, 0, 54*2, 54));
+    framesSemaforo.push_back(IntRect(2 * 54, 0, 54*3, 54));
+//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
+    vector<Semaforo> texSemaforo;
+    crearSemaforos(texSemaforo, matrices2d[mapaActual],framesSemaforo);
+    cout<<texSemaforo.size()<<endl;
+
+//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
     // Ajustar la posición inicial del sprite para dibujarse desde la parte inferior
     makibot.setOrigin(20.0f, 30.f);
@@ -905,7 +953,7 @@ int main()
                             }
                             clickSound.play();
                         }
-                        clicDerechoPresionado = false;
+                        clicDerechoPresionado = false; 
                     }
                 }
             }
@@ -972,6 +1020,8 @@ int main()
                     if(laststate == -1){
                         laststate = state;
                     }
+
+
                     if(laststate == 2 || laststate == 1 && isBlockSemaforo){
                         lastmov = movimiento;
                         mainbot[contadorMovimientos] = 7;
@@ -1271,12 +1321,15 @@ int main()
             if (!colisionando)
             {
                 if (!(posXIso >= 0 && posXIso < gridSize && posYISo >= 0 && posYISo < gridSize) ||
-                    (mapas[mapaActual][posXIso][posYISo] != 0 && mapas[mapaActual][posXIso][posYISo] != -1))
+                    (mapas[mapaActual][posXIso][posYISo] != 0 
+                    && mapas[mapaActual][posXIso][posYISo] != -1
+                    && mapas[mapaActual][posXIso][posYISo] != -2))
                 {
                     colisionando = true;
                     moving = false;
                     targetPosition = makibot.getPosition();
                 }
+
                 else
                 {
                     if (animationClock.getElapsedTime().asSeconds() > animationSpeed)
@@ -1308,6 +1361,11 @@ int main()
 
                     // mapa 2D , se verifica la posicion de los bloques y el makibot
                     updateBlocks(bloques2, mapas[mapaActual], gridSize, texturaBloque, lado, posXIso, posYISo);
+                    if (mapas[mapaActual][posXIso][posYISo] == -2)
+                    {
+                        cout<<"cambio if-else"<<laststate<<endl;
+                        isBlockSemaforo==1;
+                    }
                 }
             }
             else if (colisionando == true)
@@ -1383,7 +1441,21 @@ int main()
 
         window.draw(makibot);
         window.draw(makibot2D);
+        //---------dibujar semaforo---------------
+        for (auto &sema:texSemaforo)
+        {
+            
+                
+                Sprite sSema(spriteSemaforo);
+                sSema.setTextureRect(framesSemaforo[0]);
+                sSema.setPosition(sema.posX,sema.posY);
+                //cout<<"sem dibuj";
+                window.draw(sSema,isoTransform);
 
+            
+        }
+        
+        //---------end dibujar semaforo---------------
         for (auto &bloque : bloques2)
         {
             window.draw(bloque, isoTransform);
