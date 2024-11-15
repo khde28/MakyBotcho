@@ -813,7 +813,7 @@ int main()
 
     bool ifCondition = true;
 
-    bool isBlockSemaforo = false;
+    bool isBlockSemaforo = true;
     int laststate = -1;
 
     while (window.isOpen())
@@ -1159,6 +1159,70 @@ int main()
                             contadorMovimientos++;
                             int laststate = -1;
                         }
+                    }
+                }
+                else if (movimiento == 5)
+                {
+                    lastmov = movimiento;
+                    mainbot[contadorMovimientos] = 7;
+
+                    cout << "gaaaa" << endl;
+                    if (contadorMovf1 < sizeof(f1bot) / sizeof(f1bot[0]) && moving == false && girando == false)
+                    {
+
+                        if (f1bot[contadorMovf1] != 7)
+                        {
+                            movimientof1 = f1bot[contadorMovf1];
+                        }
+                        if (contadorMovf1 != 0)
+                        {
+                            if (f1bot[contadorMovf1 - 1] == 7)
+                            {
+                                f1bot[contadorMovf1 - 1] = lastmovf1;
+                            }
+                        }
+
+                        if (movimientof1 == 2 || movimientof1 == 3)
+                        {
+                            lastmovf1 = movimientof1;
+                            f1bot[contadorMovf1] = 7;
+                            // Cambia la dirección cíclicamente
+                            updateDirection(contador, movimientof1);
+                            cout << contador << "----------------------" << endl;
+                            miraNE = estados[contador].miraNE;
+                            miraNO = estados[contador].miraNO;
+                            miraSO = estados[contador].miraSO;
+                            miraSE = estados[contador].miraSE;
+                            girando = true;
+                            contadorMovf1++;
+                        }
+                        else if (movimientof1 == 1)
+                        {
+                            lastmovf1 = movimientof1;
+                            f1bot[contadorMovf1] = 7;
+                            // Mover en la dirección actual
+                            Estado estado;
+                            estado.miraNE = miraNE;
+                            estado.miraNO = miraNO;
+                            estado.miraSO = miraSO;
+                            estado.miraSE = miraSE;
+
+                            move2(targetPosition, moving, estado, xIso, yIso);
+                            contadorMovf1++;
+                        }
+                        else if (movimientof1 == 0)
+                        {
+                            contadorMovf1 = 0;
+                            contadorMovimientos++;
+                        }
+
+                        // Avanzar en el array de movimientos
+                    }
+                    else if (contadorMovf1 >= 8)
+                    {
+                        f1bot[contadorMovf1 - 1] = lastmovf1;
+                        contadorMovf1 = 0;
+                        contadorMovimientos++;
                     }
                 }
                 else if (movimiento == 6 && currentIteraciones < counter)
