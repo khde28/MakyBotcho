@@ -970,24 +970,32 @@ int main()
         bool boolsemaforo = true;
         if (booliniciar)
         {
+            cout<<"cant mov"<<contadorMovimientos<<moving<<endl;
+            
             if (contadorMovimientos < sizeof(mainbot) / sizeof(mainbot[0]) && moving == false && girando == false && colisionando == false)
             {
                 if (mainbot[contadorMovimientos] != 7)
                 {
+                    //al parecer en el mainbot no esta el 4
+                    //ingresa  aui pero el movimiento lo marca como 0 y no como el 4 q es el foco
+                    cout<<"movimiento numero"<<mainbot[contadorMovimientos]<<endl;
                     movimiento = mainbot[contadorMovimientos];
+                    cout<<"mov distinto7"<<movimiento<<endl;
                 }
                 if (contadorMovimientos != 0)
                 {
                     if (mainbot[contadorMovimientos - 1] == 7)
                     {
-                        cout << "cambio " << endl;
+                        cout << "cambio lm " << endl;
                         mainbot[contadorMovimientos - 1] = lastmov;
                     }
                 }
-                // int movimiento = mainbot[contadorMovimientos];
+                //int movimiento = mainbot[contadorMovimientos];
 
                 if (movimiento == 2 || movimiento == 3)
                 {
+                    cout<<"mov"<<movimiento<<endl;
+
                     lastmov = movimiento;
                     mainbot[contadorMovimientos] = 7;
                     // Cambia la dirección cíclicamente
@@ -1002,6 +1010,8 @@ int main()
                 }
                 else if (movimiento == 1)
                 {
+                    cout<<"mov"<<movimiento<<endl;
+
                     lastmov = movimiento;
                     mainbot[contadorMovimientos] = 7;
                     // Mover en la dirección actual
@@ -1017,6 +1027,7 @@ int main()
                 //
                 else if (movimiento == 4)
                 {
+                    cout<<"mov4"<<endl;
                     if(laststate == -1){
                         laststate = state;
                     }
@@ -1231,7 +1242,7 @@ int main()
                 // Avanzar en el array de movimientos
                 // contadorMovimientos++;
             }
-            else if (!moving && !girando && !colisionando && state == 2)
+            else if (!moving && !girando && !colisionando )
             {
                 cout << "Llegue al final del array de movimientos" << endl;
                 mainbot[contadorMovimientos - 1] = lastmov;
@@ -1332,6 +1343,12 @@ int main()
 
                 else
                 {
+
+                    if (mapas[mapaActual][posXIso][posYISo] == -2)
+                    {
+                        cout<<"cambio if-else"<<laststate<<endl;
+                        isBlockSemaforo==1;
+                    }
                     if (animationClock.getElapsedTime().asSeconds() > animationSpeed)
                     {
                         if (miraNE || miraNO)
@@ -1358,14 +1375,10 @@ int main()
                     stopMovement(makibot, targetPosition, makibot.getPosition(), currentFrame, miraNE, miraNO, miraSO, miraSE, moving, framesB, framesF);
                     // posicion de makibot2D
                     makibot2D.setPosition(57.5f + 15.f * posXIso, 47.4f + 15.f * posYISo);
-
+                    cout<<"salida del moving: "<<moving<<endl;
                     // mapa 2D , se verifica la posicion de los bloques y el makibot
                     updateBlocks(bloques2, mapas[mapaActual], gridSize, texturaBloque, lado, posXIso, posYISo);
-                    if (mapas[mapaActual][posXIso][posYISo] == -2)
-                    {
-                        cout<<"cambio if-else"<<laststate<<endl;
-                        isBlockSemaforo==1;
-                    }
+                    
                 }
             }
             else if (colisionando == true)
