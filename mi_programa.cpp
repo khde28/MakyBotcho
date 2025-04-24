@@ -11,6 +11,9 @@
 #include <stdio.h>
 #include <sstream>
 
+const int INIT_VALUE = 0;
+
+const int TAMANIO_MAPA = 8;
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
 const float BUTTON_SCALE = 1.06f;
@@ -178,7 +181,7 @@ void renderImagesBlocksWithControls(sf::RenderWindow &window, const std::vector<
         }
         if (button2Pressed)
         {
-            button2Pressed = false; // Reinicia el estado al soltar el botón
+            button2Pressed = false; // restart el estado al soltar el botón
             esc2 = 30;
         }
     }
@@ -545,6 +548,19 @@ int main()
         std::cerr << "Error cargando la imagen if.png o else.png" << std::endl;
         return -1;
     }
+
+    // Add pause/play button textures and sprite
+    sf::Texture pauseTexture;
+    sf::Texture playTexture;
+    if (!pauseTexture.loadFromFile("images/pause.png") || !playTexture.loadFromFile("images/play.png")) {
+        std::cerr << "Error cargando las imágenes de pause/play" << std::endl;
+        return -1;
+    }
+
+    sf::Sprite pausePlayButton(pauseTexture);
+    pausePlayButton.setPosition(30, 30); // Position in top-left corner
+    bool isPaused = false;
+
     //imagen if and else
 
     sf::Sprite IfandElseSprite(ifTexture);
@@ -711,10 +727,10 @@ int main()
     configurarSprites(tiles2d, matrices2d[mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d);
 
     const int frameWidth = 40;
-    const int frameHeight = 30;
+    const int frameHeight = 60;
     // SPRITES FRONTAL
     Texture spriteMaki;
-    if (!spriteMaki.loadFromFile("images/sprite_carritos.png"))
+    if (!spriteMaki.loadFromFile("images/rbot2.png"))
     {
         return -1;
     }
@@ -759,7 +775,7 @@ int main()
 //---------------------------------------------------------------------------------
 
     // Ajustar la posición inicial del sprite para dibujarse desde la parte inferior
-    makibot.setOrigin(20.0f, 30.f);
+    makibot.setOrigin(20.f, 60.f);
     makibot.setPosition(300.f, 160.f + yIso / 2.f);
 
     // primera aparicion del makibot
@@ -845,6 +861,17 @@ int main()
             //-------------------------intrucciones-----------------------------------------
             if (event.type == sf::Event::MouseButtonPressed)
             {
+                // Add pause/play button check
+                if (pausePlayButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y)) {
+                    isPaused = !isPaused;
+                    if (isPaused) {
+                        pausePlayButton.setTexture(playTexture);
+                    } else {
+                        pausePlayButton.setTexture(pauseTexture);
+                    }
+                    clickSound.play();
+                }
+
                 if (iniciarButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
                     clickSound2.play();
@@ -883,19 +910,22 @@ int main()
         // Actualizar temporizador
         float timeSemaforo = clockSemaforo.getElapsedTime().asSeconds();
 
-        // Cambiar de estado según el tiempo
-        if (state == 0 && timeSemaforo >= redTime) {
-            state = 1;
-            SpriteSemaforo.setTexture(orangeTexture);
-            clockSemaforo.restart();
-        } else if (state == 1 && timeSemaforo >= orangeTime) {
-            state = 2;
-            SpriteSemaforo.setTexture(greenTexture);
-            clockSemaforo.restart();
-        } else if (state == 2 && timeSemaforo >= greenTime) {
-            SpriteSemaforo.setTexture(redTexture);
-            state = 0;
-            clockSemaforo.restart();
+        // Only update game state if not paused
+        if (!isPaused) {
+            // Cambiar de estado según el tiempo
+            if (state == 0 && timeSemaforo >= redTime) {
+                state = 1;
+                SpriteSemaforo.setTexture(orangeTexture);
+                clockSemaforo.restart();
+            } else if (state == 1 && timeSemaforo >= orangeTime) {
+                state = 2;
+                SpriteSemaforo.setTexture(greenTexture);
+                clockSemaforo.restart();
+            } else if (state == 2 && timeSemaforo >= greenTime) {
+                SpriteSemaforo.setTexture(redTexture);
+                state = 0;
+                clockSemaforo.restart();
+            }
         }
         //--------------------------------Fin_Semaforo-----------------------------------------
 
@@ -924,34 +954,36 @@ int main()
                 {
                     if (event.mouseButton.button == sf::Mouse::Left && clicDerechoPresionado == true)
                     {
-                        if (boolmain)
-                        {
-                            InsertarInstru(mainbot, 12, button.id);
-                            imprimirArray(mainbot, 12);
-                            clickSound.play();
-                        }
-                        if (boolf1)
-                        {
-                            InsertarInstru(f1bot, 8, button.id);
-                            imprimirArray(f1bot, 8);
-                            clickSound.play();
-                        }
-                        if (boolbucle)
-                        {
-                            InsertarInstru(buclebot, 4, button.id);
-                            imprimirArray(buclebot, 4);
-                            clickSound.play();  
-                        }
-                        if (boolcondicional)
-                        {
-                            if(ifCondition){
-                                InsertarInstru(ifbot, 8, button.id);
-                                imprimirArray(ifbot, 4);
-                            }else{
-                                InsertarInstru(elsebot, 8, button.id);
-                                imprimirArray(elsebot, 4);
+                        if (!isPaused) {  // Only allow button interactions when not paused
+                            if (boolmain)
+                            {
+                                InsertarInstru(mainbot, 12, button.id);
+                                imprimirArray(mainbot, 12);
+                                clickSound.play();
                             }
-                            clickSound.play();
+                            if (boolf1)
+                            {
+                                InsertarInstru(f1bot, 8, button.id);
+                                imprimirArray(f1bot, 8);
+                                clickSound.play();
+                            }
+                            if (boolbucle)
+                            {
+                                InsertarInstru(buclebot, 4, button.id);
+                                imprimirArray(buclebot, 4);
+                                clickSound.play();  
+                            }
+                            if (boolcondicional)
+                            {
+                                if(ifCondition){
+                                    InsertarInstru(ifbot, 8, button.id);
+                                    imprimirArray(ifbot, 4);
+                                }else{
+                                    InsertarInstru(elsebot, 8, button.id);
+                                    imprimirArray(elsebot, 4);
+                                }
+                                clickSound.play();
+                            }
                         }
                         clicDerechoPresionado = false; 
                     }
@@ -968,7 +1000,7 @@ int main()
         }
         //-------------------------intrucciones-----------------------------------------
         bool boolsemaforo = true;
-        if (booliniciar)
+        if (booliniciar && !isPaused)  // Only update game state if not paused
         {
             cout<<"cant mov"<<contadorMovimientos<<moving<<endl;
             
@@ -1379,7 +1411,7 @@ int main()
                 }
                 contador = 0;
                 cout << "hhhhh" << endl;
-                makibot.setOrigin(20.f, 30.f);
+                makibot.setOrigin(20.f, 60.f);
                 makibot.setPosition(300.f, 160.f + yIso / 2.f);
 
                 // Actualizar targetPosition a la nueva posición inicial
@@ -1494,6 +1526,9 @@ int main()
 
         //sprite semaforo
         window.draw(SpriteSemaforo);
+
+        // Add pause/play button to rendering
+        window.draw(pausePlayButton);
 
         // dibujar piso 2d
         for (int i = 0; i < gridSize; ++i)
