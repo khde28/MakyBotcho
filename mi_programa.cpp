@@ -494,17 +494,21 @@ int main()
     }
 
     // Add pause/play button textures and sprite--------------------------------------------------------------------------
-    sf::Texture menuTextura;
+    sf::Texture pausaTextura;
     sf::Texture continuaTextura;
     sf::Texture nivel1Textura;
-    if (!menuTextura.loadFromFile("images/select_nivel.png") || !continuaTextura.loadFromFile("images/select_nivel_pressed.png") || !nivel1Textura.loadFromFile("images/nivel1.png"))
+    sf::Texture menuTextura;
+    if (!pausaTextura.loadFromFile("images/pausa.png") || 
+        !continuaTextura.loadFromFile("images/continua.png") || 
+        !nivel1Textura.loadFromFile("images/nivel1.png") ||
+        !menuTextura.loadFromFile("images/menu.png"))
     {
         std::cerr << "Error cargando las imágenes de pausa" << std::endl;
         return -1;
     }
 
-    sf::Sprite menuButton(menuTextura);
-    menuButton.setPosition(30, 300); // Position in top-left corner
+    sf::Sprite pausaButton(pausaTextura);
+    pausaButton.setPosition(30, 700); // Position in top-left corner
     bool isPaused = false;
     //------------------------------------------------------------------------------------------------------------
     // imagen if and else
@@ -779,10 +783,12 @@ int main()
     bool isBlockSemaforo = true;
     int laststate = -1;
     // menu--------------------------------------------------------------------------------------
-    sf::Sprite continuaTexturaSprite(continuaTextura);
-    continuaTexturaSprite.setPosition(400, 100); // Position in top-left corner
-    sf::Sprite nivel1TexturaSprite(nivel1Textura);
-    nivel1TexturaSprite.setPosition(400, 160); // Position in top-left corner
+    sf::Sprite menuSprite(menuTextura);
+    menuSprite.setPosition(400, 200); // Position in top-left corner
+    sf::Sprite continuaSprite(continuaTextura);
+    continuaSprite.setPosition(475, 250); // Position in top-left corner
+    sf::Sprite nivel1Sprite(nivel1Textura);
+    nivel1Sprite.setPosition(465, 350); // Position in top-left corner
 
     //-------------------------------------------------------------------------
 
@@ -816,12 +822,12 @@ int main()
             if (event.type == sf::Event::MouseButtonPressed)
             {
                 // Add menu/pausa button check
-                if (menuButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) && !isPaused)
+                if (pausaButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) && !isPaused)
                 {
                     isPaused = !isPaused;
                     clickSound.play();
                 }
-                else if (continuaTexturaSprite.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) && isPaused)
+                else if (continuaSprite.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) && isPaused)
                 {
                     isPaused = !isPaused;
                     clickSound.play();
@@ -980,7 +986,7 @@ int main()
         {
             cout << "cant mov" << contadorMovimientos << moving << endl;
 
-            if (contadorMovimientos < sizeof(mainbot) / sizeof(mainbot[0]) && moving == false && girando == false && colisionando == false)
+            if (contadorMovimientos < 12 && moving == false && girando == false && colisionando == false)
             {
                 if (mainbot[contadorMovimientos] != 7)
                 {
@@ -1325,6 +1331,7 @@ int main()
             }
         }
 
+        
         // Actualizar la animación del sprite
         if (moving || colisionando)
         {
@@ -1504,7 +1511,7 @@ int main()
         window.draw(SpriteSemaforo);
 
         // Add pause/play button to rendering
-        window.draw(menuButton);
+        window.draw(pausaButton);
 
         // dibujar piso 2d
         for (int i = 0; i < gridSize; ++i)
@@ -1566,6 +1573,20 @@ int main()
             renderImagesBlocksWithControls(window, buttonTexture, ifbot, sizeof(ifbot) / sizeof(ifbot[0]), 720, 570, event, boolcondicional, clickSound2);
         else
             renderImagesBlocksWithControls(window, buttonTexture, elsebot, sizeof(elsebot) / sizeof(elsebot[0]), 720, 570, event, boolcondicional, clickSound2);
+
+        if (isPaused)
+        {
+            sf::RectangleShape overlay(sf::Vector2f(window.getSize()));
+            overlay.setFillColor(sf::Color(0, 0, 0, 180));
+
+            window.draw(overlay);
+            window.draw(menuSprite);
+            window.draw(continuaSprite);
+            window.draw(nivel1Sprite);
+        }
+        
+
+
         window.display();
     }
 
