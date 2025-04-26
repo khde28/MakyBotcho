@@ -18,70 +18,6 @@ const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
 const float BUTTON_SCALE = 1.06f;
 
-void escribirInstruccion(int numero, std::ofstream &archivo)
-{
-    switch (numero)
-    {
-    case 1:
-        archivo << "avanzar;" << std::endl;
-        break;
-    case 2:
-        archivo << "girarDerecho;" << std::endl;
-        break;
-    case 3:
-        archivo << "girarIzquierda;" << std::endl;
-        break;
-    case 4:
-        archivo << "encender;" << std::endl;
-        break;
-    default:
-        std::cerr << "Número inválido en el array: " << numero << std::endl;
-        break;
-    }
-}
-
-void guardarInstrucciones(int *array, int tamaño, int *array2, int tamaño2, int *array3, int tamaño3, const std::string &nombreArchivo, int iter)
-{
-    std::ofstream archivo(nombreArchivo, std::ios::out);
-    if (!archivo)
-    {
-        std::cerr << "No se pudo abrir el archivo para escribir." << std::endl;
-        return;
-    }
-    archivo << "iniciar()" << std::endl;
-    for (int i = 0; i < tamaño; ++i)
-    {
-        escribirInstruccion(array[i], archivo);
-        if (array[i] == 5)
-        {
-            for (int j = 0; j < tamaño2; ++j)
-            {
-                escribirInstruccion(array2[j], archivo);
-            }
-        }
-        if (array[i] == 6)
-        {
-            for (int g = 0; g < iter; ++g)
-            {
-                for (int k = 0; k < tamaño3; ++k)
-                {
-                    escribirInstruccion(array3[k], archivo);
-                    if (array3[k] == 5)
-                    {
-                        for (int m = 0; m < tamaño2; ++m)
-                        {
-                            escribirInstruccion(array2[m], archivo);
-                        }
-                    }
-                }
-            }
-        }
-    }
-    archivo << "." << std::endl;
-
-    archivo.close();
-}
-
 void imprimirArray(int array[], int size)
 {
     std::cout << "Contenido del array: ";
@@ -114,7 +50,7 @@ void FIFOdelete(int array[], int &tamano)
 }
 
 // Función para dibujar las imágenes en base al array
-void renderImagesBlocksWithControls(sf::RenderWindow &window, const std::vector<sf::Texture> &texturas, int array[], int tamano, int xx, int yy, sf::Event event, bool &estado, sf::Sound& clickSound)
+void renderImagesBlocksWithControls(sf::RenderWindow &window, const std::vector<sf::Texture> &texturas, int array[], int tamano, int xx, int yy, sf::Event event, bool &estado, sf::Sound &clickSound)
 {
     // Tamaño de cada imagen (asumimos que todas tienen el mismo tamaño)
     sf::Vector2u imageSize = texturas[0].getSize();
@@ -236,8 +172,6 @@ const float ladoIso = sqrt(xIso * xIso / 4.f + yIso * yIso / 4.f);
 const float angXY = atan2f(xIso, yIso);
 const float angYX = atan2f(yIso, xIso);
 const Vector2f pos_origin(300.f, 150.f);
-
-
 
 Vector2i calculateGridIndices(const Vector2f &position, const Vector2f &gridOrigin)
 {
@@ -389,12 +323,14 @@ void updateBlocks(vector<Sprite> &bloques2, const int mapas[][gridSize], int gri
         }
     }
 }
-struct Semaforo{
+struct Semaforo
+{
     vector<IntRect> seccionSemaforo;
     float posX;
     float posY;
 };
-void crearSemaforos(vector<Semaforo>& semaforos, const int matriz3D[][gridSize], vector<IntRect> &seccionSemaforo){
+void crearSemaforos(vector<Semaforo> &semaforos, const int matriz3D[][gridSize], vector<IntRect> &seccionSemaforo)
+{
     semaforos.clear();
     for (int i = 0; i < gridSize; i++)
     {
@@ -402,19 +338,16 @@ void crearSemaforos(vector<Semaforo>& semaforos, const int matriz3D[][gridSize],
         {
             if (matriz3D[i][j] == -2)
             {
-                cout<<"cont"<<endl;
+                cout << "cont" << endl;
                 Semaforo sem;
-                sem.posX=i*lado;
-                sem.posY=j*lado;
+                sem.posX = i * lado;
+                sem.posY = j * lado;
                 sem.seccionSemaforo = seccionSemaforo;
-                
+
                 semaforos.push_back(sem);
             }
-            
         }
-        
     }
-    
 }
 
 struct Estado
@@ -431,7 +364,15 @@ Estado estados[] = {
     {false, true, false, false}, // 2: Mira hacia arriba
     {true, false, false, false}  // 3: Mira hacia el derecha
 };
+enum class Comando
+{
+    AVANZAR,
+    GIRAR_IZQUIERDA,
+    GIRAR_DERECHA,
+    FUNCION1,
+    BUCLE
 
+};
 // Función para cambiar la dirección cíclicamente
 void updateDirection(int &contador, int movimiento)
 { // moviento es el valor del arreglo
@@ -481,23 +422,23 @@ int main()
 
     if (!redTexture.loadFromFile("images/srojo.png") ||
         !orangeTexture.loadFromFile("images/snaranja.png") ||
-        !greenTexture.loadFromFile("images/sverde.png")) {
+        !greenTexture.loadFromFile("images/sverde.png"))
+    {
         std::cerr << "Error al cargar las imágenes del semáforo" << std::endl;
         return -1;
     }
 
     sf::Sprite SpriteSemaforo(redTexture);
 
-    SpriteSemaforo.setPosition(30,350);
+    SpriteSemaforo.setPosition(30, 350);
 
     // Temporizador
     sf::Clock clockSemaforo;
-    int state = 0;  // 0: Rojo, 1: Naranja, 2: Verde
+    int state = 0;           // 0: Rojo, 1: Naranja, 2: Verde
     float redTime = 5.0f;    // 5 segundos en rojo
     float orangeTime = 2.0f; // 2 segundos en naranja
     float greenTime = 5.0f;  // 5 segundos en verde
     //--------------------------------------- Fin de configuración del Semaforo --------------------------------------
-
 
     //--------------------------------------- Configuración de sonidos --------------------------------------
     sf::SoundBuffer clickBuffer;
@@ -507,14 +448,16 @@ int main()
     sf::Sound clickSound2;
 
     // Cargar y asignar el primer sonido
-    if (!clickBuffer.loadFromFile("sounds/click1.ogg")) {
+    if (!clickBuffer.loadFromFile("sounds/click1.ogg"))
+    {
         std::cerr << "Error al cargar el sonido click1.ogg" << std::endl;
         return -1; // Maneja el error adecuadamente
     }
     clickSound.setBuffer(clickBuffer);
 
     // Cargar y asignar el segundo sonido
-    if (!clickBuffer2.loadFromFile("sounds/click2.ogg")) {
+    if (!clickBuffer2.loadFromFile("sounds/click2.ogg"))
+    {
         std::cerr << "Error al cargar el sonido click2.ogg" << std::endl;
         return -1; // Maneja el error adecuadamente
     }
@@ -544,24 +487,27 @@ int main()
 
     sf::Texture ifTexture;
     sf::Texture elseTexture;
-    if (!ifTexture.loadFromFile("images/if.png") || !elseTexture.loadFromFile("images/else.png") ){
+    if (!ifTexture.loadFromFile("images/if.png") || !elseTexture.loadFromFile("images/else.png"))
+    {
         std::cerr << "Error cargando la imagen if.png o else.png" << std::endl;
         return -1;
     }
 
-    // Add pause/play button textures and sprite
-    sf::Texture pauseTexture;
-    sf::Texture playTexture;
-    if (!pauseTexture.loadFromFile("images/pause.png") || !playTexture.loadFromFile("images/play.png")) {
-        std::cerr << "Error cargando las imágenes de pause/play" << std::endl;
+    // Add pause/play button textures and sprite--------------------------------------------------------------------------
+    sf::Texture menuTextura;
+    sf::Texture continuaTextura;
+    sf::Texture nivel1Textura;
+    if (!menuTextura.loadFromFile("images/select_nivel.png") || !continuaTextura.loadFromFile("images/select_nivel_pressed.png") || !nivel1Textura.loadFromFile("images/nivel1.png"))
+    {
+        std::cerr << "Error cargando las imágenes de pausa" << std::endl;
         return -1;
     }
 
-    sf::Sprite pausePlayButton(pauseTexture);
-    pausePlayButton.setPosition(30, 30); // Position in top-left corner
+    sf::Sprite menuButton(menuTextura);
+    menuButton.setPosition(30, 300); // Position in top-left corner
     bool isPaused = false;
-
-    //imagen if and else
+    //------------------------------------------------------------------------------------------------------------
+    // imagen if and else
 
     sf::Sprite IfandElseSprite(ifTexture);
     IfandElseSprite.setPosition(620, 590);
@@ -612,8 +558,12 @@ int main()
     }
 
     std::vector<int> pressedButtons;
-    int mainbot[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // importante
-    int f1bot[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    int mainbot[12] = {
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0}; // importante
+    int f1bot[8] = {0, 0, 0, 0,
+                    0, 0, 0, 0};
     int buclebot[4] = {0, 0, 0, 0};
     int ifbot[8] = {};
     int elsebot[8] = {};
@@ -623,7 +573,6 @@ int main()
     bool boolbucle = false;
     bool boolcondicional = false;
     bool clicDerechoPresionado = false;
-
 
     //-----------------------------------------------------------------------------------------------------------
 
@@ -754,8 +703,8 @@ int main()
     framesB.push_back(IntRect(2 * frameWidth, frameHeight, frameWidth, frameHeight));
 
     IntRect focoB = IntRect(3 * frameWidth, frameHeight, frameWidth, frameHeight);
-//---------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------
     Texture spriteSemaforo;
     if (!spriteSemaforo.loadFromFile("images/semaforo.png"))
     {
@@ -763,16 +712,16 @@ int main()
     }
     vector<IntRect> framesSemaforo;
     framesSemaforo.push_back(IntRect(0, 0, 54, 54));
-    framesSemaforo.push_back(IntRect(54, 0, 54*2, 54));
-    framesSemaforo.push_back(IntRect(2 * 54, 0, 54*3, 54));
-//---------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------
+    framesSemaforo.push_back(IntRect(54, 0, 54 * 2, 54));
+    framesSemaforo.push_back(IntRect(2 * 54, 0, 54 * 3, 54));
+    //---------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------
     vector<Semaforo> texSemaforo;
-    crearSemaforos(texSemaforo, matrices2d[mapaActual],framesSemaforo);
-    cout<<texSemaforo.size()<<endl;
+    crearSemaforos(texSemaforo, mapas[mapaActual], framesSemaforo);
+    cout << texSemaforo.size() << endl;
 
-//---------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------
 
     // Ajustar la posición inicial del sprite para dibujarse desde la parte inferior
     makibot.setOrigin(20.f, 60.f);
@@ -823,14 +772,19 @@ int main()
     int lastmovIf;
     int lastmovElse;
 
-
     bool colisionando = false;
-
 
     bool ifCondition = true;
 
     bool isBlockSemaforo = true;
     int laststate = -1;
+    // menu--------------------------------------------------------------------------------------
+    sf::Sprite continuaTexturaSprite(continuaTextura);
+    continuaTexturaSprite.setPosition(400, 100); // Position in top-left corner
+    sf::Sprite nivel1TexturaSprite(nivel1Textura);
+    nivel1TexturaSprite.setPosition(400, 160); // Position in top-left corner
+
+    //-------------------------------------------------------------------------
 
     while (window.isOpen())
     {
@@ -861,48 +815,53 @@ int main()
             //-------------------------intrucciones-----------------------------------------
             if (event.type == sf::Event::MouseButtonPressed)
             {
-                // Add pause/play button check
-                if (pausePlayButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y)) {
+                // Add menu/pausa button check
+                if (menuButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) && !isPaused)
+                {
                     isPaused = !isPaused;
-                    if (isPaused) {
-                        pausePlayButton.setTexture(playTexture);
-                    } else {
-                        pausePlayButton.setTexture(pauseTexture);
-                    }
+                    clickSound.play();
+                }
+                else if (continuaTexturaSprite.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) && isPaused)
+                {
+                    isPaused = !isPaused;
                     clickSound.play();
                 }
 
-                if (iniciarButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                if (!isPaused)
                 {
-                    clickSound2.play();
-                    guardarInstrucciones(mainbot, 12, f1bot, 8, buclebot, 4, "instrucciones.txt", counter);
-                    
-                    cout << lenguajeintermedio << endl;
-                    booliniciar = true;
-                }
-                if (incrementButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
-                {
-                    if (counter < 5)
-                    {
-                        counter++;
-                        numberSprite.setTexture(textures[counter]);
-                    }
-                }
 
-                if (decrementButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
-                {
-                    if (counter > 0)
+                    if (iniciarButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                     {
-                        counter--;
-                        numberSprite.setTexture(textures[counter]);
-                    }
-                }
-                if (IfandElseSprite.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
-                {
-                    ifCondition = !ifCondition;
-                    if(ifCondition)IfandElseSprite.setTexture(ifTexture);
-                    else IfandElseSprite.setTexture(elseTexture);
+                        clickSound2.play();
 
+                        cout << lenguajeintermedio << endl;
+                        booliniciar = true;
+                    }
+                    if (incrementButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                    {
+                        if (counter < 5)
+                        {
+                            counter++;
+                            numberSprite.setTexture(textures[counter]);
+                        }
+                    }
+
+                    if (decrementButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                    {
+                        if (counter > 0)
+                        {
+                            counter--;
+                            numberSprite.setTexture(textures[counter]);
+                        }
+                    }
+                    if (IfandElseSprite.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                    {
+                        ifCondition = !ifCondition;
+                        if (ifCondition)
+                            IfandElseSprite.setTexture(ifTexture);
+                        else
+                            IfandElseSprite.setTexture(elseTexture);
+                    }
                 }
             }
         }
@@ -911,17 +870,23 @@ int main()
         float timeSemaforo = clockSemaforo.getElapsedTime().asSeconds();
 
         // Only update game state if not paused
-        if (!isPaused) {
+        if (!isPaused)
+        {
             // Cambiar de estado según el tiempo
-            if (state == 0 && timeSemaforo >= redTime) {
+            if (state == 0 && timeSemaforo >= redTime)
+            {
                 state = 1;
                 SpriteSemaforo.setTexture(orangeTexture);
                 clockSemaforo.restart();
-            } else if (state == 1 && timeSemaforo >= orangeTime) {
+            }
+            else if (state == 1 && timeSemaforo >= orangeTime)
+            {
                 state = 2;
                 SpriteSemaforo.setTexture(greenTexture);
                 clockSemaforo.restart();
-            } else if (state == 2 && timeSemaforo >= greenTime) {
+            }
+            else if (state == 2 && timeSemaforo >= greenTime)
+            {
                 SpriteSemaforo.setTexture(redTexture);
                 state = 0;
                 clockSemaforo.restart();
@@ -932,87 +897,98 @@ int main()
         //-------------------------intrucciones-----------------------------------------
         // Procesar interacción del ratón
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-        for (auto &button : buttons)
-        {
-            sf::FloatRect bounds = button.sprite.getGlobalBounds();
-            if (bounds.contains(static_cast<sf::Vector2f>(mousePos)))
-            {
-                if (!button.isHovered)
-                {
-                    button.sprite.setScale(BUTTON_SCALE, BUTTON_SCALE);
-                    button.isHovered = true;
-                }
 
-                else if (event.type == sf::Event::MouseButtonPressed)
-                {
-                    if (event.mouseButton.button == sf::Mouse::Left)
-                    {
-                        clicDerechoPresionado = true;
-                    }
-                }
-                else if (event.type == sf::Event::MouseButtonReleased)
-                {
-                    if (event.mouseButton.button == sf::Mouse::Left && clicDerechoPresionado == true)
-                    {
-                        if (!isPaused) {  // Only allow button interactions when not paused
-                            if (boolmain)
-                            {
-                                InsertarInstru(mainbot, 12, button.id);
-                                imprimirArray(mainbot, 12);
-                                clickSound.play();
-                            }
-                            if (boolf1)
-                            {
-                                InsertarInstru(f1bot, 8, button.id);
-                                imprimirArray(f1bot, 8);
-                                clickSound.play();
-                            }
-                            if (boolbucle)
-                            {
-                                InsertarInstru(buclebot, 4, button.id);
-                                imprimirArray(buclebot, 4);
-                                clickSound.play();  
-                            }
-                            if (boolcondicional)
-                            {
-                                if(ifCondition){
-                                    InsertarInstru(ifbot, 8, button.id);
-                                    imprimirArray(ifbot, 4);
-                                }else{
-                                    InsertarInstru(elsebot, 8, button.id);
-                                    imprimirArray(elsebot, 4);
-                                }
-                                clickSound.play();
-                            }
-                        }
-                        clicDerechoPresionado = false; 
-                    }
-                }
-            }
-            else
+        if (!isPaused)
+        {
+
+            for (auto &button : buttons)
             {
-                if (button.isHovered)
+                sf::FloatRect bounds = button.sprite.getGlobalBounds();
+                if (bounds.contains(static_cast<sf::Vector2f>(mousePos)))
                 {
-                    button.sprite.setScale(1.f, 1.f);
-                    button.isHovered = false;
+                    if (!button.isHovered)
+                    {
+                        button.sprite.setScale(BUTTON_SCALE, BUTTON_SCALE);
+                        button.isHovered = true;
+                    }
+
+                    else if (event.type == sf::Event::MouseButtonPressed)
+                    {
+                        if (event.mouseButton.button == sf::Mouse::Left)
+                        {
+                            clicDerechoPresionado = true;
+                        }
+                    }
+                    else if (event.type == sf::Event::MouseButtonReleased)
+                    {
+                        if (event.mouseButton.button == sf::Mouse::Left && clicDerechoPresionado == true)
+                        {
+                            if (!isPaused)
+                            { // Only allow button interactions when not paused
+                                if (boolmain)
+                                {
+                                    InsertarInstru(mainbot, 12, button.id);
+                                    imprimirArray(mainbot, 12);
+                                    clickSound.play();
+                                }
+                                if (boolf1)
+                                {
+                                    InsertarInstru(f1bot, 8, button.id);
+                                    imprimirArray(f1bot, 8);
+                                    clickSound.play();
+                                }
+                                if (boolbucle)
+                                {
+                                    InsertarInstru(buclebot, 4, button.id);
+                                    imprimirArray(buclebot, 4);
+                                    clickSound.play();
+                                }
+                                if (boolcondicional)
+                                {
+                                    if (ifCondition)
+                                    {
+                                        InsertarInstru(ifbot, 8, button.id);
+                                        imprimirArray(ifbot, 4);
+                                    }
+                                    else
+                                    {
+                                        InsertarInstru(elsebot, 8, button.id);
+                                        imprimirArray(elsebot, 4);
+                                    }
+                                    clickSound.play();
+                                }
+                            }
+                            clicDerechoPresionado = false;
+                        }
+                    }
+                }
+                else
+                {
+                    if (button.isHovered)
+                    {
+                        button.sprite.setScale(1.f, 1.f);
+                        button.isHovered = false;
+                    }
                 }
             }
         }
+
         //-------------------------intrucciones-----------------------------------------
+
         bool boolsemaforo = true;
-        if (booliniciar && !isPaused)  // Only update game state if not paused
+        if (booliniciar && !isPaused) // Only update game state if not paused
         {
-            cout<<"cant mov"<<contadorMovimientos<<moving<<endl;
-            
+            cout << "cant mov" << contadorMovimientos << moving << endl;
+
             if (contadorMovimientos < sizeof(mainbot) / sizeof(mainbot[0]) && moving == false && girando == false && colisionando == false)
             {
                 if (mainbot[contadorMovimientos] != 7)
                 {
-                    //al parecer en el mainbot no esta el 4
-                    //ingresa  aui pero el movimiento lo marca como 0 y no como el 4 q es el foco
-                    cout<<"movimiento numero"<<mainbot[contadorMovimientos]<<endl;
+                    // al parecer en el mainbot no esta el 4
+                    // ingresa  aui pero el movimiento lo marca como 0 y no como el 4 q es el foco
+                    cout << "movimiento numero" << mainbot[contadorMovimientos] << endl;
                     movimiento = mainbot[contadorMovimientos];
-                    cout<<"mov distinto7"<<movimiento<<endl;
+                    cout << "mov distinto7" << movimiento << endl;
                 }
                 if (contadorMovimientos != 0)
                 {
@@ -1022,11 +998,11 @@ int main()
                         mainbot[contadorMovimientos - 1] = lastmov;
                     }
                 }
-                //int movimiento = mainbot[contadorMovimientos];
+                // int movimiento = mainbot[contadorMovimientos];
 
                 if (movimiento == 2 || movimiento == 3)
                 {
-                    cout<<"mov"<<movimiento<<endl;
+                    cout << "mov" << movimiento << endl;
 
                     lastmov = movimiento;
                     mainbot[contadorMovimientos] = 7;
@@ -1042,7 +1018,7 @@ int main()
                 }
                 else if (movimiento == 1)
                 {
-                    cout<<"mov"<<movimiento<<endl;
+                    cout << "mov" << movimiento << endl;
 
                     lastmov = movimiento;
                     mainbot[contadorMovimientos] = 7;
@@ -1059,13 +1035,14 @@ int main()
                 //
                 else if (movimiento == 4)
                 {
-                    cout<<"mov4"<<endl;
-                    if(laststate == -1){
+                    cout << "mov4" << endl;
+                    if (laststate == -1)
+                    {
                         laststate = state;
                     }
 
-
-                    if(laststate == 2 || laststate == 1 && isBlockSemaforo){
+                    if (laststate == 2 || laststate == 1 && isBlockSemaforo)
+                    {
                         lastmov = movimiento;
                         mainbot[contadorMovimientos] = 7;
 
@@ -1129,7 +1106,8 @@ int main()
                             int laststate = -1;
                         }
                     } //-----------------------------ELSE-----------------------------------
-                    else if(laststate == 0 && isBlockSemaforo){
+                    else if (laststate == 0 && isBlockSemaforo)
+                    {
                         lastmov = movimiento;
                         mainbot[contadorMovimientos] = 7;
 
@@ -1330,7 +1308,7 @@ int main()
                 }
                 else if (currentIteraciones == counter)
                 {
-                    cout<< "ups entre conter" <<endl;
+                    cout << "ups entre conter" << endl;
                     contadorMovimientos++;
                     currentIteraciones = 0;
                 }
@@ -1338,7 +1316,7 @@ int main()
                 // Avanzar en el array de movimientos
                 // contadorMovimientos++;
             }
-            else if (!moving && !girando && !colisionando )
+            else if (!moving && !girando && !colisionando)
             {
                 cout << "Llegue al final del array de movimientos" << endl;
                 mainbot[contadorMovimientos - 1] = lastmov;
@@ -1348,7 +1326,8 @@ int main()
         }
 
         // Actualizar la animación del sprite
-        if (moving || colisionando){
+        if (moving || colisionando)
+        {
             // Verificar colisión con bloques
             Vector2f newPosition = targetPosition;
             int posXIso, posYISo;
@@ -1359,7 +1338,7 @@ int main()
 
             cout << posXIso << posYISo << endl;
 
-            if (mapas[mapaActual][posXIso][posYISo] == -1 && posXIso!=-1 && posYISo!=-1 )
+            if (mapas[mapaActual][posXIso][posYISo] == -1 && posXIso != -1 && posYISo != -1)
             {
                 contadorMovimientos = 0;
                 contadorMovf1 = 0;
@@ -1428,9 +1407,7 @@ int main()
             if (!colisionando)
             {
                 if (!(posXIso >= 0 && posXIso < gridSize && posYISo >= 0 && posYISo < gridSize) ||
-                    (mapas[mapaActual][posXIso][posYISo] != 0 
-                    && mapas[mapaActual][posXIso][posYISo] != -1
-                    && mapas[mapaActual][posXIso][posYISo] != -2))
+                    (mapas[mapaActual][posXIso][posYISo] != 0 && mapas[mapaActual][posXIso][posYISo] != -1 && mapas[mapaActual][posXIso][posYISo] != -2))
                 {
                     colisionando = true;
                     moving = false;
@@ -1442,8 +1419,8 @@ int main()
 
                     if (mapas[mapaActual][posXIso][posYISo] == -2)
                     {
-                        cout<<"cambio if-else"<<laststate<<endl;
-                        isBlockSemaforo==1;
+                        cout << "cambio if-else" << laststate << endl;
+                        isBlockSemaforo == 1;
                     }
                     if (animationClock.getElapsedTime().asSeconds() > animationSpeed)
                     {
@@ -1471,10 +1448,9 @@ int main()
                     stopMovement(makibot, targetPosition, makibot.getPosition(), currentFrame, miraNE, miraNO, miraSO, miraSE, moving, framesB, framesF);
                     // posicion de makibot2D
                     makibot2D.setPosition(57.5f + 15.f * posXIso, 47.4f + 15.f * posYISo);
-                    cout<<"salida del moving: "<<moving<<endl;
+                    cout << "salida del moving: " << moving << endl;
                     // mapa 2D , se verifica la posicion de los bloques y el makibot
                     updateBlocks(bloques2, mapas[mapaActual], gridSize, texturaBloque, lado, posXIso, posYISo);
-                    
                 }
             }
             else if (colisionando == true)
@@ -1524,11 +1500,11 @@ int main()
 
         window.clear(grisOscuro);
 
-        //sprite semaforo
+        // sprite semaforo
         window.draw(SpriteSemaforo);
 
         // Add pause/play button to rendering
-        window.draw(pausePlayButton);
+        window.draw(menuButton);
 
         // dibujar piso 2d
         for (int i = 0; i < gridSize; ++i)
@@ -1554,19 +1530,16 @@ int main()
         window.draw(makibot);
         window.draw(makibot2D);
         //---------dibujar semaforo---------------
-        for (auto &sema:texSemaforo)
+        for (auto &sema : texSemaforo)
         {
-            
-                
-                Sprite sSema(spriteSemaforo);
-                sSema.setTextureRect(framesSemaforo[0]);
-                sSema.setPosition(sema.posX,sema.posY);
-                //cout<<"sem dibuj";
-                window.draw(sSema,isoTransform);
 
-            
+            Sprite sSema(spriteSemaforo);
+            sSema.setTextureRect(framesSemaforo[0]);
+            sSema.setPosition(sema.posX, sema.posY);
+            // cout<<"sem dibuj";
+            window.draw(sSema, isoTransform);
         }
-        
+
         //---------end dibujar semaforo---------------
         for (auto &bloque : bloques2)
         {
@@ -1589,8 +1562,10 @@ int main()
         renderImagesBlocksWithControls(window, buttonTexture, mainbot, sizeof(mainbot) / sizeof(mainbot[0]), 720, 100, event, boolmain, clickSound2);
         renderImagesBlocksWithControls(window, buttonTexture, f1bot, sizeof(f1bot) / sizeof(f1bot[0]), 720, 320, event, boolf1, clickSound2);
         renderImagesBlocksWithControls(window, buttonTexture, buclebot, sizeof(buclebot) / sizeof(buclebot[0]), 720, 470, event, boolbucle, clickSound2);
-        if(ifCondition)renderImagesBlocksWithControls(window, buttonTexture, ifbot, sizeof(ifbot) / sizeof(ifbot[0]), 720, 570, event, boolcondicional, clickSound2);
-        else renderImagesBlocksWithControls(window, buttonTexture, elsebot, sizeof(elsebot) / sizeof(elsebot[0]), 720, 570, event, boolcondicional, clickSound2);
+        if (ifCondition)
+            renderImagesBlocksWithControls(window, buttonTexture, ifbot, sizeof(ifbot) / sizeof(ifbot[0]), 720, 570, event, boolcondicional, clickSound2);
+        else
+            renderImagesBlocksWithControls(window, buttonTexture, elsebot, sizeof(elsebot) / sizeof(elsebot[0]), 720, 570, event, boolcondicional, clickSound2);
         window.display();
     }
 
