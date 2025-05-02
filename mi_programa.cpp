@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <vector>
+#include <array>
 #include <cmath>
 #include <iostream>
 #include "mapas.h"
@@ -18,10 +19,11 @@ const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
 const float BUTTON_SCALE = 1.06f;
 
-void imprimirArray(int array[], int size)
+template <size_t N>
+void imprimirArray(const std::array<int,N>& array)
 {
     std::cout << "Contenido del array: ";
-    for (int i = 0; i < size; ++i)
+    for (int i = 0; i < array.size(); ++i)
     {
         std::cout << array[i] << " ";
     }
@@ -36,10 +38,10 @@ void Inicializar(int arr[], int size)
         arr[i] = 0;
     }
 }
-
-void FIFOdelete(int array[], int &tamano)
+template<size_t N>
+void FIFOdelete(std::array<int,N>& array)
 {
-    for (int i = tamano - 1; i >= 0; --i)
+    for (int i = array.size() - 1; i >= 0; --i)
     {
         if (array[i] != 0)
         {
@@ -50,7 +52,8 @@ void FIFOdelete(int array[], int &tamano)
 }
 
 // Función para dibujar las imágenes en base al array
-void renderImagesBlocksWithControls(sf::RenderWindow &window, const std::vector<sf::Texture> &texturas, int array[], int tamano, int xx, int yy, sf::Event event, bool &estado, sf::Sound &clickSound)
+template <size_t N>
+void renderImagesBlocksWithControls(sf::RenderWindow &window, const std::vector<sf::Texture> &texturas, std::array<int,N> array,int xx, int yy, sf::Event event, bool &estado, sf::Sound &clickSound)
 {
     // Tamaño de cada imagen (asumimos que todas tienen el mismo tamaño)
     sf::Vector2u imageSize = texturas[0].getSize();
@@ -60,7 +63,7 @@ void renderImagesBlocksWithControls(sf::RenderWindow &window, const std::vector<
     int offsetX = xx; // Desplazamiento en x
     int offsetY = yy; // Desplazamiento en y
 
-    for (int i = 0; i < tamano; ++i)
+    for (int i = 0; i < array.size(); ++i)
     {
         if (array[i] >= 0 && array[i] < texturas.size())
         {
@@ -94,7 +97,7 @@ void renderImagesBlocksWithControls(sf::RenderWindow &window, const std::vector<
         if (button.getGlobalBounds().contains(mousePosF) && !buttonPressed)
         {
             buttonPressed = true;
-            FIFOdelete(array, tamano);
+            FIFOdelete(array);
             button.setFillColor(sf::Color::White);
             esc = 28;
             clickSound.play();
@@ -132,10 +135,10 @@ struct Button
     int id;
     bool isHovered = false;
 };
-
-void InsertarInstru(int array[], int size, int valor)
+template<size_t N>
+void InsertarInstru(std::array<int, N>& array, int valor)
 {
-    for (int i = 0; i < size; ++i)
+    for (size_t i = 0; i < array.size(); ++i)
     {
         if (array[i] == 0)
         {
@@ -224,7 +227,7 @@ void crearSpritesPiso(Sprite tiles[][gridSize], const int matriz3D[][gridSize], 
 }
 
 // Función para crear los sprites de los bloques
-void crearSpritesBloques(vector<Sprite> &bloques, const int matriz3D[][gridSize], Texture &texturaBloque)
+void crearSpritesBloques(std::vector<sf::Sprite> &bloques, const int matriz3D[][gridSize], sf::Texture &texturaBloque)
 {
     for (int i = 0; i < gridSize; ++i)
     {
@@ -352,10 +355,10 @@ void crearSemaforos(vector<Semaforo> &semaforos, const int matriz3D[][gridSize],
 
 struct Estado
 {
-    bool miraNE;
-    bool miraNO;
-    bool miraSO;
-    bool miraSE;
+    bool esNE;
+    bool esNO;
+    bool esSO;
+    bool esSE;
 };
 
 Estado estados[] = {
@@ -391,22 +394,22 @@ void updateDirection(int &contador, int movimiento)
 // Función para mover el robot
 void move2(Vector2f &targetPosition, bool &moving, const Estado &estado, float xIso, float yIso)
 {
-    if (estado.miraNE)
+    if (estado.esNE)
     {
         targetPosition.x += xIso / 2.f;
         targetPosition.y -= yIso / 2.f;
     }
-    else if (estado.miraNO)
+    else if (estado.esNO)
     {
         targetPosition.x -= xIso / 2.f;
         targetPosition.y -= yIso / 2.f;
     }
-    else if (estado.miraSO)
+    else if (estado.esSO)
     {
         targetPosition.x -= xIso / 2.f;
         targetPosition.y += yIso / 2.f;
     }
-    else if (estado.miraSE)
+    else if (estado.esSE)
     {
         targetPosition.x += xIso / 2.f;
         targetPosition.y += yIso / 2.f;
@@ -414,6 +417,42 @@ void move2(Vector2f &targetPosition, bool &moving, const Estado &estado, float x
     moving = true;
 }
 
+struct ParametrosNivel{
+    int state;
+    int numeroCiclo;
+
+    array<int,12> mainbot;
+    array<int,8> pf1bot;
+    array<int,4> buclebot;
+    array<int,8> ifbot;
+    array<int,8> elsebot;
+
+    bool boolmain;
+    bool boolf1;
+    bool boolbucle;
+    bool boolcondicional;
+
+    int mapaActual;
+    int currentFrame;
+    bool moving;
+
+    bool miraNE ;
+    bool miraNO ;
+    bool miraSO ;
+    bool miraSE ;
+
+
+
+    void reset(){
+        state = 0;
+        numeroCiclo = 0;
+    }
+
+};
+
+ParametrosNivel pNivel= {
+
+};
 int main()
 {
 
@@ -434,7 +473,7 @@ int main()
 
     // Temporizador
     sf::Clock clockSemaforo;
-    int state = 0;           // 0: Rojo, 1: Naranja, 2: Verde
+    pNivel.state = 0;           // 0: Rojo, 1: Naranja, 2: Verde
     float redTime = 5.0f;    // 5 segundos en rojo
     float orangeTime = 2.0f; // 2 segundos en naranja
     float greenTime = 5.0f;  // 5 segundos en verde
@@ -508,23 +547,38 @@ int main()
     }
 
     sf::Sprite pausaButton(pausaTextura);
-    pausaButton.setPosition(30, 700); // Position in top-left corner
+    pausaButton.setPosition(30, 650); // Position in top-left corner
     bool isPaused = false;
+    //------------------------------------------------------------------------------------------------------------
+    //imagenes de restart
+    sf::Texture restart1Textura;
+    sf::Texture restartaTextura;
+    if (!restart1Textura.loadFromFile("images/restart_1.png") || !restartaTextura.loadFromFile("images/restart_a.png"))
+    {
+        std::cerr << "Error cargando la imagen restart.png" << std::endl;
+        return -1;
+    }
+    sf::Sprite restart1Button(restart1Textura);
+    restart1Button.setPosition(110, 650); 
+    
+    sf::Sprite restartaButton(restartaTextura);
+    restartaButton.setPosition(200, 650); 
+
+
     //------------------------------------------------------------------------------------------------------------
     // imagen if and else
 
     sf::Sprite IfandElseSprite(ifTexture);
     IfandElseSprite.setPosition(620, 590);
 
-    int clicks = 0;
+    
     sf::Sprite iniciarButton(iniciarTexture);
     iniciarButton.setPosition(420, 480);
-    string lenguajeintermedio;
 
     // imagenes del contador
     int conty = 485;
-    int counter = 0; // importante
-    sf::Sprite numberSprite(textures[counter]);
+    pNivel.numeroCiclo = 0; // importante
+    sf::Sprite numberSprite(textures[pNivel.numeroCiclo]);
     numberSprite.setPosition(620, conty);
 
     sf::Sprite incrementButton(incrementTexture);
@@ -562,20 +616,21 @@ int main()
     }
 
     std::vector<int> pressedButtons;
-    int mainbot[12] = {
+    pNivel.mainbot = {
         0, 0, 0, 0,
         0, 0, 0, 0,
         0, 0, 0, 0}; // importante
-    int f1bot[8] = {0, 0, 0, 0,
-                    0, 0, 0, 0};
-    int buclebot[4] = {0, 0, 0, 0};
-    int ifbot[8] = {};
-    int elsebot[8] = {};
+    pNivel.pf1bot = {
+        0, 0, 0, 0,
+        0, 0, 0, 0};
+    pNivel.buclebot = {0, 0, 0, 0};
+    pNivel.ifbot = {};
+    pNivel.elsebot = {};
 
-    bool boolmain = false;
-    bool boolf1 = false;
-    bool boolbucle = false;
-    bool boolcondicional = false;
+    pNivel.boolmain = false;
+    pNivel.boolf1 = false;
+    pNivel.boolbucle = false;
+    pNivel.boolcondicional = false;
     bool clicDerechoPresionado = false;
 
     //-----------------------------------------------------------------------------------------------------------
@@ -604,7 +659,7 @@ int main()
     bool soundPlaying = false;
     sf::Clock clock; // Para medir el tiempo
 
-    int mapaActual = 0; // Índice del mapa actual
+    pNivel.mapaActual = 0; // Índice del mapa actual
 
     // Crear la ventana
     RenderWindow window(VideoMode(1000, 750), "Makibot");
@@ -652,14 +707,14 @@ int main()
 
     Sprite tiles[gridSize][gridSize];
 
-    crearSpritesPiso(tiles, mapas[mapaActual], texturaLozaAzul, texturaPiso);
+    crearSpritesPiso(tiles, mapas[pNivel.mapaActual], texturaLozaAzul, texturaPiso);
 
     // Vector de sprites para los bloques
     vector<Sprite> bloques;
     // Vector para los bloques q se sobreponen al makibot
     vector<Sprite> bloques2;
     // Inicializar los sprites del piso y los bloques
-    crearSpritesBloques(bloques, mapas[mapaActual], texturaBloque);
+    crearSpritesBloques(bloques, mapas[pNivel.mapaActual], texturaBloque);
 
     // Figura del makibot en 2D
     CircleShape makibot2D;
@@ -677,7 +732,7 @@ int main()
 
     // crear el minimapa en 2d
     Sprite tiles2d[gridSize][gridSize];
-    configurarSprites(tiles2d, matrices2d[mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d);
+    configurarSprites(tiles2d, matrices2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d);
 
     const int frameWidth = 40;
     const int frameHeight = 60;
@@ -721,7 +776,7 @@ int main()
     //---------------------------------------------------------------------------------
     //---------------------------------------------------------------------------------
     vector<Semaforo> texSemaforo;
-    crearSemaforos(texSemaforo, mapas[mapaActual], framesSemaforo);
+    crearSemaforos(texSemaforo, mapas[pNivel.mapaActual], framesSemaforo);
     cout << texSemaforo.size() << endl;
 
     //---------------------------------------------------------------------------------
@@ -735,12 +790,12 @@ int main()
     makibot.setTextureRect(framesF[0]);
 
     // Variables para la animación
-    int currentFrame = 0;
+    pNivel.currentFrame = 0;
     Clock animationClock;
     float animationSpeed = 0.3f;
 
     // Variables para controlar el movimiento
-    bool moving = false;
+    pNivel.moving = false;
     Vector2f targetPosition = makibot.getPosition();
 
     bool miraNE = false;
@@ -840,24 +895,24 @@ int main()
                     {
                         clickSound2.play();
 
-                        cout << lenguajeintermedio << endl;
+                        
                         booliniciar = true;
                     }
                     if (incrementButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                     {
-                        if (counter < 5)
+                        if (pNivel.numeroCiclo < 5)
                         {
-                            counter++;
-                            numberSprite.setTexture(textures[counter]);
+                            pNivel.numeroCiclo++;
+                            numberSprite.setTexture(textures[pNivel.numeroCiclo]);
                         }
                     }
 
                     if (decrementButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                     {
-                        if (counter > 0)
+                        if (pNivel.numeroCiclo > 0)
                         {
-                            counter--;
-                            numberSprite.setTexture(textures[counter]);
+                            pNivel.numeroCiclo--;
+                            numberSprite.setTexture(textures[pNivel.numeroCiclo]);
                         }
                     }
                     if (IfandElseSprite.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
@@ -879,22 +934,22 @@ int main()
         if (!isPaused)
         {
             // Cambiar de estado según el tiempo
-            if (state == 0 && timeSemaforo >= redTime)
+            if (pNivel.state == 0 && timeSemaforo >= redTime)
             {
-                state = 1;
+                pNivel.state = 1;
                 SpriteSemaforo.setTexture(orangeTexture);
                 clockSemaforo.restart();
             }
-            else if (state == 1 && timeSemaforo >= orangeTime)
+            else if (pNivel.state == 1 && timeSemaforo >= orangeTime)
             {
-                state = 2;
+                pNivel.state = 2;
                 SpriteSemaforo.setTexture(greenTexture);
                 clockSemaforo.restart();
             }
-            else if (state == 2 && timeSemaforo >= greenTime)
+            else if (pNivel.state == 2 && timeSemaforo >= greenTime)
             {
                 SpriteSemaforo.setTexture(redTexture);
-                state = 0;
+                pNivel.state = 0;
                 clockSemaforo.restart();
             }
         }
@@ -931,35 +986,35 @@ int main()
                         {
                             if (!isPaused)
                             { // Only allow button interactions when not paused
-                                if (boolmain)
+                                if (pNivel.boolmain)
                                 {
-                                    InsertarInstru(mainbot, 12, button.id);
-                                    imprimirArray(mainbot, 12);
+                                    InsertarInstru(pNivel.mainbot, button.id);
+                                    imprimirArray(pNivel.mainbot);
                                     clickSound.play();
                                 }
-                                if (boolf1)
+                                if (pNivel.boolf1)
                                 {
-                                    InsertarInstru(f1bot, 8, button.id);
-                                    imprimirArray(f1bot, 8);
+                                    InsertarInstru(pNivel.pf1bot, button.id);
+                                    imprimirArray(pNivel.pf1bot);
                                     clickSound.play();
                                 }
-                                if (boolbucle)
+                                if (pNivel.boolbucle)
                                 {
-                                    InsertarInstru(buclebot, 4, button.id);
-                                    imprimirArray(buclebot, 4);
+                                    InsertarInstru(pNivel.buclebot, button.id);
+                                    imprimirArray(pNivel.buclebot);
                                     clickSound.play();
                                 }
-                                if (boolcondicional)
+                                if (pNivel.boolcondicional)
                                 {
                                     if (ifCondition)
                                     {
-                                        InsertarInstru(ifbot, 8, button.id);
-                                        imprimirArray(ifbot, 4);
+                                        InsertarInstru(pNivel.ifbot, button.id);
+                                        imprimirArray(pNivel.ifbot);
                                     }
                                     else
                                     {
-                                        InsertarInstru(elsebot, 8, button.id);
-                                        imprimirArray(elsebot, 4);
+                                        InsertarInstru(pNivel.elsebot, button.id);
+                                        imprimirArray(pNivel.elsebot);
                                     }
                                     clickSound.play();
                                 }
@@ -984,41 +1039,41 @@ int main()
         bool boolsemaforo = true;
         if (booliniciar && !isPaused) // Only update game state if not paused
         {
-            cout << "cant mov" << contadorMovimientos << moving << endl;
+            cout << "cant mov" << contadorMovimientos << pNivel.moving << endl;
 
-            if (contadorMovimientos < 12 && moving == false && girando == false && colisionando == false)
+            if (contadorMovimientos < 12 && pNivel.moving == false && girando == false && colisionando == false)
             {
-                if (mainbot[contadorMovimientos] != 7)
+                if (pNivel.mainbot[contadorMovimientos] != 7)
                 {
-                    // al parecer en el mainbot no esta el 4
+                    // al parecer en el pNivel.mainbot no esta el 4
                     // ingresa  aui pero el movimiento lo marca como 0 y no como el 4 q es el foco
-                    cout << "movimiento numero" << mainbot[contadorMovimientos] << endl;
-                    movimiento = mainbot[contadorMovimientos];
+                    cout << "movimiento numero" << pNivel.mainbot[contadorMovimientos] << endl;
+                    movimiento = pNivel.mainbot[contadorMovimientos];
                     cout << "mov distinto7" << movimiento << endl;
                 }
                 if (contadorMovimientos != 0)
                 {
-                    if (mainbot[contadorMovimientos - 1] == 7)
+                    if (pNivel.mainbot[contadorMovimientos - 1] == 7)
                     {
                         cout << "cambio lm " << endl;
-                        mainbot[contadorMovimientos - 1] = lastmov;
+                        pNivel.mainbot[contadorMovimientos - 1] = lastmov;
                     }
                 }
-                // int movimiento = mainbot[contadorMovimientos];
+                // int movimiento = pNivel.mainbot[contadorMovimientos];
 
                 if (movimiento == 2 || movimiento == 3)
                 {
                     cout << "mov" << movimiento << endl;
 
                     lastmov = movimiento;
-                    mainbot[contadorMovimientos] = 7;
+                    pNivel.mainbot[contadorMovimientos] = 7;
                     // Cambia la dirección cíclicamente
                     updateDirection(contador, movimiento);
                     cout << contador << "----------------------" << endl;
-                    miraNE = estados[contador].miraNE;
-                    miraNO = estados[contador].miraNO;
-                    miraSO = estados[contador].miraSO;
-                    miraSE = estados[contador].miraSE;
+                    miraNE = estados[contador].esNE;
+                    miraNO = estados[contador].esNO;
+                    miraSO = estados[contador].esSO;
+                    miraSE = estados[contador].esSE;
                     girando = true;
                     contadorMovimientos++;
                 }
@@ -1027,15 +1082,15 @@ int main()
                     cout << "mov" << movimiento << endl;
 
                     lastmov = movimiento;
-                    mainbot[contadorMovimientos] = 7;
+                    pNivel.mainbot[contadorMovimientos] = 7;
                     // Mover en la dirección actual
                     Estado estado;
-                    estado.miraNE = miraNE;
-                    estado.miraNO = miraNO;
-                    estado.miraSO = miraSO;
-                    estado.miraSE = miraSE;
+                    estado.esNE = miraNE;
+                    estado.esNO = miraNO;
+                    estado.esSO = miraSO;
+                    estado.esSE = miraSE;
 
-                    move2(targetPosition, moving, estado, xIso, yIso);
+                    move2(targetPosition, pNivel.moving, estado, xIso, yIso);
                     contadorMovimientos++;
                 }
                 //
@@ -1044,56 +1099,56 @@ int main()
                     cout << "mov4" << endl;
                     if (laststate == -1)
                     {
-                        laststate = state;
+                        laststate = pNivel.state;
                     }
 
                     if (laststate == 2 || laststate == 1 && isBlockSemaforo)
                     {
                         lastmov = movimiento;
-                        mainbot[contadorMovimientos] = 7;
+                        pNivel.mainbot[contadorMovimientos] = 7;
 
                         cout << "entre en condicional" << endl;
-                        if (contadorMovIf < sizeof(ifbot) / sizeof(ifbot[0]) && moving == false && girando == false)
+                        if (contadorMovIf < sizeof(pNivel.ifbot) / sizeof(pNivel.ifbot[0]) && pNivel.moving == false && girando == false)
                         {
 
-                            if (ifbot[contadorMovIf] != 7)
+                            if (pNivel.ifbot[contadorMovIf] != 7)
                             {
-                                movimientoIf = ifbot[contadorMovIf];
+                                movimientoIf = pNivel.ifbot[contadorMovIf];
                             }
                             if (contadorMovIf != 0)
                             {
-                                if (ifbot[contadorMovIf - 1] == 7)
+                                if (pNivel.ifbot[contadorMovIf - 1] == 7)
                                 {
-                                    ifbot[contadorMovIf - 1] = lastmovIf;
+                                    pNivel.ifbot[contadorMovIf - 1] = lastmovIf;
                                 }
                             }
 
                             if (movimientoIf == 2 || movimientoIf == 3)
                             {
                                 lastmovIf = movimientoIf;
-                                ifbot[contadorMovIf] = 7;
+                                pNivel.ifbot[contadorMovIf] = 7;
                                 // Cambia la dirección cíclicamente
                                 updateDirection(contador, movimientoIf);
                                 cout << contador << "----------------------" << endl;
-                                miraNE = estados[contador].miraNE;
-                                miraNO = estados[contador].miraNO;
-                                miraSO = estados[contador].miraSO;
-                                miraSE = estados[contador].miraSE;
+                                miraNE = estados[contador].esNE;
+                                miraNO = estados[contador].esNO;
+                                miraSO = estados[contador].esSO;
+                                miraSE = estados[contador].esSE;
                                 girando = true;
                                 contadorMovIf++;
                             }
                             else if (movimientoIf == 1)
                             {
                                 lastmovIf = movimientoIf;
-                                ifbot[contadorMovIf] = 7;
+                                pNivel.ifbot[contadorMovIf] = 7;
                                 // Mover en la dirección actual
                                 Estado estado;
-                                estado.miraNE = miraNE;
-                                estado.miraNO = miraNO;
-                                estado.miraSO = miraSO;
-                                estado.miraSE = miraSE;
+                                estado.esNE = miraNE;
+                                estado.esNO = miraNO;
+                                estado.esSO = miraSO;
+                                estado.esSE = miraSE;
 
-                                move2(targetPosition, moving, estado, xIso, yIso);
+                                move2(targetPosition, pNivel.moving, estado, xIso, yIso);
                                 contadorMovIf++;
                             }
                             else if (movimientoIf == 0)
@@ -1106,7 +1161,7 @@ int main()
                         }
                         else if (contadorMovIf >= 8)
                         {
-                            ifbot[contadorMovIf - 1] = lastmovIf;
+                            pNivel.ifbot[contadorMovIf - 1] = lastmovIf;
                             contadorMovIf = 0;
                             contadorMovimientos++;
                             int laststate = -1;
@@ -1115,49 +1170,49 @@ int main()
                     else if (laststate == 0 && isBlockSemaforo)
                     {
                         lastmov = movimiento;
-                        mainbot[contadorMovimientos] = 7;
+                        pNivel.mainbot[contadorMovimientos] = 7;
 
                         cout << "entre en condicional" << endl;
-                        if (contadorMovElse < sizeof(elsebot) / sizeof(elsebot[0]) && moving == false && girando == false)
+                        if (contadorMovElse < sizeof(pNivel.elsebot) / sizeof(pNivel.elsebot[0]) && pNivel.moving == false && girando == false)
                         {
-                            if (elsebot[contadorMovElse] != 7)
+                            if (pNivel.elsebot[contadorMovElse] != 7)
                             {
-                                movimientoElse = elsebot[contadorMovElse];
+                                movimientoElse = pNivel.elsebot[contadorMovElse];
                             }
                             if (contadorMovElse != 0)
                             {
-                                if (elsebot[contadorMovElse - 1] == 7)
+                                if (pNivel.elsebot[contadorMovElse - 1] == 7)
                                 {
-                                    elsebot[contadorMovElse - 1] = lastmovElse;
+                                    pNivel.elsebot[contadorMovElse - 1] = lastmovElse;
                                 }
                             }
 
                             if (movimientoElse == 2 || movimientoElse == 3)
                             {
                                 lastmovElse = movimientoElse;
-                                elsebot[contadorMovElse] = 7;
+                                pNivel.elsebot[contadorMovElse] = 7;
                                 // Cambia la dirección cíclicamente
                                 updateDirection(contador, movimientoElse);
                                 cout << contador << "----------------------" << endl;
-                                miraNE = estados[contador].miraNE;
-                                miraNO = estados[contador].miraNO;
-                                miraSO = estados[contador].miraSO;
-                                miraSE = estados[contador].miraSE;
+                                miraNE = estados[contador].esNE;
+                                miraNO = estados[contador].esNO;
+                                miraSO = estados[contador].esSO;
+                                miraSE = estados[contador].esSE;
                                 girando = true;
                                 contadorMovElse++;
                             }
                             else if (movimientoElse == 1)
                             {
                                 lastmovElse = movimientoElse;
-                                elsebot[contadorMovElse] = 7;
+                                pNivel.elsebot[contadorMovElse] = 7;
                                 // Mover en la dirección actual
                                 Estado estado;
-                                estado.miraNE = miraNE;
-                                estado.miraNO = miraNO;
-                                estado.miraSO = miraSO;
-                                estado.miraSE = miraSE;
+                                estado.esNE = miraNE;
+                                estado.esNO = miraNO;
+                                estado.esSO = miraSO;
+                                estado.esSE = miraSE;
 
-                                move2(targetPosition, moving, estado, xIso, yIso);
+                                move2(targetPosition, pNivel.moving, estado, xIso, yIso);
                                 contadorMovElse++;
                             }
                             else if (movimientoElse == 0)
@@ -1170,7 +1225,7 @@ int main()
                         }
                         else if (contadorMovElse >= 8)
                         {
-                            elsebot[contadorMovElse - 1] = lastmovElse;
+                            pNivel.elsebot[contadorMovElse - 1] = lastmovElse;
                             contadorMovElse = 0;
                             contadorMovimientos++;
                             int laststate = -1;
@@ -1180,50 +1235,50 @@ int main()
                 else if (movimiento == 5)
                 {
                     lastmov = movimiento;
-                    mainbot[contadorMovimientos] = 7;
+                    pNivel.mainbot[contadorMovimientos] = 7;
 
                     cout << "gaaaa" << endl;
-                    if (contadorMovf1 < sizeof(f1bot) / sizeof(f1bot[0]) && moving == false && girando == false)
+                    if (contadorMovf1 < sizeof(pNivel.pf1bot) / sizeof(pNivel.pf1bot[0]) && pNivel.moving == false && girando == false)
                     {
 
-                        if (f1bot[contadorMovf1] != 7)
+                        if (pNivel.pf1bot[contadorMovf1] != 7)
                         {
-                            movimientof1 = f1bot[contadorMovf1];
+                            movimientof1 = pNivel.pf1bot[contadorMovf1];
                         }
                         if (contadorMovf1 != 0)
                         {
-                            if (f1bot[contadorMovf1 - 1] == 7)
+                            if (pNivel.pf1bot[contadorMovf1 - 1] == 7)
                             {
-                                f1bot[contadorMovf1 - 1] = lastmovf1;
+                                pNivel.pf1bot[contadorMovf1 - 1] = lastmovf1;
                             }
                         }
 
                         if (movimientof1 == 2 || movimientof1 == 3)
                         {
                             lastmovf1 = movimientof1;
-                            f1bot[contadorMovf1] = 7;
+                            pNivel.pf1bot[contadorMovf1] = 7;
                             // Cambia la dirección cíclicamente
                             updateDirection(contador, movimientof1);
                             cout << contador << "----------------------" << endl;
-                            miraNE = estados[contador].miraNE;
-                            miraNO = estados[contador].miraNO;
-                            miraSO = estados[contador].miraSO;
-                            miraSE = estados[contador].miraSE;
+                            miraNE = estados[contador].esNE;
+                            miraNO = estados[contador].esNO;
+                            miraSO = estados[contador].esSO;
+                            miraSE = estados[contador].esSE;
                             girando = true;
                             contadorMovf1++;
                         }
                         else if (movimientof1 == 1)
                         {
                             lastmovf1 = movimientof1;
-                            f1bot[contadorMovf1] = 7;
+                            pNivel.pf1bot[contadorMovf1] = 7;
                             // Mover en la dirección actual
                             Estado estado;
-                            estado.miraNE = miraNE;
-                            estado.miraNO = miraNO;
-                            estado.miraSO = miraSO;
-                            estado.miraSE = miraSE;
+                            estado.esNE = miraNE;
+                            estado.esNO = miraNO;
+                            estado.esSO = miraSO;
+                            estado.esSE = miraSE;
 
-                            move2(targetPosition, moving, estado, xIso, yIso);
+                            move2(targetPosition, pNivel.moving, estado, xIso, yIso);
                             contadorMovf1++;
                         }
                         else if (movimientof1 == 0)
@@ -1236,57 +1291,57 @@ int main()
                     }
                     else if (contadorMovf1 >= 8)
                     {
-                        f1bot[contadorMovf1 - 1] = lastmovf1;
+                        pNivel.pf1bot[contadorMovf1 - 1] = lastmovf1;
                         contadorMovf1 = 0;
                         contadorMovimientos++;
                     }
                 }
-                else if (movimiento == 6 && currentIteraciones < counter)
+                else if (movimiento == 6 && currentIteraciones < pNivel.numeroCiclo)
                 {
                     lastmov = movimiento;
-                    mainbot[contadorMovimientos] = 7;
+                    pNivel.mainbot[contadorMovimientos] = 7;
 
                     cout << "bucleoco" << endl;
-                    if (contadorMovbucle < sizeof(buclebot) / sizeof(buclebot[0]) && moving == false && girando == false)
+                    if (contadorMovbucle < sizeof(pNivel.buclebot) / sizeof(pNivel.buclebot[0]) && pNivel.moving == false && girando == false)
                     {
-                        if (buclebot[contadorMovbucle] != 7)
+                        if (pNivel.buclebot[contadorMovbucle] != 7)
                         {
-                            movimientoBucle = buclebot[contadorMovbucle];
+                            movimientoBucle = pNivel.buclebot[contadorMovbucle];
                         }
                         if (contadorMovbucle != 0)
                         {
-                            if (buclebot[contadorMovbucle - 1] == 7)
+                            if (pNivel.buclebot[contadorMovbucle - 1] == 7)
                             {
-                                buclebot[contadorMovbucle - 1] = lastmovbucle;
+                                pNivel.buclebot[contadorMovbucle - 1] = lastmovbucle;
                             }
                         }
 
                         if (movimientoBucle == 2 || movimientoBucle == 3)
                         {
                             lastmovbucle = movimientoBucle;
-                            buclebot[contadorMovbucle] = 7;
+                            pNivel.buclebot[contadorMovbucle] = 7;
                             // Cambia la dirección cíclicamente
                             updateDirection(contador, movimientoBucle);
                             cout << contador << "----------------------" << endl;
-                            miraNE = estados[contador].miraNE;
-                            miraNO = estados[contador].miraNO;
-                            miraSO = estados[contador].miraSO;
-                            miraSE = estados[contador].miraSE;
+                            miraNE = estados[contador].esNE;
+                            miraNO = estados[contador].esNO;
+                            miraSO = estados[contador].esSO;
+                            miraSE = estados[contador].esSE;
                             girando = true;
                             contadorMovbucle++;
                         }
                         else if (movimientoBucle == 1)
                         {
                             lastmovbucle = movimientoBucle;
-                            buclebot[contadorMovbucle] = 7;
+                            pNivel.buclebot[contadorMovbucle] = 7;
                             // Mover en la dirección actual
                             Estado estado;
-                            estado.miraNE = miraNE;
-                            estado.miraNO = miraNO;
-                            estado.miraSO = miraSO;
-                            estado.miraSE = miraSE;
+                            estado.esNE = miraNE;
+                            estado.esNO = miraNO;
+                            estado.esSO = miraSO;
+                            estado.esSE = miraSE;
 
-                            move2(targetPosition, moving, estado, xIso, yIso);
+                            move2(targetPosition, pNivel.moving, estado, xIso, yIso);
                             contadorMovbucle++;
                         }
                         else if (movimientoBucle == 0)
@@ -1299,7 +1354,7 @@ int main()
                     }
                     else if (contadorMovbucle >= 4)
                     {
-                        buclebot[contadorMovbucle - 1] = lastmovbucle;
+                        pNivel.buclebot[contadorMovbucle - 1] = lastmovbucle;
                         contadorMovbucle = 0;
                         currentIteraciones++;
                     }
@@ -1307,12 +1362,12 @@ int main()
                 else if (movimiento == 0)
                 {
                     cout << "Llegue al final del array de movimientos 0000" << endl;
-                    mainbot[contadorMovimientos - 1] = lastmov;
+                    pNivel.mainbot[contadorMovimientos - 1] = lastmov;
 
                     contadorMovimientos = 0;
                     booliniciar = false;
                 }
-                else if (currentIteraciones == counter)
+                else if (currentIteraciones == pNivel.numeroCiclo)
                 {
                     cout << "ups entre conter" << endl;
                     contadorMovimientos++;
@@ -1322,10 +1377,10 @@ int main()
                 // Avanzar en el array de movimientos
                 // contadorMovimientos++;
             }
-            else if (!moving && !girando && !colisionando)
+            else if (!pNivel.moving && !girando && !colisionando)
             {
                 cout << "Llegue al final del array de movimientos" << endl;
-                mainbot[contadorMovimientos - 1] = lastmov;
+                pNivel.mainbot[contadorMovimientos - 1] = lastmov;
                 contadorMovimientos = 0;
                 booliniciar = false;
             }
@@ -1333,7 +1388,7 @@ int main()
 
         
         // Actualizar la animación del sprite
-        if (moving || colisionando)
+        if (pNivel.moving || colisionando)
         {
             // Verificar colisión con bloques
             Vector2f newPosition = targetPosition;
@@ -1345,7 +1400,7 @@ int main()
 
             cout << posXIso << posYISo << endl;
 
-            if (mapas[mapaActual][posXIso][posYISo] == -1 && posXIso != -1 && posYISo != -1)
+            if (mapas[pNivel.mapaActual][posXIso][posYISo] == -1 && posXIso != -1 && posYISo != -1)
             {
                 contadorMovimientos = 0;
                 contadorMovf1 = 0;
@@ -1369,31 +1424,31 @@ int main()
                     }
                 }
 
-                // Incrementar mapaActual y usar el operador módulo para reiniciar a 0 cuando se alcance el límite
-                mapaActual = (mapaActual + 1) % 5;
+                // Incrementar pNivel.mapaActual y usar el operador módulo para reiniciar a 0 cuando se alcance el límite
+                pNivel.mapaActual = (pNivel.mapaActual + 1) % 5;
 
                 posXIso = 0;
                 posYISo = 0;
 
                 for (int i = 0; i < 12; ++i)
                 {
-                    mainbot[i] = 0;
+                    pNivel.mainbot[i] = 0;
                 }
                 for (int i = 0; i < 8; ++i)
                 {
-                    f1bot[i] = 0;
+                    pNivel.pf1bot[i] = 0;
                 }
                 for (int i = 0; i < 4; ++i)
                 {
-                    buclebot[i] = 0;
+                    pNivel.buclebot[i] = 0;
                 }
                 for (int i = 0; i < 8; ++i)
                 {
-                    ifbot[i] = 0;
+                    pNivel.ifbot[i] = 0;
                 }
                 for (int i = 0; i < 8; ++i)
                 {
-                    elsebot[i] = 0;
+                    pNivel.elsebot[i] = 0;
                 }
                 contador = 0;
                 cout << "hhhhh" << endl;
@@ -1403,28 +1458,28 @@ int main()
                 // Actualizar targetPosition a la nueva posición inicial
                 targetPosition = makibot.getPosition();
 
-                crearSpritesPiso(tiles, mapas[mapaActual], texturaLozaAzul, texturaPiso);
-                crearSpritesBloques(bloques, mapas[mapaActual], texturaBloque);
-                configurarSprites(tiles2d, matrices2d[mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d);
+                crearSpritesPiso(tiles, mapas[pNivel.mapaActual], texturaLozaAzul, texturaPiso);
+                crearSpritesBloques(bloques, mapas[pNivel.mapaActual], texturaBloque);
+                configurarSprites(tiles2d, matrices2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d);
 
                 // Detener movimiento
-                moving = false;
+                pNivel.moving = false;
             }
 
             if (!colisionando)
             {
                 if (!(posXIso >= 0 && posXIso < gridSize && posYISo >= 0 && posYISo < gridSize) ||
-                    (mapas[mapaActual][posXIso][posYISo] != 0 && mapas[mapaActual][posXIso][posYISo] != -1 && mapas[mapaActual][posXIso][posYISo] != -2))
+                    (mapas[pNivel.mapaActual][posXIso][posYISo] != 0 && mapas[pNivel.mapaActual][posXIso][posYISo] != -1 && mapas[pNivel.mapaActual][posXIso][posYISo] != -2))
                 {
                     colisionando = true;
-                    moving = false;
+                    pNivel.moving = false;
                     targetPosition = makibot.getPosition();
                 }
 
                 else
                 {
 
-                    if (mapas[mapaActual][posXIso][posYISo] == -2)
+                    if (mapas[pNivel.mapaActual][posXIso][posYISo] == -2)
                     {
                         cout << "cambio if-else" << laststate << endl;
                         isBlockSemaforo == 1;
@@ -1433,14 +1488,14 @@ int main()
                     {
                         if (miraNE || miraNO)
                         {
-                            currentFrame = (currentFrame + 1) % framesB.size();
-                            makibot.setTextureRect(framesB[currentFrame]);
+                            pNivel.currentFrame = (pNivel.currentFrame + 1) % framesB.size();
+                            makibot.setTextureRect(framesB[pNivel.currentFrame]);
                             cout << "arriba" << endl;
                         }
                         else if (miraSO || miraSE)
                         {
-                            currentFrame = (currentFrame + 1) % framesF.size();
-                            makibot.setTextureRect(framesF[currentFrame]);
+                            pNivel.currentFrame = (pNivel.currentFrame + 1) % framesF.size();
+                            makibot.setTextureRect(framesF[pNivel.currentFrame]);
                         }
 
                         animationClock.restart();
@@ -1452,12 +1507,12 @@ int main()
 
                     // Detener el movimiento al alcanzar el objetivo
 
-                    stopMovement(makibot, targetPosition, makibot.getPosition(), currentFrame, miraNE, miraNO, miraSO, miraSE, moving, framesB, framesF);
+                    stopMovement(makibot, targetPosition, makibot.getPosition(), pNivel.currentFrame, miraNE, miraNO, miraSO, miraSE, pNivel.moving, framesB, framesF);
                     // posicion de makibot2D
                     makibot2D.setPosition(57.5f + 15.f * posXIso, 47.4f + 15.f * posYISo);
-                    cout << "salida del moving: " << moving << endl;
+                    cout << "salida del pNivel.moving: " << pNivel.moving << endl;
                     // mapa 2D , se verifica la posicion de los bloques y el makibot
-                    updateBlocks(bloques2, mapas[mapaActual], gridSize, texturaBloque, lado, posXIso, posYISo);
+                    updateBlocks(bloques2, mapas[pNivel.mapaActual], gridSize, texturaBloque, lado, posXIso, posYISo);
                 }
             }
             else if (colisionando == true)
@@ -1485,11 +1540,11 @@ int main()
             {
                 if (miraNE || miraNO)
                 {
-                    makibot.setTextureRect(framesB[currentFrame]);
+                    makibot.setTextureRect(framesB[pNivel.currentFrame]);
                 }
                 else if (miraSO || miraSE)
                 {
-                    makibot.setTextureRect(framesF[currentFrame]);
+                    makibot.setTextureRect(framesF[pNivel.currentFrame]);
                 }
                 if (miraNE)
                     makibot.setScale(1.f, 1.f);
@@ -1513,6 +1568,8 @@ int main()
         // Add pause/play button to rendering
         window.draw(pausaButton);
 
+        window.draw(restart1Button);
+        window.draw(restartaButton);
         // dibujar piso 2d
         for (int i = 0; i < gridSize; ++i)
         {
@@ -1566,13 +1623,13 @@ int main()
         {
             window.draw(button.sprite);
         }
-        renderImagesBlocksWithControls(window, buttonTexture, mainbot, sizeof(mainbot) / sizeof(mainbot[0]), 720, 100, event, boolmain, clickSound2);
-        renderImagesBlocksWithControls(window, buttonTexture, f1bot, sizeof(f1bot) / sizeof(f1bot[0]), 720, 320, event, boolf1, clickSound2);
-        renderImagesBlocksWithControls(window, buttonTexture, buclebot, sizeof(buclebot) / sizeof(buclebot[0]), 720, 470, event, boolbucle, clickSound2);
+        renderImagesBlocksWithControls(window, buttonTexture, pNivel.mainbot, 720, 100, event, pNivel.boolmain, clickSound2);
+        renderImagesBlocksWithControls(window, buttonTexture, pNivel.pf1bot, 720, 320, event, pNivel.boolf1, clickSound2);
+        renderImagesBlocksWithControls(window, buttonTexture, pNivel.buclebot, 720, 470, event, pNivel.boolbucle, clickSound2);
         if (ifCondition)
-            renderImagesBlocksWithControls(window, buttonTexture, ifbot, sizeof(ifbot) / sizeof(ifbot[0]), 720, 570, event, boolcondicional, clickSound2);
+            renderImagesBlocksWithControls(window, buttonTexture, pNivel.ifbot, 720, 570, event, pNivel.boolcondicional, clickSound2);
         else
-            renderImagesBlocksWithControls(window, buttonTexture, elsebot, sizeof(elsebot) / sizeof(elsebot[0]), 720, 570, event, boolcondicional, clickSound2);
+            renderImagesBlocksWithControls(window, buttonTexture, pNivel.elsebot, 720, 570, event, pNivel.boolcondicional, clickSound2);
 
         if (isPaused)
         {
