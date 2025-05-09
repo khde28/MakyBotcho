@@ -509,7 +509,7 @@ struct ParametrosNivel
         miraNE = false;
         miraNO = false;
         miraSO = false;
-        miraSE = false;
+        miraSE = true;
         contador = 0;
         contadorMovimientos = 0;
         contadorMovf1 = 0;
@@ -563,7 +563,7 @@ struct ParametrosNivel
         miraNE = false;
         miraNO = false;
         miraSO = false;
-        miraSE = false;
+        miraSE = true;
         contador = 0;
         contadorMovimientos = 0;
         contadorMovf1 = 0;
@@ -1033,6 +1033,7 @@ int main()
                     if (restart1Button.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                     {
                         pNivel.reset1();
+                        contador = 0;
                         makibot.setOrigin(20.f, 60.f);
                         makibot.setPosition(300.f, 160.f + yIso / 2.f);
                         makibot.setTextureRect(framesF[0]);
@@ -1042,6 +1043,7 @@ int main()
                     if (restartaButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                     {
                         pNivel.resetall();
+                        contador = 0;
                         makibot.setOrigin(20.f, 60.f);
                         makibot.setPosition(300.f, 160.f + yIso / 2.f);
                         makibot.setTextureRect(framesF[0]);
@@ -1212,7 +1214,7 @@ int main()
                     // ingresa  aui pero el movimiento lo marca como 0 y no como el 4 q es el foco
                     cout << "movimiento numero" << pNivel.mainbot[pNivel.contadorMovimientos] << endl;
                     movimiento = pNivel.mainbot[pNivel.contadorMovimientos];
-                    cout << "mov distinto7" << movimiento << endl;
+                    cout << "mov distinto a 7" << movimiento << endl;
                 }
                 if (pNivel.contadorMovimientos != 0)
                 {
@@ -1224,7 +1226,7 @@ int main()
                 }
                 // int movimiento = pNivel.mainbot[pNivel.contadorMovimientos];
 
-                if (movimiento == 2 || movimiento == 3)
+                if (movimiento == 2 || movimiento == 3) 
                 {
                     cout << "mov" << movimiento << endl;
 
@@ -1725,7 +1727,7 @@ int main()
         window.clear(grisOscuro);
 
         // sprite semaforo
-        window.draw(SpriteSemaforo);
+        window.draw(SpriteSemaforo);                
 
         // Add pause/play button to rendering
         window.draw(pausaButton);
