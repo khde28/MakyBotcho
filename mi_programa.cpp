@@ -779,6 +779,7 @@ int main()
     bool miraSO = false;
     bool miraSE = true;
 
+    int contdebug = 0;
     // int CountMovimiento = 0;
 
     int contador = 0; // Inicialmente mirando hacia el Sur
@@ -815,6 +816,14 @@ int main()
 
     bool isBlockSemaforo = true;
     int laststate = -1;
+    auto reemplazar = [](int arr[], int size) {
+        for (int i = 0; i < size; ++i) {
+            if (arr[i] == 4 || arr[i] == 5 || arr[i] == 6) {
+                arr[i] = 0;
+            }
+        }
+    };
+
 
     while (window.isOpen())
     {
@@ -922,8 +931,13 @@ int main()
                 }
                 else if (event.type == sf::Event::MouseButtonReleased)
                 {
+                    reemplazar(f1bot, 8);
+                    reemplazar(buclebot, 4);
+                    reemplazar(ifbot, 8);
+                    reemplazar(elsebot, 8);
                     if (event.mouseButton.button == sf::Mouse::Left && clicDerechoPresionado == true)
                     {
+                        
                         if (boolmain)
                         {
                             InsertarInstru(mainbot, 12, button.id);
@@ -1288,13 +1302,110 @@ int main()
                         currentIteraciones++;
                     }
                 }
-                else if (movimiento == 0)
+                
+                else if (movimiento == 0 && contdebug==1 )
                 {
+                    contdebug = 0;
                     cout << "Llegue al final del array de movimientos 0000" << endl;
                     mainbot[contadorMovimientos - 1] = lastmov;
 
                     contadorMovimientos = 0;
                     booliniciar = false;
+                    contadorMovimientos = 0;
+                    contadorMovf1 = 0;
+                    contadorMovbucle = 0;
+                    booliniciar = false;
+                    bloques.clear();
+                
+                    for (int i = 0; i < gridSize; ++i)
+                    {
+                        for (int j = 0; j < gridSize; ++j)
+                        {
+                            tiles[i][j] = Sprite(); // Reasignar un sprite por defecto
+                        }
+                    }
+                
+                    for (int i = 0; i < gridSize; ++i)
+                    {
+                        for (int j = 0; j < gridSize; ++j)
+                        {
+                            tiles2d[i][j] = Sprite(); // Reasignar un sprite por defecto
+                        }
+                    }
+                
+                    // Incrementar mapaActual y usar el operador módulo para reiniciar a 0 cuando se alcance el límite
+                    //mapaActual = (mapaActual + 1) % 5;
+                
+                    //posXIso = 0;
+                    //posYISo = 0;
+                
+                    for (int i = 0; i < 12; ++i)
+                    {
+                        mainbot[i] = 0;
+                    }
+                    for (int i = 0; i < 8; ++i)
+                    {
+                        f1bot[i] = 0;
+                    }
+                    for (int i = 0; i < 4; ++i)
+                    {
+                        buclebot[i] = 0;
+                    }
+                    for (int i = 0; i < 8; ++i)
+                    {
+                        ifbot[i] = 0;
+                    }
+                    for (int i = 0; i < 8; ++i)
+                    {
+                        elsebot[i] = 0;
+                    }
+                    contador = 0;
+                    cout << "hhhhh" << endl;
+                    miraNE = false;
+                    miraNO = false;
+                    miraSO = false;
+                    miraSE = true;
+                    makibot.setOrigin(20.f, 30.f);
+                    makibot.setPosition(300.f, 160.f + yIso / 2.f);
+                
+                    // Actualizar targetPosition a la nueva posición inicial
+                    targetPosition = makibot.getPosition();
+                    miraNE = false;
+                    miraNO = false;
+                    miraSO = false;
+                    miraSE = true;
+                
+                    crearSpritesPiso(tiles, mapas[mapaActual], texturaLozaAzul, texturaPiso);
+                    crearSpritesBloques(bloques, mapas[mapaActual], texturaBloque);
+                    configurarSprites(tiles2d, matrices2d[mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d);
+                
+                    // Detener movimiento
+                    moving = false;
+                }
+                else if (movimiento == 0 && contdebug==0){
+                    cout << ":CC INTENTO" << endl;
+                    miraNE = false;
+                    miraNO = false;
+                    miraSO = false;
+                    miraSE = true;
+                    contdebug++;
+                    if (miraNE || miraNO)
+                    {
+                        makibot.setTextureRect(framesB[currentFrame]);
+                    }
+                    else if (miraSO || miraSE)
+                    {
+                        makibot.setTextureRect(framesF[currentFrame]);
+                    }
+                    if (miraNE)
+                        makibot.setScale(1.f, 1.f);
+                    else if (miraNO)
+                        makibot.setScale(-1.f, 1.f);
+                    else if (miraSO)
+                        makibot.setScale(-1.f, 1.f);
+                    else if (miraSE)
+                        makibot.setScale(1.f, 1.f);
+                    
                 }
                 else if (currentIteraciones == counter)
                 {
@@ -1379,6 +1490,29 @@ int main()
                 }
                 contador = 0;
                 cout << "hhhhh" << endl;
+
+                miraNE = false;
+                miraNO = false;
+                miraSO = false;
+                miraSE = true;
+
+                if (miraNE || miraNO)
+                {
+                    makibot.setTextureRect(framesB[currentFrame]);
+                }
+                else if (miraSO || miraSE)
+                {
+                    makibot.setTextureRect(framesF[currentFrame]);
+                }
+                if (miraNE)
+                    makibot.setScale(1.f, 1.f);
+                else if (miraNO)
+                    makibot.setScale(-1.f, 1.f);
+                else if (miraSO)
+                    makibot.setScale(-1.f, 1.f);
+                else if (miraSE)
+                    makibot.setScale(1.f, 1.f);
+                
                 makibot.setOrigin(20.f, 30.f);
                 makibot.setPosition(300.f, 160.f + yIso / 2.f);
 
