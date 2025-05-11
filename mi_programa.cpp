@@ -1833,7 +1833,11 @@ int main()
 
         // sprite semaforo
         window.draw(SpriteSemaforo);
+        // Add pause/play button to rendering
+        window.draw(pausaButton);
 
+        window.draw(restart1Button);
+        window.draw(restartaButton);
         // dibujar piso 2d
         for (int i = 0; i < gridSize; ++i)
         {
@@ -1894,6 +1898,18 @@ int main()
             renderImagesBlocksWithControls(window, buttonTexture, pNivel.ifbot, 720, 570, event, pNivel.boolcondicional, clickSound2);
         else
             renderImagesBlocksWithControls(window, buttonTexture, pNivel.elsebot, 720, 570, event, pNivel.boolcondicional, clickSound2);
+
+
+         if (isPaused)
+        {
+            sf::RectangleShape overlay(sf::Vector2f(window.getSize()));
+            overlay.setFillColor(sf::Color(0, 0, 0, 180));
+
+            window.draw(overlay);
+            window.draw(menuSprite);
+            window.draw(continuaSprite);
+            window.draw(nivel1Sprite);
+        }
         window.display();
     }
 
