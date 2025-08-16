@@ -1,0 +1,8 @@
+sqp_02e5b1ce3de387d645847e5edb5c6a80a6af4205
+borrar del indice del repositorio si subi una carpeta q no debia
+git rm -r --cached <carpeta>
+sqp_36444e5e6fca2b6ffe330449c652372fcc961688
+
+
+
+sonar-scanner -Dsonar.projectKey=eleccionsq -Dsonar.sources=. -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_02e5b1ce3de387d645847e5edb5c6a80a6af4205
