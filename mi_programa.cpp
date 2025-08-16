@@ -938,7 +938,7 @@ int main()
     pNivel.mapaActual = 0; // Índice del mapa actual
 
     // Crear la ventana
-    RenderWindow window(VideoMode(1000, 750), "Makibot");
+    RenderWindow window(VideoMode(1000, 750), "Makibot", sf::Style::Titlebar | sf::Style::Close);
     window.setFramerateLimit(60);
     // Establecer el color gris oscuro
     sf::Color grisOscuro(169, 169, 169); // RGB para pNivel.gris oscuro
