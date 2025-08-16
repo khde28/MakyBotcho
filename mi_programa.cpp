@@ -594,6 +594,148 @@ void reemplazar(array<int, N> arr)
         }
     }
 }
+
+//-----------------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------
+
+// Level selection variable
+
+bool showLevelMenu = false;
+sf::RectangleShape levelButtons[10];
+sf::Text levelTexts[10];
+sf::Font font;
+
+// FUNCTION DEFINITIONS (before main):
+void restartWithLevel(int levelNumber, ParametrosNivel &pNivel, sf::Sprite &makibot,
+                      sf::Vector2f &targetPosition, int &contador,
+                      sf::Sprite tiles[][gridSize], sf::Sprite tiles2d[][gridSize],
+                      std::vector<sf::Sprite> &bloques, std::vector<sf::Sprite> &bloques2,
+                      sf::Texture &texturaLozaAzul, sf::Texture &texturaPiso,
+                      sf::Texture &texturaBloque, sf::Texture &texturaBloque2d,
+                      sf::Texture &texturaLozaAzul2D, sf::Texture &texturaPiso2d,
+                      std::vector<sf::IntRect> &framesF, std::vector<Semaforo> &texSemaforo)
+{
+    // Reset all parameters
+    pNivel.resetall();
+
+    // Set the specific level
+    pNivel.mapaActual = levelNumber;
+
+    // Reset robot position and orientation
+    contador = 0;
+    makibot.setOrigin(20.f, 30.f);
+    makibot.setPosition(300.f, 160.f + yIso / 2.f);
+    makibot.setTextureRect(framesF[0]);
+    targetPosition = makibot.getPosition();
+
+    // Clear existing sprites
+    bloques.clear();
+    for (int i = 0; i < gridSize; ++i)
+    {
+        for (int j = 0; j < gridSize; ++j)
+        {
+            tiles[i][j] = sf::Sprite();
+            tiles2d[i][j] = sf::Sprite();
+        }
+    }
+
+    // Recreate map sprites for the selected level
+    crearSpritesPiso(tiles, mapas[pNivel.mapaActual], texturaLozaAzul, texturaPiso);
+    crearSpritesBloques(bloques, mapas[pNivel.mapaActual], texturaBloque);
+    configurarSprites(tiles2d, matrices2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d);
+    updateBlocks(bloques2, mapas[pNivel.mapaActual], gridSize, texturaBloque, lado, 0, 0);
+
+    // Recreate semaphores for the selected level
+    std::vector<sf::IntRect> framesSemaforo;
+    framesSemaforo.push_back(sf::IntRect(0, 0, 54, 54));
+    framesSemaforo.push_back(sf::IntRect(54, 0, 54 * 2, 54));
+    framesSemaforo.push_back(sf::IntRect(2 * 54, 0, 54 * 3, 54));
+    crearSemaforos(texSemaforo, matrices2d[pNivel.mapaActual], framesSemaforo);
+}
+
+int checkLevelButtonClick(sf::Vector2i mousePos)
+{
+    for (int i = 0; i < 10; i++)
+    {
+        if (levelButtons[i].getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)))
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void updateLevelButtonHover(sf::Vector2i mousePos)
+{
+    for (int i = 0; i < 10; i++)
+    {
+        if (levelButtons[i].getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)))
+        {
+            levelButtons[i].setFillColor(sf::Color(100, 150, 200));
+        }
+        else
+        {
+            levelButtons[i].setFillColor(sf::Color(70, 130, 180));
+        }
+    }
+}
+
+void setupLevelButtons()
+{
+    // Load font
+    if (!font.loadFromFile("assets/ARIAL.TTF"))
+    {
+        std::cerr << "Warning: Could not load font, using default" << std::endl;
+    }
+
+    // Setup level selection buttons and text
+    for (int i = 0; i < 10; i++)
+    {
+        // Setup rectangles
+        levelButtons[i].setSize(sf::Vector2f(80, 50));
+        levelButtons[i].setFillColor(sf::Color(70, 130, 180));
+        levelButtons[i].setOutlineThickness(2);
+        levelButtons[i].setOutlineColor(sf::Color::White);
+
+        // Position buttons in a grid
+        if (i < 3) // First row
+        {
+            levelButtons[i].setPosition(350 + (i * 100), 300);
+        }else if(i < 6) // Second row
+        {
+            levelButtons[i].setPosition(350 + ((i - 3) * 100), 380);
+        }
+        else if(i<9) // Third row
+        {
+            levelButtons[i].setPosition(350 + ((i - 6) * 100), 460);
+        }else
+        {
+            levelButtons[i].setPosition(350 + ((i - 9) * 100), 540);
+        }
+
+        // Setup text
+        levelTexts[i].setFont(font);
+        levelTexts[i].setString("Level " + std::to_string(i + 1));
+        levelTexts[i].setCharacterSize(16);
+        levelTexts[i].setFillColor(sf::Color::White);
+
+        // Center text in button
+        sf::FloatRect textBounds = levelTexts[i].getLocalBounds();
+        sf::Vector2f buttonPos = levelButtons[i].getPosition();
+        sf::Vector2f buttonSize = levelButtons[i].getSize();
+
+        levelTexts[i].setPosition(
+            buttonPos.x + (buttonSize.x - textBounds.width) / 2 - textBounds.left,
+            buttonPos.y + (buttonSize.y - textBounds.height) / 2 - textBounds.top);
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------------------------------------------------------------
+
+
 int main()
 {
 
@@ -664,7 +806,7 @@ int main()
         std::cerr << "Error cargando la imagen imageincrement.png o decrement" << std::endl;
         return -1;
     }
- // Add pause/play button textures and sprite--------------------------------------------------------------------------
+    // Add pause/play button textures and sprite--------------------------------------------------------------------------
     sf::Texture pausaTextura;
     sf::Texture continuaTextura;
     sf::Texture nivel1Textura;
@@ -980,9 +1122,13 @@ int main()
     continuaSprite.setPosition(475, 250); // Position in top-left corner
     sf::Sprite nivel1Sprite(nivel1Textura);
     nivel1Sprite.setPosition(465, 350); // Position in top-left corner
-    //-------------------------------------------------------------------------
+                                        //-------------------------------------------------------------------------
+
+    setupLevelButtons();
+    sf::Vector2i mousePos;
     while (window.isOpen())
     {
+        mousePos = sf::Mouse::getPosition(window);
         // Lógica de reproducción de sonido
         if (!soundPlaying)
         {
@@ -1015,12 +1161,33 @@ int main()
                 if (pausaButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) && !isPaused)
                 {
                     isPaused = !isPaused;
+                    showLevelMenu = false;
                     clickSound.play();
                 }
                 else if (continuaSprite.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) && isPaused)
                 {
                     isPaused = !isPaused;
+                    showLevelMenu = false;
                     clickSound.play();
+                }
+                else if (nivel1Sprite.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) && isPaused)
+                {
+                    showLevelMenu = !showLevelMenu;
+                    clickSound.play();
+                }
+                // Level selection
+                if (showLevelMenu && isPaused)
+                {
+                    int clickedLevel = checkLevelButtonClick(mousePos);
+                    if (clickedLevel != -1)
+                    {
+                        restartWithLevel(clickedLevel, pNivel, makibot, targetPosition, contador, tiles, tiles2d,
+                                         bloques, bloques2, texturaLozaAzul, texturaPiso, texturaBloque,
+                                         texturaBloque2d, texturaLozaAzul2D, texturaPiso2d, framesF, texSemaforo);
+                        isPaused = false;
+                        showLevelMenu = false;
+                        clickSound.play();
+                    }
                 }
                 if (!isPaused)
                 {
@@ -1028,7 +1195,7 @@ int main()
                     {
                         pNivel.reset1();
                         contador = 0;
-                        makibot.setOrigin(20.f, 60.f);
+                        makibot.setOrigin(20.f, 30.f);
                         makibot.setPosition(300.f, 160.f + yIso / 2.f);
                         makibot.setTextureRect(framesF[0]);
                         targetPosition = makibot.getPosition();
@@ -1038,7 +1205,7 @@ int main()
                     {
                         pNivel.resetall();
                         contador = 0;
-                        makibot.setOrigin(20.f, 60.f);
+                        makibot.setOrigin(20.f, 30.f);
                         makibot.setPosition(300.f, 160.f + yIso / 2.f);
                         makibot.setTextureRect(framesF[0]);
                         targetPosition = makibot.getPosition();
@@ -1085,6 +1252,11 @@ int main()
                     }
                 }
             }
+            // ADD hover effect handling:
+            if (event.type == sf::Event::MouseMoved && showLevelMenu && isPaused)
+            {
+                updateLevelButtonHover(sf::Mouse::getPosition(window));
+            }
         }
         //--------------------------------Semaforo-----------------------------------------
         // Actualizar temporizador
@@ -1113,7 +1285,7 @@ int main()
 
         //-------------------------intrucciones-----------------------------------------
         // Procesar interacción del ratón
-        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+        // sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         for (auto &button : buttons)
         {
             sf::FloatRect bounds = button.sprite.getGlobalBounds();
@@ -1899,8 +2071,29 @@ int main()
         else
             renderImagesBlocksWithControls(window, buttonTexture, pNivel.elsebot, 720, 570, event, pNivel.boolcondicional, clickSound2);
 
+        //-----------------------------------------------------------------------------
 
-         if (isPaused)
+        // draw level stage
+        sf::RectangleShape levelStage(sf::Vector2f(300, 50));
+        levelStage.setPosition(200, 20);
+        levelStage.setFillColor(sf::Color(30, 30, 30, 220));
+        levelStage.setOutlineThickness(3);
+        levelStage.setOutlineColor(sf::Color::White);
+        window.draw(levelStage);
+
+        // Draw title
+        sf::Text level_text;
+        level_text.setFont(font);
+        level_text.setString("NIVEL " + std::to_string(pNivel.mapaActual + 1));
+        level_text.setCharacterSize(24);
+        level_text.setFillColor(sf::Color::White);
+        sf::FloatRect titleBounds = level_text.getLocalBounds();
+        level_text.setPosition(300 - titleBounds.width / 2, 30);
+        window.draw(level_text);
+
+
+        //--------------------------------------------------------------------------
+        if (isPaused)
         {
             sf::RectangleShape overlay(sf::Vector2f(window.getSize()));
             overlay.setFillColor(sf::Color(0, 0, 0, 180));
@@ -1909,10 +2102,41 @@ int main()
             window.draw(menuSprite);
             window.draw(continuaSprite);
             window.draw(nivel1Sprite);
+
+            if (showLevelMenu)
+            {
+                // Draw level selection background
+                sf::RectangleShape levelMenuBg(sf::Vector2f(450, 400));
+                levelMenuBg.setPosition(275, 250);
+                levelMenuBg.setFillColor(sf::Color(30, 30, 30, 220));
+                levelMenuBg.setOutlineThickness(3);
+                levelMenuBg.setOutlineColor(sf::Color::White);
+                window.draw(levelMenuBg);
+
+                // Draw title
+                sf::Text menuTitle;
+                menuTitle.setFont(font);
+                menuTitle.setString("Select Level");
+                menuTitle.setCharacterSize(24);
+                menuTitle.setFillColor(sf::Color::White);
+                sf::FloatRect titleBounds = menuTitle.getLocalBounds();
+                menuTitle.setPosition(500 - titleBounds.width / 2, 260);
+                window.draw(menuTitle);
+
+                // Draw level buttons
+                for (int i = 0; i < 10; i++)
+                {
+                    window.draw(levelButtons[i]);
+                    window.draw(levelTexts[i]);
+                }
+            }
         }
+
+        // ... rest of your rendering code
         window.display();
     }
-
     return 0;
+    
 }
+
 //...........
