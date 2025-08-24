@@ -3,7 +3,6 @@
 #include <vector>
 #include <cmath>
 #include <iostream>
-#include "mapas.h"
 //------------------------------------------------------------------------------------------------------------
 #include <fstream>
 #include <string>
@@ -15,6 +14,40 @@
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
 const float BUTTON_SCALE = 1.06f;
+
+
+int mapas[10][8][8];
+int matrices2d[10][8][8];
+
+bool loadMapsFromFile(const std::string& filename, int maps[10][8][8]) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file " << filename << std::endl;
+        return false;
+    }
+    
+    int numMaps, rows, cols;
+    file >> numMaps >> rows >> cols;
+    
+    if (numMaps != 10 || rows != 8 || cols != 8) {
+        std::cerr << "Error: Invalid map dimensions in " << filename << std::endl;
+        return false;
+    }
+    
+    for (int map = 0; map < numMaps; ++map) {
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                if (!(file >> maps[map][i][j])) {
+                    std::cerr << "Error: Failed to read map data from " << filename << std::endl;
+                    return false;
+                }
+            }
+        }
+    }
+    
+    file.close();
+    return true;
+}
 
 void escribirInstruccion(int numero, std::ofstream &archivo)
 {
@@ -90,8 +123,60 @@ void renderImagesBlocksWithControls(sf::RenderWindow &window, const std::vector<
             sf::Sprite sprite(texturas[array[i]]);
             sprite.setPosition(offsetX + (i % 4) * imageWidth, offsetY + (i / 4) * imageHeight);
             window.draw(sprite);
+
+
+            // Check for individual instruction deletion
+static bool deletionProcessed = false;
+
+if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
+{
+    if (!deletionProcessed) // Only process if not already processed
+    {
+        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+        sf::Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+        
+        for (int i = 0; i < N; ++i)
+        {
+            if (array[i] > 0 && array[i] < texturas.size())
+            {
+                // Create temporary sprite to check bounds
+                sf::Sprite tempSprite(texturas[array[i]]);
+                tempSprite.setPosition(offsetX + (i % 4) * imageWidth, offsetY + (i / 4) * imageHeight);
+                
+                if (tempSprite.getGlobalBounds().contains(mousePosF))
+                {
+                    // Create new array without the deleted element
+                    std::array<int, N> newArray;
+                    newArray.fill(0);
+                    
+                    int newIndex = 0;
+                    for (int j = 0; j < N; ++j)
+                    {
+                        if (j != i && array[j] != 0) // Skip the deleted element
+                        {
+                            newArray[newIndex] = array[j];
+                            newIndex++;
+                        }
+                    }
+                    
+                    // Copy the new array back
+                    array = newArray;
+                    
+                    clickSound.play();
+                    clickSound.setVolume(10.f);
+                    deletionProcessed = true; // Mark as processed
+                    break;
+                }
+            }
         }
-        else
+    }
+}
+else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left)
+{
+    deletionProcessed = false; // Reset when mouse is released
+}
+        }
+        else if (array[i] != 0)
         {
             std::cerr << "Valor de índice fuera de rango: " << array[i] << std::endl;
         }
@@ -738,7 +823,17 @@ void setupLevelButtons()
 
 int main()
 {
-
+    if (!loadMapsFromFile("mapas3d.txt", mapas)) {
+        std::cerr << "Failed to load 3D maps. Exiting..." << std::endl;
+        return -1;
+    }
+    
+    if (!loadMapsFromFile("mapas2d.txt", matrices2d)) {
+        std::cerr << "Failed to load 2D maps. Exiting..." << std::endl;
+        return -1;
+    }
+    
+    std::cout << "Maps loaded successfully!" << std::endl;
     //--------------------------------------- Configuración del Semaforo --------------------------------------
     sf::Texture redTexture, orangeTexture, greenTexture;
 
@@ -1126,6 +1221,10 @@ int main()
 
     setupLevelButtons();
     sf::Vector2i mousePos;
+
+
+//-------------------------------------------------------LOOP PRINCIPAL-------------------------------------------------------
+
     while (window.isOpen())
     {
         mousePos = sf::Mouse::getPosition(window);
@@ -1258,6 +1357,8 @@ int main()
                 updateLevelButtonHover(sf::Mouse::getPosition(window));
             }
         }
+
+
         //--------------------------------Semaforo-----------------------------------------
         // Actualizar temporizador
         float timeSemaforo = clockSemaforo.getElapsedTime().asSeconds();
