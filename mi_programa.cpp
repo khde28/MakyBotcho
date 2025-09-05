@@ -1960,97 +1960,128 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
             }
 
             if (!pNivel.colisionando)
+{
+    if (!(posXIso >= 0 && posXIso < gridSize && posYISo >= 0 && posYISo < gridSize) ||
+        (mapas[pNivel.mapaActual][posXIso][posYISo] != 0 && mapas[pNivel.mapaActual][posXIso][posYISo] != -1 && mapas[pNivel.mapaActual][posXIso][posYISo] != -2))
+    {
+        // COLLISION DETECTED - MOSTRAR ESTRELLA Y ACTIVAR TIMER
+        cout << "COLLISION DETECTED - SHOWING STAR EFFECT" << endl;
+        
+        // Guardar posición donde ocurrió la colisión
+        posicionEstrella = targetPosition + sf::Vector2f(0.f, -15.f);;
+        mostrarEstrella = true;
+        clockEstrella.restart();
+        
+        // Establecer posición de la estrella
+        spriteEstrella.setPosition(posicionEstrella);
+        
+        // Detener movimiento inmediatamente
+        moving = false;
+        pNivel.colisionando = true; // Usamos esto como flag temporal
+        pNivel.girando = false;
+    }
+    else
+    {
+        // Normal movement logic (existing code remains the same)
+        if (mapas[pNivel.mapaActual][posXIso][posYISo] == -2)
+        {
+            cout << "cambio if-else" << pNivel.laststate << endl;
+            pNivel.isBlockSemaforo == 1;
+        }
+        
+        if (animationClock.getElapsedTime().asSeconds() > animationSpeed)
+        {
+            if (miraNE || miraNO)
             {
-                if (!(posXIso >= 0 && posXIso < gridSize && posYISo >= 0 && posYISo < gridSize) ||
-                    (mapas[pNivel.mapaActual][posXIso][posYISo] != 0 && mapas[pNivel.mapaActual][posXIso][posYISo] != -1 && mapas[pNivel.mapaActual][posXIso][posYISo] != -2))
-                {
-                    cout << "COLLISION DETECTED - RESETTING LEVEL" << endl;
-
-                    // Reset all counters and states
-                    pNivel.reset1(); // Use the same reset function as the restart button
-                    contador = 0;
-
-                    // Clear all instruction arrays
-                    for (int i = 0; i < 12; ++i)
-                    {
-                        pNivel.mainbot[i] = 0;
-                    }
-                    for (int i = 0; i < 8; ++i)
-                    {
-                        pNivel.f1bot[i] = 0;
-                    }
-                    for (int i = 0; i < 4; ++i)
-                    {
-                        pNivel.buclebot[i] = 0;
-                    }
-                    for (int i = 0; i < 8; ++i)
-                    {
-                        pNivel.ifbot[i] = 0;
-                    }
-                    for (int i = 0; i < 8; ++i)
-                    {
-                        pNivel.elsebot[i] = 0;
-                    }
-                    // Reset robot position and orientation
-                    makibot.setOrigin(20.f, 30.f);
-                    makibot.setPosition(300.f, 160.f + yIso / 2.f);
-                    makibot.setTextureRect(framesF[0]);
-                    targetPosition = makibot.getPosition();
-
-                    // Reset direction flags
-                    miraNE = false;
-                    miraNO = false;
-                    miraSO = false;
-                    miraSE = true;
-
-                    // Stop all movement
-                    moving = false;
-                    pNivel.colisionando = false;
-                    pNivel.girando = false;
-
-                    // Reset animation frame
-                    pNivel.currentFrame = 0;
-                }
-
-                else
-                {
-
-                    if (mapas[pNivel.mapaActual][posXIso][posYISo] == -2)
-                    {
-                        cout << "cambio if-else" << pNivel.laststate << endl;
-                        pNivel.isBlockSemaforo == 1;
-                    }
-                    if (animationClock.getElapsedTime().asSeconds() > animationSpeed)
-                    {
-                        if (miraNE || miraNO)
-                        {
-                            pNivel.currentFrame = (pNivel.currentFrame + 1) % framesB.size();
-                            makibot.setTextureRect(framesB[pNivel.currentFrame]);
-                            cout << "arriba" << endl;
-                        }
-                        else if (miraSO || miraSE)
-                        {
-                            pNivel.currentFrame = (pNivel.currentFrame + 1) % framesF.size();
-                            makibot.setTextureRect(framesF[pNivel.currentFrame]);
-                        }
-
-                        animationClock.restart();
-                    }
-
-                    // movimeinto del car
-                    Vector2f currentPosition = makibot.getPosition();
-                    moveRobot(makibot, targetPosition, currentPosition, xIso, yIso);
-
-                    // Detener el movimiento al alcanzar el objetivo
-
-                    stopMovement(makibot, targetPosition, makibot.getPosition(), pNivel.currentFrame, miraNE, miraNO, miraSO, miraSE, moving, framesB, framesF);
-                    // posicion de makibot2D
-                    makibot2D.setPosition(57.5f + 15.f * posXIso, 47.4f + 15.f * posYISo);
-                    cout << "salida del moving: " << moving << endl;
-                    // mapa 2D , se verifica la posicion de los bloques y el makibot
-                    updateBlocks(bloques2, mapas[pNivel.mapaActual], gridSize, texturaBloque, lado, posXIso, posYISo);
-                }
+                pNivel.currentFrame = (pNivel.currentFrame + 1) % framesB.size();
+                makibot.setTextureRect(framesB[pNivel.currentFrame]);
+                cout << "arriba" << endl;
             }
+            else if (miraSO || miraSE)
+            {
+                pNivel.currentFrame = (pNivel.currentFrame + 1) % framesF.size();
+                makibot.setTextureRect(framesF[pNivel.currentFrame]);
+            }
+
+            animationClock.restart();
+        }
+
+        Vector2f currentPosition = makibot.getPosition();
+        moveRobot(makibot, targetPosition, currentPosition, xIso, yIso);
+        stopMovement(makibot, targetPosition, makibot.getPosition(), pNivel.currentFrame, miraNE, miraNO, miraSO, miraSE, moving, framesB, framesF);
+        
+        makibot2D.setPosition(57.5f + 15.f * posXIso, 47.4f + 15.f * posYISo);
+        cout << "salida del moving: " << moving << endl;
+        
+        updateBlocks(bloques2, mapas[pNivel.mapaActual], gridSize, texturaBloque, lado, posXIso, posYISo);
+    }
+}
+
+// CUARTO: Reemplazar el manejo de colisión anterior con este nuevo código
+if (pNivel.colisionando == true)
+{
+    // Verificar si ha pasado 1 segundo desde la colisión
+    if (clockEstrella.getElapsedTime().asSeconds() > 1.0f)
+    {
+        // Ocultar estrella y resetear nivel después de 1 segundo
+        mostrarEstrella = false;
+        
+        // RESET COMPLETO DEL NIVEL
+        cout << "RESETTING LEVEL AFTER COLLISION" << endl;
+        
+        // Reset all counters and states
+        pNivel.reset1();
+        contador = 0;
+        
+        // Clear all instruction arrays
+        for (int i = 0; i < 12; ++i)
+        {
+            pNivel.mainbot[i] = 0;
+        }
+        for (int i = 0; i < 8; ++i)
+        {
+            pNivel.f1bot[i] = 0;
+        }
+        for (int i = 0; i < 4; ++i)
+        {
+            pNivel.buclebot[i] = 0;
+        }
+        for (int i = 0; i < 8; ++i)
+        {
+            pNivel.ifbot[i] = 0;
+        }
+        for (int i = 0; i < 8; ++i)
+        {
+            pNivel.elsebot[i] = 0;
+        }
+        
+        // Reset robot position and orientation
+        makibot.setOrigin(20.f, 30.f);
+        makibot.setPosition(300.f, 160.f + yIso / 2.f);
+        makibot.setTextureRect(framesF[0]);
+        targetPosition = makibot.getPosition();
+        
+        // Reset direction flags
+        miraNE = false;
+        miraNO = false;
+        miraSO = false;
+        miraSE = true;
+        
+        // Stop all movement and collision state
+        moving = false;
+        pNivel.colisionando = false;
+        pNivel.girando = false;
+        
+        // Reset animation frame
+        pNivel.currentFrame = 0;
+        
+        // Reset additional counters
+        pNivel.currentIteraciones = 0;
+        pNivel.laststate = -1;
+        
+        cout << "Level reset completed after collision" << endl;
+    }
+}
 
             if (miraNE)
                 makibot.setScale(1.f, 1.f);
@@ -2158,7 +2189,10 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
             renderImagesBlocksWithControls(window, buttonTexture, pNivel.elsebot, 720, 570, event, pNivel.boolcondicional, clickSound2);
 
         //-----------------------------------------------------------------------------
-
+        if (mostrarEstrella)
+{
+    window.draw(spriteEstrella);
+}
         // draw level stage
         sf::RectangleShape levelStage(sf::Vector2f(300, 50));
         levelStage.setPosition(200, 20);
