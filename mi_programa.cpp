@@ -3,7 +3,6 @@
 #include <vector>
 #include <cmath>
 #include <iostream>
-#include "mapas.h"
 //------------------------------------------------------------------------------------------------------------
 #include <fstream>
 #include <string>
@@ -11,7 +10,40 @@
 #include <stdio.h>
 #include <sstream>
 #include <array>
+using namespace std;
 
+
+const int N = 10; // cantidad de mapas
+const int R = 8;  // filas
+const int C = 8;
+
+int mapas[10][8][8];
+int matrices2d[10][8][8];
+bool cargarMapa(const string& filename, int mapas[N][R][C]) {
+    ifstream in(filename);
+    if (!in) {
+        cerr << "Error al abrir " << filename << endl;
+        return false;
+    }
+
+    int n, r, c;
+    in >> n >> r >> c; // leer dimensiones (ej: 10 8 8)
+
+    if (n != N || r != R || c != C) {
+        cerr << "Dimensiones incorrectas en " << filename << endl;
+        return false;
+    }
+
+    for (int k = 0; k < N; k++) {
+        for (int i = 0; i < R; i++) {
+            for (int j = 0; j < C; j++) {
+                in >> mapas[k][i][j];
+            }
+        }
+    }
+
+    return true;
+}
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
 const float BUTTON_SCALE = 1.06f;
@@ -701,14 +733,16 @@ void setupLevelButtons()
         if (i < 3) // First row
         {
             levelButtons[i].setPosition(350 + (i * 100), 300);
-        }else if(i < 6) // Second row
+        }
+        else if (i < 6) // Second row
         {
             levelButtons[i].setPosition(350 + ((i - 3) * 100), 380);
         }
-        else if(i<9) // Third row
+        else if (i < 9) // Third row
         {
             levelButtons[i].setPosition(350 + ((i - 6) * 100), 460);
-        }else
+        }
+        else
         {
             levelButtons[i].setPosition(350 + ((i - 9) * 100), 540);
         }
@@ -732,12 +766,23 @@ void setupLevelButtons()
 
 //-----------------------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------------------
-
+sf::Texture texturaEstrella;
+sf::Sprite spriteEstrella;
+sf::Clock clockEstrella;
+bool mostrarEstrella = false;
+sf::Vector2f posicionEstrella;
 //-----------------------------------------------------------------------------------------------------------------------------------
-
 
 int main()
 {
+    if (!cargarMapa(std::string("mapas3d.txt"), mapas)) return 1;
+if (!cargarMapa(std::string("mapas2d.txt"), matrices2d)) return 1;
+    if (!texturaEstrella.loadFromFile("images/estrella.png")) {
+    cout << "Error al cargar textura de estrella" << endl;
+}
+spriteEstrella.setTexture(texturaEstrella);
+spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.getSize().y / 2.0f);
+
 
     //--------------------------------------- Configuración del Semaforo --------------------------------------
     sf::Texture redTexture, orangeTexture, greenTexture;
@@ -1713,7 +1758,7 @@ int main()
                     }
 
                     // Incrementar mapaActual y usar el operador módulo para reiniciar a 0 cuando se alcance el límite
-                    // mapaActual = (mapaActual + 1) % 5;
+                    // mapaActual = (mapaActual + 1) % 10;
 
                     // posXIso = 0;
                     // posYISo = 0;
@@ -1798,10 +1843,17 @@ int main()
             }
             else if (!moving && !pNivel.girando && !pNivel.colisionando)
             {
-                cout << "Llegue al final del array de movimientos" << endl;
+                /* cout << "Llegue al final del array de movimientos" << endl;
                 pNivel.mainbot[pNivel.contadorMovimientos - 1] = pNivel.lastmov;
                 pNivel.contadorMovimientos = 0;
-                pNivel.booliniciar = false;
+                pNivel.booliniciar = false; */
+
+                pNivel.reset1();
+                contador = 0;
+                makibot.setOrigin(20.f, 30.f);
+                makibot.setPosition(300.f, 160.f + yIso / 2.f);
+                makibot.setTextureRect(framesF[0]);
+                targetPosition = makibot.getPosition();
             }
         }
 
@@ -1843,7 +1895,7 @@ int main()
                 }
 
                 // Incrementar mapaActual y usar el operador módulo para reiniciar a 0 cuando se alcance el límite
-                pNivel.mapaActual = (pNivel.mapaActual + 1) % 5;
+                pNivel.mapaActual = (pNivel.mapaActual + 1) % 10;
 
                 posXIso = 0;
                 posYISo = 0;
@@ -1912,9 +1964,52 @@ int main()
                 if (!(posXIso >= 0 && posXIso < gridSize && posYISo >= 0 && posYISo < gridSize) ||
                     (mapas[pNivel.mapaActual][posXIso][posYISo] != 0 && mapas[pNivel.mapaActual][posXIso][posYISo] != -1 && mapas[pNivel.mapaActual][posXIso][posYISo] != -2))
                 {
-                    pNivel.colisionando = true;
-                    moving = false;
+                    cout << "COLLISION DETECTED - RESETTING LEVEL" << endl;
+
+                    // Reset all counters and states
+                    pNivel.reset1(); // Use the same reset function as the restart button
+                    contador = 0;
+
+                    // Clear all instruction arrays
+                    for (int i = 0; i < 12; ++i)
+                    {
+                        pNivel.mainbot[i] = 0;
+                    }
+                    for (int i = 0; i < 8; ++i)
+                    {
+                        pNivel.f1bot[i] = 0;
+                    }
+                    for (int i = 0; i < 4; ++i)
+                    {
+                        pNivel.buclebot[i] = 0;
+                    }
+                    for (int i = 0; i < 8; ++i)
+                    {
+                        pNivel.ifbot[i] = 0;
+                    }
+                    for (int i = 0; i < 8; ++i)
+                    {
+                        pNivel.elsebot[i] = 0;
+                    }
+                    // Reset robot position and orientation
+                    makibot.setOrigin(20.f, 30.f);
+                    makibot.setPosition(300.f, 160.f + yIso / 2.f);
+                    makibot.setTextureRect(framesF[0]);
                     targetPosition = makibot.getPosition();
+
+                    // Reset direction flags
+                    miraNE = false;
+                    miraNO = false;
+                    miraSO = false;
+                    miraSE = true;
+
+                    // Stop all movement
+                    moving = false;
+                    pNivel.colisionando = false;
+                    pNivel.girando = false;
+
+                    // Reset animation frame
+                    pNivel.currentFrame = 0;
                 }
 
                 else
@@ -1954,15 +2049,6 @@ int main()
                     cout << "salida del moving: " << moving << endl;
                     // mapa 2D , se verifica la posicion de los bloques y el makibot
                     updateBlocks(bloques2, mapas[pNivel.mapaActual], gridSize, texturaBloque, lado, posXIso, posYISo);
-                }
-            }
-            else if (pNivel.colisionando == true)
-            {
-                if (animationClock.getElapsedTime().asSeconds() > 1.5)
-                {
-                    pNivel.colisionando = false;
-                    cout << "cambiando pNivel.colisionando a false" << endl;
-                    animationClock.restart();
                 }
             }
 
@@ -2091,7 +2177,6 @@ int main()
         level_text.setPosition(300 - titleBounds.width / 2, 30);
         window.draw(level_text);
 
-
         //--------------------------------------------------------------------------
         if (isPaused)
         {
@@ -2136,7 +2221,6 @@ int main()
         window.display();
     }
     return 0;
-    
 }
 
 //...........
