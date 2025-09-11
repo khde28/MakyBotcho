@@ -776,17 +776,13 @@ struct ParametrosNivel
 
 ParametrosNivel pNivel;
 template <size_t N>
-void reemplazar(array<int, N> arr)
-{
-    for (int i = 0; i < N; ++i)
-    {
-        if (arr[i] == 4 || arr[i] == 5 || arr[i] == 6)
-        {
-            arr[i] = 0;
+void reemplazar(array<int, N> &arr) {
+    for (int &val : arr) {
+        if (val == 4 || val == 5 || val == 6) {
+            val = 0;
         }
     }
 }
-
 //-----------------------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1335,6 +1331,7 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
     sf::Vector2i mousePos;
     while (window.isOpen())
     {
+        cout << pNivel.laststate << "  estado  "<< state << endl;
         mousePos = sf::Mouse::getPosition(window);
         // Lógica de reproducción de sonido
         if (!soundPlaying)
@@ -1628,9 +1625,11 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
                     if (pNivel.laststate == -1)
                     {
                         pNivel.laststate = state;
+                        pNivel.lastmov = pNivel.movimiento;
+                        pNivel.mainbot[pNivel.contadorMovimientos] = 7;
                     }
 
-                    if (pNivel.laststate == 2 || pNivel.laststate == 1 && pNivel.isBlockSemaforo)
+                    if (pNivel.laststate == 2 || pNivel.laststate == 1)
                     {
                         pNivel.lastmov = pNivel.movimiento;
                         pNivel.mainbot[pNivel.contadorMovimientos] = 7;
@@ -1683,6 +1682,7 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
                             {
                                 pNivel.contadorMovIf = 0;
                                 pNivel.contadorMovimientos++;
+                                pNivel.laststate = -1;
                             }
 
                             // Avanzar en el array de movimientos
@@ -1695,7 +1695,7 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
                             pNivel.laststate = -1;
                         }
                     } //-----------------------------ELSE-----------------------------------
-                    else if (pNivel.laststate == 0 && pNivel.isBlockSemaforo)
+                    else if (pNivel.laststate == 0 )
                     {
                         pNivel.lastmov = pNivel.movimiento;
                         pNivel.mainbot[pNivel.contadorMovimientos] = 7;
@@ -1747,6 +1747,7 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
                             {
                                 pNivel.contadorMovElse = 0;
                                 pNivel.contadorMovimientos++;
+                                pNivel.laststate = -1;
                             }
 
                             // Avanzar en el array de movimientos
@@ -2061,6 +2062,7 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
 
                 posXIso = 0;
                 posYISo = 0;
+                pNivel.reset1();
 
                 for (int i = 0; i < 12; ++i)
                 {
