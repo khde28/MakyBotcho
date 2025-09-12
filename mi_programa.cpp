@@ -12,16 +12,17 @@
 #include <array>
 using namespace std;
 
-
 const int N = 10; // cantidad de mapas
 const int R = 8;  // filas
-const int C = 8;    
+const int C = 8;
 
 int mapas[10][8][8];
 int matrices2d[10][8][8];
-bool cargarMapa(const string& filename, int mapas[N][R][C]) {
+bool cargarMapa(const string &filename, int mapas[N][R][C])
+{
     ifstream in(filename);
-    if (!in) {
+    if (!in)
+    {
         cerr << "Error al abrir " << filename << endl;
         return false;
     }
@@ -29,14 +30,18 @@ bool cargarMapa(const string& filename, int mapas[N][R][C]) {
     int n, r, c;
     in >> n >> r >> c; // leer dimensiones (ej: 10 8 8)
 
-    if (n != N || r != R || c != C) {
+    if (n != N || r != R || c != C)
+    {
         cerr << "Dimensiones incorrectas en " << filename << endl;
         return false;
     }
 
-    for (int k = 0; k < N; k++) {
-        for (int i = 0; i < R; i++) {
-            for (int j = 0; j < C; j++) {
+    for (int k = 0; k < N; k++)
+    {
+        for (int i = 0; i < R; i++)
+        {
+            for (int j = 0; j < C; j++)
+            {
                 in >> mapas[k][i][j];
             }
         }
@@ -56,62 +61,70 @@ int totalLevels = 0;
 
 // Function to load 3D maps from file
 // Function to load 3D maps from file
-bool loadMaps3D(const std::string& filename) {
+bool loadMaps3D(const std::string &filename)
+{
     std::ifstream file(filename);
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         std::cerr << "Error: Could not open " << filename << std::endl;
         return false;
     }
-    
+
     std::string line;
     int currentLevel = 0;
     int row = 0;
     bool firstLine = true;
     int expectedLevels = 0;
-    
-    while (std::getline(file, line) && currentLevel < MAX_LEVELS) {
+
+    while (std::getline(file, line) && currentLevel < MAX_LEVELS)
+    {
         // Skip empty lines
-        if (line.empty() || line.find_first_not_of(' ') == std::string::npos) {
+        if (line.empty() || line.find_first_not_of(' ') == std::string::npos)
+        {
             continue;
         }
-        
+
         // Handle header line (first line with format: numLevels width height)
-        if (firstLine) {
+        if (firstLine)
+        {
             std::istringstream headerStream(line);
             int width, height;
             headerStream >> expectedLevels >> width >> height;
-            
-            if (width != gridSize || height != gridSize) {
-                std::cerr << "Warning: File dimensions (" << width << "x" << height 
-                         << ") don't match gridSize (" << gridSize << ")" << std::endl;
+
+            if (width != gridSize || height != gridSize)
+            {
+                std::cerr << "Warning: File dimensions (" << width << "x" << height
+                          << ") don't match gridSize (" << gridSize << ")" << std::endl;
             }
-            
-            std::cout << "Expected " << expectedLevels << " 3D levels of size " 
-                     << width << "x" << height << std::endl;
+
+            std::cout << "Expected " << expectedLevels << " 3D levels of size "
+                      << width << "x" << height << std::endl;
             firstLine = false;
             continue;
         }
-        
+
         // Parse the row data
         std::istringstream iss(line);
         int value;
         int col = 0;
-        
-        while (iss >> value && col < gridSize) {
+
+        while (iss >> value && col < gridSize)
+        {
             mapas3d[currentLevel][row][col] = value;
             col++;
         }
-        
+
         row++;
-        
+
         // Check if we've completed a matrix (gridSize rows)
-        if (row >= gridSize) {
+        if (row >= gridSize)
+        {
             currentLevel++;
             row = 0;
             std::cout << "Completed loading 3D level " << currentLevel << std::endl;
         }
     }
-    
+
     totalLevels = std::max(totalLevels, currentLevel);
     std::cout << "Loaded " << currentLevel << " 3D maps" << std::endl;
     file.close();
@@ -119,94 +132,106 @@ bool loadMaps3D(const std::string& filename) {
 }
 
 // Function to load 2D maps from file
-bool loadMaps2D(const std::string& filename) {
+bool loadMaps2D(const std::string &filename)
+{
     std::ifstream file(filename);
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         std::cerr << "Error: Could not open " << filename << std::endl;
         return false;
     }
-    
+
     std::string line;
     int currentLevel = 0;
     int row = 0;
     bool firstLine = true;
     int expectedLevels = 0;
-    
-    while (std::getline(file, line) && currentLevel < MAX_LEVELS) {
+
+    while (std::getline(file, line) && currentLevel < MAX_LEVELS)
+    {
         // Skip empty lines
-        if (line.empty() || line.find_first_not_of(' ') == std::string::npos) {
+        if (line.empty() || line.find_first_not_of(' ') == std::string::npos)
+        {
             continue;
         }
-        
+
         // Handle header line (first line with format: numLevels width height)
-        if (firstLine) {
+        if (firstLine)
+        {
             std::istringstream headerStream(line);
             int width, height;
             headerStream >> expectedLevels >> width >> height;
-            
-            if (width != gridSize || height != gridSize) {
-                std::cerr << "Warning: File dimensions (" << width << "x" << height 
-                         << ") don't match gridSize (" << gridSize << ")" << std::endl;
+
+            if (width != gridSize || height != gridSize)
+            {
+                std::cerr << "Warning: File dimensions (" << width << "x" << height
+                          << ") don't match gridSize (" << gridSize << ")" << std::endl;
             }
-            
-            std::cout << "Expected " << expectedLevels << " 2D levels of size " 
-                     << width << "x" << height << std::endl;
+
+            std::cout << "Expected " << expectedLevels << " 2D levels of size "
+                      << width << "x" << height << std::endl;
             firstLine = false;
             continue;
         }
-        
+
         // Parse the row data
         std::istringstream iss(line);
         int value;
         int col = 0;
-        
-        while (iss >> value && col < gridSize) {
+
+        while (iss >> value && col < gridSize)
+        {
             mapas2d[currentLevel][row][col] = value;
             col++;
         }
-        
+
         row++;
-        
+
         // Check if we've completed a matrix (gridSize rows)
-        if (row >= gridSize) {
+        if (row >= gridSize)
+        {
             currentLevel++;
             row = 0;
             std::cout << "Completed loading 2D level " << currentLevel << std::endl;
         }
     }
-    
+
     std::cout << "Loaded " << currentLevel << " 2D maps" << std::endl;
     file.close();
     return true;
 }
 // Function to initialize all maps
-bool initializeMaps() {
+bool initializeMaps()
+{
     // Initialize arrays with zeros
-    for (int level = 0; level < MAX_LEVELS; level++) {
-        for (int i = 0; i < gridSize; i++) {
-            for (int j = 0; j < gridSize; j++) {
+    for (int level = 0; level < MAX_LEVELS; level++)
+    {
+        for (int i = 0; i < gridSize; i++)
+        {
+            for (int j = 0; j < gridSize; j++)
+            {
                 mapas3d[level][i][j] = 0;
                 mapas2d[level][i][j] = 0;
             }
         }
     }
-    
+
     // Load maps from files
-    if (!loadMaps3D("mapas3d.txt")) {
+    if (!loadMaps3D("mapas3d.txt"))
+    {
         std::cerr << "Failed to load 3D maps" << std::endl;
         return false;
     }
-    
-    if (!loadMaps2D("mapas2d.txt")) {
+
+    if (!loadMaps2D("mapas2d.txt"))
+    {
         std::cerr << "Failed to load 2D maps" << std::endl;
         return false;
     }
-    
+
     std::cout << "Successfully loaded " << totalLevels << " levels" << std::endl;
     return true;
 }
-
-
 
 void escribirInstruccion(int numero, std::ofstream &archivo)
 {
@@ -436,7 +461,7 @@ void crearSpritesPiso(Sprite tiles[][gridSize], const int matriz3D[][gridSize], 
             {
                 tiles[i][j].setTexture(texturaLozaRoja);
             }
-            
+
             else
             {
                 tiles[i][j].setTexture(texturaPiso);
@@ -636,7 +661,7 @@ void move2(Vector2f &targetPosition, bool &moving, const Estado &estado, float x
 struct ParametrosNivel
 {
     int state;       // 0: Rojo, 1: Naranja, 2: Verde
-    int numeroCiclo; // cantidad de ciclos 1-5
+    int numeroCiclo; // cantidad de ciclos 1-10
 
     array<int, 12> mainbot;
     array<int, 8> f1bot;
@@ -785,17 +810,16 @@ struct ParametrosNivel
 
 ParametrosNivel pNivel;
 template <size_t N>
-void reemplazar(array<int, N> arr)
+void reemplazar(array<int, N> &arr)
 {
-    for (int i = 0; i < N; ++i)
+    for (int &val : arr)
     {
-        if (arr[i] == 4 || arr[i] == 5 || arr[i] == 6)
+        if (val == 4 || val == 5 || val == 6)
         {
-            arr[i] = 0;
+            val = 0;
         }
     }
 }
-
 //-----------------------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------------------
 
@@ -947,14 +971,16 @@ int main()
 {
     loadMaps2D("mapas2d.txt");
     loadMaps3D("mapas3d.txt");
-    if (!cargarMapa(std::string("mapas3d.txt"), mapas)) return 1;
-if (!cargarMapa(std::string("mapas2d.txt"), matrices2d)) return 1;
-    if (!texturaEstrella.loadFromFile("images/estrella.png")) {
-    cout << "Error al cargar textura de estrella" << endl;
-}
-spriteEstrella.setTexture(texturaEstrella);
-spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.getSize().y / 2.0f);
-
+    if (!cargarMapa(std::string("mapas3d.txt"), mapas))
+        return 1;
+    if (!cargarMapa(std::string("mapas2d.txt"), matrices2d))
+        return 1;
+    if (!texturaEstrella.loadFromFile("images/estrella.png"))
+    {
+        cout << "Error al cargar textura de estrella" << endl;
+    }
+    spriteEstrella.setTexture(texturaEstrella);
+    spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.getSize().y / 2.0f);
 
     //--------------------------------------- Configuración del Semaforo --------------------------------------
     sf::Texture redTexture, orangeTexture, greenTexture;
@@ -1234,7 +1260,7 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
 
     // crear el minimapa en 2d
     Sprite tiles2d[gridSize][gridSize];
-    configurarSprites(tiles2d, mapas2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d,texturaLozaRoja2d);
+    configurarSprites(tiles2d, mapas2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d, texturaLozaRoja2d);
 
     const int frameWidth = 40;
     const int frameHeight = 30;
@@ -1352,11 +1378,36 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
 
     setupLevelButtons();
     sf::Vector2i mousePos;
+    //---------------------------------------------------------------------------------------
 
+    sf::Color rosa (255, 192, 203); // pink
+    sf::Color lila (182, 102, 210); // lilac / light purple
+    sf::Color amarillo (0, 0, 255); // yellow
+    sf::Color cian (0, 255, 255); // cyan
 
+    // Crear rectángulos
+    float startY = 100;
+    float gap = 10.f;
+    sf::Vector2f size(30, 200);
+    sf::RectangleShape rect1(size);
+    rect1.setPosition(700, startY);
+    rect1.setFillColor(rosa);
+
+    sf::RectangleShape rect2(sf::Vector2f(30,133));
+    rect2.setPosition(700 , 180+ startY+ (size.x + gap) * 1);
+    rect2.setFillColor(lila);
+
+    sf::RectangleShape rect3(sf::Vector2f(30,60));
+    rect3.setPosition(700 ,300+ startY+ (size.x + gap) * 2);
+    rect3.setFillColor(amarillo);
+
+    sf::RectangleShape rect4(sf::Vector2f(30,133));
+    rect4.setPosition(700 ,50 + startY+ (133 + gap) * 3);
+    rect4.setFillColor(cian);
 
     while (window.isOpen())
     {
+        cout << pNivel.laststate << "  estado  " << state << endl;
         mousePos = sf::Mouse::getPosition(window);
         // Lógica de reproducción de sonido
         if (!soundPlaying)
@@ -1412,7 +1463,7 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
                     {
                         restartWithLevel(clickedLevel, pNivel, makibot, targetPosition, contador, tiles, tiles2d,
                                          bloques, bloques2, texturaLozaAzul, texturaPiso, texturaBloque,
-                                         texturaBloque2d, texturaLozaAzul2D, texturaPiso2d,texturaLozaRoja,texturaLozaRoja2d, framesF, texSemaforo);
+                                         texturaBloque2d, texturaLozaAzul2D, texturaPiso2d, texturaLozaRoja, texturaLozaRoja2d, framesF, texSemaforo);
                         isPaused = false;
                         showLevelMenu = false;
                         clickSound.play();
@@ -1650,6 +1701,8 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
                     if (pNivel.laststate == -1)
                     {
                         pNivel.laststate = state;
+                        pNivel.lastmov = pNivel.movimiento;
+                        pNivel.mainbot[pNivel.contadorMovimientos] = 7;
                     }
 
                     if (pNivel.laststate == 2 || pNivel.laststate == 1 && pNivel.isBlockSemaforo)
@@ -1705,6 +1758,7 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
                             {
                                 pNivel.contadorMovIf = 0;
                                 pNivel.contadorMovimientos++;
+                                pNivel.laststate = -1;
                             }
 
                             // Avanzar en el array de movimientos
@@ -1769,6 +1823,7 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
                             {
                                 pNivel.contadorMovElse = 0;
                                 pNivel.contadorMovimientos++;
+                                pNivel.laststate = -1;
                             }
 
                             // Avanzar en el array de movimientos
@@ -2084,6 +2139,7 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
 
                 posXIso = 0;
                 posYISo = 0;
+                pNivel.reset1();
 
                 for (int i = 0; i < 12; ++i)
                 {
@@ -2145,128 +2201,129 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
             }
 
             if (!pNivel.colisionando)
-{
-    if (!(posXIso >= 0 && posXIso < gridSize && posYISo >= 0 && posYISo < gridSize) ||
-        (mapas[pNivel.mapaActual][posXIso][posYISo] != 0 && mapas[pNivel.mapaActual][posXIso][posYISo] != -1 && mapas[pNivel.mapaActual][posXIso][posYISo] != -2))
-    {
-        // COLLISION DETECTED - MOSTRAR ESTRELLA Y ACTIVAR TIMER
-        cout << "COLLISION DETECTED - SHOWING STAR EFFECT" << endl;
-        
-        // Guardar posición donde ocurrió la colisión
-        posicionEstrella = targetPosition + sf::Vector2f(0.f, -15.f);;
-        mostrarEstrella = true;
-        clockEstrella.restart();
-        
-        // Establecer posición de la estrella
-        spriteEstrella.setPosition(posicionEstrella);
-        
-        // Detener movimiento inmediatamente
-        moving = false;
-        pNivel.colisionando = true; // Usamos esto como flag temporal
-        pNivel.girando = false;
-    }
-    else
-    {
-        // Normal movement logic (existing code remains the same)
-        if (mapas[pNivel.mapaActual][posXIso][posYISo] == -2)
-        {
-            cout << "cambio if-else" << pNivel.laststate << endl;
-            pNivel.isBlockSemaforo == 1;
-        }
-        
-        if (animationClock.getElapsedTime().asSeconds() > animationSpeed)
-        {
-            if (miraNE || miraNO)
             {
-                pNivel.currentFrame = (pNivel.currentFrame + 1) % framesB.size();
-                makibot.setTextureRect(framesB[pNivel.currentFrame]);
-                cout << "arriba" << endl;
+                if (!(posXIso >= 0 && posXIso < gridSize && posYISo >= 0 && posYISo < gridSize) ||
+                    (mapas[pNivel.mapaActual][posXIso][posYISo] != 0 && mapas[pNivel.mapaActual][posXIso][posYISo] != -1 && mapas[pNivel.mapaActual][posXIso][posYISo] != -2))
+                {
+                    // COLLISION DETECTED - MOSTRAR ESTRELLA Y ACTIVAR TIMER
+                    cout << "COLLISION DETECTED - SHOWING STAR EFFECT" << endl;
+
+                    // Guardar posición donde ocurrió la colisión
+                    posicionEstrella = targetPosition + sf::Vector2f(0.f, -15.f);
+                    ;
+                    mostrarEstrella = true;
+                    clockEstrella.restart();
+
+                    // Establecer posición de la estrella
+                    spriteEstrella.setPosition(posicionEstrella);
+
+                    // Detener movimiento inmediatamente
+                    moving = false;
+                    pNivel.colisionando = true; // Usamos esto como flag temporal
+                    pNivel.girando = false;
+                }
+                else
+                {
+                    // Normal movement logic (existing code remains the same)
+                    if (mapas[pNivel.mapaActual][posXIso][posYISo] == -2)
+                    {
+                        cout << "cambio if-else" << pNivel.laststate << endl;
+                        pNivel.isBlockSemaforo == 1;
+                    }
+
+                    if (animationClock.getElapsedTime().asSeconds() > animationSpeed)
+                    {
+                        if (miraNE || miraNO)
+                        {
+                            pNivel.currentFrame = (pNivel.currentFrame + 1) % framesB.size();
+                            makibot.setTextureRect(framesB[pNivel.currentFrame]);
+                            cout << "arriba" << endl;
+                        }
+                        else if (miraSO || miraSE)
+                        {
+                            pNivel.currentFrame = (pNivel.currentFrame + 1) % framesF.size();
+                            makibot.setTextureRect(framesF[pNivel.currentFrame]);
+                        }
+
+                        animationClock.restart();
+                    }
+
+                    Vector2f currentPosition = makibot.getPosition();
+                    moveRobot(makibot, targetPosition, currentPosition, xIso, yIso);
+                    stopMovement(makibot, targetPosition, makibot.getPosition(), pNivel.currentFrame, miraNE, miraNO, miraSO, miraSE, moving, framesB, framesF);
+
+                    makibot2D.setPosition(57.5f + 15.f * posXIso, 47.4f + 15.f * posYISo);
+                    cout << "salida del moving: " << moving << endl;
+
+                    updateBlocks(bloques2, mapas[pNivel.mapaActual], gridSize, texturaBloque, lado, posXIso, posYISo);
+                }
             }
-            else if (miraSO || miraSE)
+
+            // CUARTO: Reemplazar el manejo de colisión anterior con este nuevo código
+            if (pNivel.colisionando == true)
             {
-                pNivel.currentFrame = (pNivel.currentFrame + 1) % framesF.size();
-                makibot.setTextureRect(framesF[pNivel.currentFrame]);
+                // Verificar si ha pasado 1 segundo desde la colisión
+                if (clockEstrella.getElapsedTime().asSeconds() > 1.0f)
+                {
+                    // Ocultar estrella y resetear nivel después de 1 segundo
+                    mostrarEstrella = false;
+
+                    // RESET COMPLETO DEL NIVEL
+                    cout << "RESETTING LEVEL AFTER COLLISION" << endl;
+
+                    // Reset all counters and states
+                    pNivel.reset1();
+                    contador = 0;
+
+                    // Clear all instruction arrays
+                    for (int i = 0; i < 12; ++i)
+                    {
+                        pNivel.mainbot[i] = 0;
+                    }
+                    for (int i = 0; i < 8; ++i)
+                    {
+                        pNivel.f1bot[i] = 0;
+                    }
+                    for (int i = 0; i < 4; ++i)
+                    {
+                        pNivel.buclebot[i] = 0;
+                    }
+                    for (int i = 0; i < 8; ++i)
+                    {
+                        pNivel.ifbot[i] = 0;
+                    }
+                    for (int i = 0; i < 8; ++i)
+                    {
+                        pNivel.elsebot[i] = 0;
+                    }
+
+                    // Reset robot position and orientation
+                    makibot.setOrigin(20.f, 30.f);
+                    makibot.setPosition(300.f, 160.f + yIso / 2.f);
+                    makibot.setTextureRect(framesF[0]);
+                    targetPosition = makibot.getPosition();
+
+                    // Reset direction flags
+                    miraNE = false;
+                    miraNO = false;
+                    miraSO = false;
+                    miraSE = true;
+
+                    // Stop all movement and collision state
+                    moving = false;
+                    pNivel.colisionando = false;
+                    pNivel.girando = false;
+
+                    // Reset animation frame
+                    pNivel.currentFrame = 0;
+
+                    // Reset additional counters
+                    pNivel.currentIteraciones = 0;
+                    pNivel.laststate = -1;
+
+                    cout << "Level reset completed after collision" << endl;
+                }
             }
-
-            animationClock.restart();
-        }
-
-        Vector2f currentPosition = makibot.getPosition();
-        moveRobot(makibot, targetPosition, currentPosition, xIso, yIso);
-        stopMovement(makibot, targetPosition, makibot.getPosition(), pNivel.currentFrame, miraNE, miraNO, miraSO, miraSE, moving, framesB, framesF);
-        
-        makibot2D.setPosition(57.5f + 15.f * posXIso, 47.4f + 15.f * posYISo);
-        cout << "salida del moving: " << moving << endl;
-        
-        updateBlocks(bloques2, mapas[pNivel.mapaActual], gridSize, texturaBloque, lado, posXIso, posYISo);
-    }
-}
-
-// CUARTO: Reemplazar el manejo de colisión anterior con este nuevo código
-if (pNivel.colisionando == true)
-{
-    // Verificar si ha pasado 1 segundo desde la colisión
-    if (clockEstrella.getElapsedTime().asSeconds() > 1.0f)
-    {
-        // Ocultar estrella y resetear nivel después de 1 segundo
-        mostrarEstrella = false;
-        
-        // RESET COMPLETO DEL NIVEL
-        cout << "RESETTING LEVEL AFTER COLLISION" << endl;
-        
-        // Reset all counters and states
-        pNivel.reset1();
-        contador = 0;
-        
-        // Clear all instruction arrays
-        for (int i = 0; i < 12; ++i)
-        {
-            pNivel.mainbot[i] = 0;
-        }
-        for (int i = 0; i < 8; ++i)
-        {
-            pNivel.f1bot[i] = 0;
-        }
-        for (int i = 0; i < 4; ++i)
-        {
-            pNivel.buclebot[i] = 0;
-        }
-        for (int i = 0; i < 8; ++i)
-        {
-            pNivel.ifbot[i] = 0;
-        }
-        for (int i = 0; i < 8; ++i)
-        {
-            pNivel.elsebot[i] = 0;
-        }
-        
-        // Reset robot position and orientation
-        makibot.setOrigin(20.f, 30.f);
-        makibot.setPosition(300.f, 160.f + yIso / 2.f);
-        makibot.setTextureRect(framesF[0]);
-        targetPosition = makibot.getPosition();
-        
-        // Reset direction flags
-        miraNE = false;
-        miraNO = false;
-        miraSO = false;
-        miraSE = true;
-        
-        // Stop all movement and collision state
-        moving = false;
-        pNivel.colisionando = false;
-        pNivel.girando = false;
-        
-        // Reset animation frame
-        pNivel.currentFrame = 0;
-        
-        // Reset additional counters
-        pNivel.currentIteraciones = 0;
-        pNivel.laststate = -1;
-        
-        cout << "Level reset completed after collision" << endl;
-    }
-}
 
             if (miraNE)
                 makibot.setScale(1.f, 1.f);
@@ -2304,7 +2361,10 @@ if (pNivel.colisionando == true)
         }
 
         window.clear(grisOscuro);
-
+        window.draw(rect1);
+        window.draw(rect2);
+        window.draw(rect3);
+        window.draw(rect4);
         // sprite semaforo
         window.draw(SpriteSemaforo);
         // Add pause/play button to rendering
@@ -2375,9 +2435,9 @@ if (pNivel.colisionando == true)
 
         //-----------------------------------------------------------------------------
         if (mostrarEstrella)
-{
-    window.draw(spriteEstrella);
-}
+        {
+            window.draw(spriteEstrella);
+        }
         // draw level stage
         sf::RectangleShape levelStage(sf::Vector2f(300, 50));
         levelStage.setPosition(200, 20);
@@ -2439,8 +2499,7 @@ if (pNivel.colisionando == true)
         // ... rest of your rendering code
         window.display();
     }
-    
-    
+
     return 0;
 }
 
