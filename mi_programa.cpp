@@ -422,7 +422,7 @@ Vector2i calculateGridIndices(const Vector2f &position, const Vector2f &gridOrig
     return Vector2i(posXIso, posYISo);
 }
 
-void crearSpritesPiso(Sprite tiles[][gridSize], const int matriz3D[][gridSize], Texture &texturaLozaAzul, Texture &texturaPiso)
+void crearSpritesPiso(Sprite tiles[][gridSize], const int matriz3D[][gridSize], Texture &texturaLozaAzul, Texture &texturaPiso, Texture &texturaLozaRoja)
 {
     for (int i = 0; i < gridSize; ++i)
     {
@@ -432,6 +432,11 @@ void crearSpritesPiso(Sprite tiles[][gridSize], const int matriz3D[][gridSize], 
             {
                 tiles[i][j].setTexture(texturaLozaAzul);
             }
+            else if (matriz3D[i][j] == -2)
+            {
+                tiles[i][j].setTexture(texturaLozaRoja);
+            }
+            
             else
             {
                 tiles[i][j].setTexture(texturaPiso);
@@ -462,23 +467,27 @@ void crearSpritesBloques(vector<Sprite> &bloques, const int matriz3D[][gridSize]
 }
 
 // Función para crear los sprites en una matriz 2D
-void configurarSprites(sf::Sprite tiles2d[][gridSize], const int matriz2D[][gridSize], sf::Texture &texturaBloque2d, sf::Texture &texturaLozaAzul2D, sf::Texture &texturaPiso2d)
+void configurarSprites(sf::Sprite tiles2d[][gridSize], const int matriz2D[][gridSize], sf::Texture &texturaBloque2d, sf::Texture &texturaLozaAzul2D, sf::Texture &texturaPiso2d, sf::Texture &texturaLozaRoja2D)
 {
     for (int i = 0; i < gridSize; ++i)
     {
         for (int j = 0; j < gridSize; ++j)
         {
-            if (matriz2D[i][j] == 1)
+            if (matriz2D[i][j] == 0)
             {
-                tiles2d[i][j].setTexture(texturaBloque2d);
+                tiles2d[i][j].setTexture(texturaPiso2d);
             }
             else if (matriz2D[i][j] == -1)
             {
                 tiles2d[i][j].setTexture(texturaLozaAzul2D);
             }
+            else if (matriz2D[i][j] == -2)
+            {
+                tiles2d[i][j].setTexture(texturaLozaRoja2D);
+            }
             else
             {
-                tiles2d[i][j].setTexture(texturaPiso2d);
+                tiles2d[i][j].setTexture(texturaBloque2d);
             }
             tiles2d[i][j].setPosition(50 + i * 15, 40 + j * 15);
         }
@@ -805,6 +814,7 @@ void restartWithLevel(int levelNumber, ParametrosNivel &pNivel, sf::Sprite &maki
                       sf::Texture &texturaLozaAzul, sf::Texture &texturaPiso,
                       sf::Texture &texturaBloque, sf::Texture &texturaBloque2d,
                       sf::Texture &texturaLozaAzul2D, sf::Texture &texturaPiso2d,
+                      sf::Texture &texturaLozaRoja, sf::Texture &texturaLozaRoja2d,
                       std::vector<sf::IntRect> &framesF, std::vector<Semaforo> &texSemaforo)
 {
     // Reset all parameters
@@ -832,9 +842,9 @@ void restartWithLevel(int levelNumber, ParametrosNivel &pNivel, sf::Sprite &maki
     }
 
     // Recreate map sprites for the selected level
-    crearSpritesPiso(tiles, mapas3d[pNivel.mapaActual], texturaLozaAzul, texturaPiso);
+    crearSpritesPiso(tiles, mapas3d[pNivel.mapaActual], texturaLozaAzul, texturaPiso, texturaLozaRoja);
     crearSpritesBloques(bloques, mapas3d[pNivel.mapaActual], texturaBloque);
-    configurarSprites(tiles2d, mapas2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d);
+    configurarSprites(tiles2d, mapas2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d, texturaLozaRoja2d);
     updateBlocks(bloques2, mapas3d[pNivel.mapaActual], gridSize, texturaBloque, lado, 0, 0);
 
     // Recreate semaphores for the selected level
@@ -1185,12 +1195,21 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
     {
         return -1;
     }
-
+    Texture texturaLozaRoja;
+    if (!texturaLozaRoja.loadFromFile("images/loza_rojo.png"))
+    {
+        return -1;
+    }
+    Texture texturaLozaRoja2d;
+    if (!texturaLozaRoja2d.loadFromFile("images/loza_rojo2d.png"))
+    {
+        return -1;
+    }
     // Crear el sprite del piso
 
     Sprite tiles[gridSize][gridSize];
 
-    crearSpritesPiso(tiles, mapas3d[pNivel.mapaActual], texturaLozaAzul, texturaPiso);
+    crearSpritesPiso(tiles, mapas3d[pNivel.mapaActual], texturaLozaAzul, texturaPiso, texturaLozaRoja);
 
     // Vector de sprites para los bloques
     vector<Sprite> bloques;
@@ -1215,7 +1234,7 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
 
     // crear el minimapa en 2d
     Sprite tiles2d[gridSize][gridSize];
-    configurarSprites(tiles2d, mapas2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d);
+    configurarSprites(tiles2d, mapas2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d,texturaLozaRoja2d);
 
     const int frameWidth = 40;
     const int frameHeight = 30;
@@ -1333,6 +1352,9 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
 
     setupLevelButtons();
     sf::Vector2i mousePos;
+
+
+
     while (window.isOpen())
     {
         mousePos = sf::Mouse::getPosition(window);
@@ -1390,7 +1412,7 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
                     {
                         restartWithLevel(clickedLevel, pNivel, makibot, targetPosition, contador, tiles, tiles2d,
                                          bloques, bloques2, texturaLozaAzul, texturaPiso, texturaBloque,
-                                         texturaBloque2d, texturaLozaAzul2D, texturaPiso2d, framesF, texSemaforo);
+                                         texturaBloque2d, texturaLozaAzul2D, texturaPiso2d,texturaLozaRoja,texturaLozaRoja2d, framesF, texSemaforo);
                         isPaused = false;
                         showLevelMenu = false;
                         clickSound.play();
@@ -1417,10 +1439,10 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
                         makibot.setTextureRect(framesF[0]);
                         targetPosition = makibot.getPosition();
 
-                        crearSpritesPiso(tiles, mapas3d[pNivel.mapaActual], texturaLozaAzul, texturaPiso);
+                        crearSpritesPiso(tiles, mapas3d[pNivel.mapaActual], texturaLozaAzul, texturaPiso, texturaLozaRoja);
                         bloques.clear();
                         crearSpritesBloques(bloques, mapas3d[pNivel.mapaActual], texturaBloque);
-                        configurarSprites(tiles2d, mapas2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d);
+                        configurarSprites(tiles2d, mapas2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d, texturaLozaRoja2d);
 
                         updateBlocks(bloques2, mapas3d[pNivel.mapaActual], gridSize, texturaBloque, lado, 0, 0);
                         clickSound.play();
@@ -1900,7 +1922,7 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
                     pNivel.contadorMovimientos = 0;
                     pNivel.contadorMovf1 = 0;
                     pNivel.contadorMovbucle = 0;
-                    pNivel.booliniciar = false;
+                    pNivel.booliniciar = 0;
                     bloques.clear();
 
                     for (int i = 0; i < gridSize; ++i)
@@ -1961,9 +1983,9 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
                     miraSO = false;
                     miraSE = true;
 
-                    crearSpritesPiso(tiles, mapas3d[pNivel.mapaActual], texturaLozaAzul, texturaPiso);
+                    crearSpritesPiso(tiles, mapas3d[pNivel.mapaActual], texturaLozaAzul, texturaPiso, texturaLozaRoja);
                     crearSpritesBloques(bloques, mapas3d[pNivel.mapaActual], texturaBloque);
-                    configurarSprites(tiles2d, mapas2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d);
+                    configurarSprites(tiles2d, mapas2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d, texturaLozaRoja2d);
 
                     // Detener movimiento
                     moving = false;
@@ -1975,6 +1997,7 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
                     miraNO = false;
                     miraSO = false;
                     miraSE = true;
+                    contador = 0;
                     contdebug++;
                     if (miraNE || miraNO)
                     {
@@ -2113,9 +2136,9 @@ spriteEstrella.setOrigin(texturaEstrella.getSize().x / 2.0f, texturaEstrella.get
                 // Actualizar targetPosition a la nueva posición inicial
                 targetPosition = makibot.getPosition();
 
-                crearSpritesPiso(tiles, mapas3d[pNivel.mapaActual], texturaLozaAzul, texturaPiso);
+                crearSpritesPiso(tiles, mapas3d[pNivel.mapaActual], texturaLozaAzul, texturaPiso, texturaLozaRoja);
                 crearSpritesBloques(bloques, mapas3d[pNivel.mapaActual], texturaBloque);
-                configurarSprites(tiles2d, mapas2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d);
+                configurarSprites(tiles2d, mapas2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d, texturaLozaRoja2d);
 
                 // Detener movimiento
                 moving = false;
@@ -2416,6 +2439,8 @@ if (pNivel.colisionando == true)
         // ... rest of your rendering code
         window.display();
     }
+    
+    
     return 0;
 }
 
