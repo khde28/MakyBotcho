@@ -10,228 +10,20 @@
 #include <stdio.h>
 #include <sstream>
 #include <array>
+#include "GameManager.h"
+#include "constantes.h"
+
 using namespace std;
+using namespace Constantes;
 
 const int N = 10; // cantidad de mapas
 const int R = 8;  // filas
 const int C = 8;
 
 int mapas[10][8][8];
-int matrices2d[10][8][8];
-bool cargarMapa(const string &filename, int mapas[N][R][C])
-{
-    ifstream in(filename);
-    if (!in)
-    {
-        cerr << "Error al abrir " << filename << endl;
-        return false;
-    }
 
-    int n, r, c;
-    in >> n >> r >> c; // leer dimensiones (ej: 10 8 8)
-
-    if (n != N || r != R || c != C)
-    {
-        cerr << "Dimensiones incorrectas en " << filename << endl;
-        return false;
-    }
-
-    for (int k = 0; k < N; k++)
-    {
-        for (int i = 0; i < R; i++)
-        {
-            for (int j = 0; j < C; j++)
-            {
-                in >> mapas[k][i][j];
-            }
-        }
-    }
-
-    return true;
-}
-const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
 const float BUTTON_SCALE = 1.06f;
-const int gridSize = 8;
-
-const int MAX_LEVELS = 10; // Adjust based on how many levels you expect
-int mapas3d[MAX_LEVELS][gridSize][gridSize];
-int mapas2d[MAX_LEVELS][gridSize][gridSize];
-int totalLevels = 0;
-
-// Function to load 3D maps from file
-// Function to load 3D maps from file
-bool loadMaps3D(const std::string &filename)
-{
-    std::ifstream file(filename);
-    if (!file.is_open())
-    {
-        std::cerr << "Error: Could not open " << filename << std::endl;
-        return false;
-    }
-
-    std::string line;
-    int currentLevel = 0;
-    int row = 0;
-    bool firstLine = true;
-    int expectedLevels = 0;
-
-    while (std::getline(file, line) && currentLevel < MAX_LEVELS)
-    {
-        // Skip empty lines
-        if (line.empty() || line.find_first_not_of(' ') == std::string::npos)
-        {
-            continue;
-        }
-
-        // Handle header line (first line with format: numLevels width height)
-        if (firstLine)
-        {
-            std::istringstream headerStream(line);
-            int width, height;
-            headerStream >> expectedLevels >> width >> height;
-
-            if (width != gridSize || height != gridSize)
-            {
-                std::cerr << "Warning: File dimensions (" << width << "x" << height
-                          << ") don't match gridSize (" << gridSize << ")" << std::endl;
-            }
-
-            std::cout << "Expected " << expectedLevels << " 3D levels of size "
-                      << width << "x" << height << std::endl;
-            firstLine = false;
-            continue;
-        }
-
-        // Parse the row data
-        std::istringstream iss(line);
-        int value;
-        int col = 0;
-
-        while (iss >> value && col < gridSize)
-        {
-            mapas3d[currentLevel][row][col] = value;
-            col++;
-        }
-
-        row++;
-
-        // Check if we've completed a matrix (gridSize rows)
-        if (row >= gridSize)
-        {
-            currentLevel++;
-            row = 0;
-            std::cout << "Completed loading 3D level " << currentLevel << std::endl;
-        }
-    }
-
-    totalLevels = std::max(totalLevels, currentLevel);
-    std::cout << "Loaded " << currentLevel << " 3D maps" << std::endl;
-    file.close();
-    return true;
-}
-
-// Function to load 2D maps from file
-bool loadMaps2D(const std::string &filename)
-{
-    std::ifstream file(filename);
-    if (!file.is_open())
-    {
-        std::cerr << "Error: Could not open " << filename << std::endl;
-        return false;
-    }
-
-    std::string line;
-    int currentLevel = 0;
-    int row = 0;
-    bool firstLine = true;
-    int expectedLevels = 0;
-
-    while (std::getline(file, line) && currentLevel < MAX_LEVELS)
-    {
-        // Skip empty lines
-        if (line.empty() || line.find_first_not_of(' ') == std::string::npos)
-        {
-            continue;
-        }
-
-        // Handle header line (first line with format: numLevels width height)
-        if (firstLine)
-        {
-            std::istringstream headerStream(line);
-            int width, height;
-            headerStream >> expectedLevels >> width >> height;
-
-            if (width != gridSize || height != gridSize)
-            {
-                std::cerr << "Warning: File dimensions (" << width << "x" << height
-                          << ") don't match gridSize (" << gridSize << ")" << std::endl;
-            }
-
-            std::cout << "Expected " << expectedLevels << " 2D levels of size "
-                      << width << "x" << height << std::endl;
-            firstLine = false;
-            continue;
-        }
-
-        // Parse the row data
-        std::istringstream iss(line);
-        int value;
-        int col = 0;
-
-        while (iss >> value && col < gridSize)
-        {
-            mapas2d[currentLevel][row][col] = value;
-            col++;
-        }
-
-        row++;
-
-        // Check if we've completed a matrix (gridSize rows)
-        if (row >= gridSize)
-        {
-            currentLevel++;
-            row = 0;
-            std::cout << "Completed loading 2D level " << currentLevel << std::endl;
-        }
-    }
-
-    std::cout << "Loaded " << currentLevel << " 2D maps" << std::endl;
-    file.close();
-    return true;
-}
-// Function to initialize all maps
-bool initializeMaps()
-{
-    // Initialize arrays with zeros
-    for (int level = 0; level < MAX_LEVELS; level++)
-    {
-        for (int i = 0; i < gridSize; i++)
-        {
-            for (int j = 0; j < gridSize; j++)
-            {
-                mapas3d[level][i][j] = 0;
-                mapas2d[level][i][j] = 0;
-            }
-        }
-    }
-
-    // Load maps from files
-    if (!loadMaps3D("mapas3d.txt"))
-    {
-        std::cerr << "Failed to load 3D maps" << std::endl;
-        return false;
-    }
-
-    if (!loadMaps2D("mapas2d.txt"))
-    {
-        std::cerr << "Failed to load 2D maps" << std::endl;
-        return false;
-    }
-
-    std::cout << "Successfully loaded " << totalLevels << " levels" << std::endl;
-    return true;
-}
 
 void escribirInstruccion(int numero, std::ofstream &archivo)
 {
@@ -447,11 +239,11 @@ Vector2i calculateGridIndices(const Vector2f &position, const Vector2f &gridOrig
     return Vector2i(posXIso, posYISo);
 }
 
-void crearSpritesPiso(Sprite tiles[][gridSize], const int matriz3D[][gridSize], Texture &texturaLozaAzul, Texture &texturaPiso, Texture &texturaLozaRoja)
+void crearSpritesPiso(Sprite tiles[][GRIDSIZE], const int matriz3D[][GRIDSIZE], Texture &texturaLozaAzul, Texture &texturaPiso, Texture &texturaLozaRoja)
 {
-    for (int i = 0; i < gridSize; ++i)
+    for (int i = 0; i < GRIDSIZE; ++i)
     {
-        for (int j = 0; j < gridSize; ++j)
+        for (int j = 0; j < GRIDSIZE; ++j)
         {
             if (matriz3D[i][j] == -1)
             {
@@ -472,11 +264,11 @@ void crearSpritesPiso(Sprite tiles[][gridSize], const int matriz3D[][gridSize], 
 }
 
 // Función para crear los sprites de los bloques
-void crearSpritesBloques(vector<Sprite> &bloques, const int matriz3D[][gridSize], Texture &texturaBloque)
+void crearSpritesBloques(vector<Sprite> &bloques, const int matriz3D[][GRIDSIZE], Texture &texturaBloque)
 {
-    for (int i = 0; i < gridSize; ++i)
+    for (int i = 0; i < GRIDSIZE; ++i)
     {
-        for (int j = 0; j < gridSize; ++j)
+        for (int j = 0; j < GRIDSIZE; ++j)
         {
             if (matriz3D[i][j] != 0)
             {
@@ -492,11 +284,11 @@ void crearSpritesBloques(vector<Sprite> &bloques, const int matriz3D[][gridSize]
 }
 
 // Función para crear los sprites en una matriz 2D
-void configurarSprites(sf::Sprite tiles2d[][gridSize], const int matriz2D[][gridSize], sf::Texture &texturaBloque2d, sf::Texture &texturaLozaAzul2D, sf::Texture &texturaPiso2d, sf::Texture &texturaLozaRoja2D)
+void configurarSprites(sf::Sprite tiles2d[][GRIDSIZE], const int matriz2D[][GRIDSIZE], sf::Texture &texturaBloque2d, sf::Texture &texturaLozaAzul2D, sf::Texture &texturaPiso2d, sf::Texture &texturaLozaRoja2D)
 {
-    for (int i = 0; i < gridSize; ++i)
+    for (int i = 0; i < GRIDSIZE; ++i)
     {
-        for (int j = 0; j < gridSize; ++j)
+        for (int j = 0; j < GRIDSIZE; ++j)
         {
             if (matriz2D[i][j] == 0)
             {
@@ -556,12 +348,12 @@ void stopMovement(Sprite &makibot, const Vector2f &targetPosition, const Vector2
     }
 }
 
-void updateBlocks(vector<Sprite> &bloques2, const int mapas[][gridSize], int gridSize, const Texture &texturaBloque, float lado, int posXIso, int posYISo)
+void updateBlocks(vector<Sprite> &bloques2, const int mapas[][GRIDSIZE], int GRIDSIZE, const Texture &texturaBloque, float lado, int posXIso, int posYISo)
 {
     bloques2.clear();
-    for (int i = 0; i < gridSize; ++i)
+    for (int i = 0; i < GRIDSIZE; ++i)
     {
-        for (int j = 0; j < gridSize; ++j)
+        for (int j = 0; j < GRIDSIZE; ++j)
         {
             if (posXIso <= i && posYISo <= j)
             {
@@ -581,12 +373,12 @@ struct Semaforo
     float posX;
     float posY;
 };
-void crearSemaforos(vector<Semaforo> &semaforos, const int matriz3D[][gridSize], vector<IntRect> &seccionSemaforo)
+void crearSemaforos(vector<Semaforo> &semaforos, const int matriz3D[][GRIDSIZE], vector<IntRect> &seccionSemaforo)
 {
     semaforos.clear();
-    for (int i = 0; i < gridSize; i++)
+    for (int i = 0; i < GRIDSIZE; i++)
     {
-        for (int j = 0; j < gridSize; j++)
+        for (int j = 0; j < GRIDSIZE; j++)
         {
             if (matriz3D[i][j] == -2)
             {
@@ -833,7 +625,7 @@ sf::Font font;
 // FUNCTION DEFINITIONS (before main):
 void restartWithLevel(int levelNumber, ParametrosNivel &pNivel, sf::Sprite &makibot,
                       sf::Vector2f &targetPosition, int &contador,
-                      sf::Sprite tiles[][gridSize], sf::Sprite tiles2d[][gridSize],
+                      sf::Sprite tiles[][GRIDSIZE], sf::Sprite tiles2d[][GRIDSIZE],
                       std::vector<sf::Sprite> &bloques, std::vector<sf::Sprite> &bloques2,
                       sf::Texture &texturaLozaAzul, sf::Texture &texturaPiso,
                       sf::Texture &texturaBloque, sf::Texture &texturaBloque2d,
@@ -856,9 +648,9 @@ void restartWithLevel(int levelNumber, ParametrosNivel &pNivel, sf::Sprite &maki
 
     // Clear existing sprites
     bloques.clear();
-    for (int i = 0; i < gridSize; ++i)
+    for (int i = 0; i < GRIDSIZE; ++i)
     {
-        for (int j = 0; j < gridSize; ++j)
+        for (int j = 0; j < GRIDSIZE; ++j)
         {
             tiles[i][j] = sf::Sprite();
             tiles2d[i][j] = sf::Sprite();
@@ -869,7 +661,7 @@ void restartWithLevel(int levelNumber, ParametrosNivel &pNivel, sf::Sprite &maki
     crearSpritesPiso(tiles, mapas3d[pNivel.mapaActual], texturaLozaAzul, texturaPiso, texturaLozaRoja);
     crearSpritesBloques(bloques, mapas3d[pNivel.mapaActual], texturaBloque);
     configurarSprites(tiles2d, mapas2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d, texturaLozaRoja2d);
-    updateBlocks(bloques2, mapas3d[pNivel.mapaActual], gridSize, texturaBloque, lado, 0, 0);
+    updateBlocks(bloques2, mapas3d[pNivel.mapaActual], GRIDSIZE, texturaBloque, lado, 0, 0);
 
     // Recreate semaphores for the selected level
     std::vector<sf::IntRect> framesSemaforo;
@@ -969,12 +761,9 @@ sf::Vector2f posicionEstrella;
 
 int main()
 {
-    loadMaps2D("mapas2d.txt");
-    loadMaps3D("mapas3d.txt");
-    if (!cargarMapa(std::string("mapas3d.txt"), mapas))
-        return 1;
-    if (!cargarMapa(std::string("mapas2d.txt"), matrices2d))
-        return 1;
+    GameManager gameManager;
+    gameManager.initMapas();
+
     if (!texturaEstrella.loadFromFile("images/estrella.png"))
     {
         cout << "Error al cargar textura de estrella" << endl;
@@ -1233,7 +1022,7 @@ int main()
     }
     // Crear el sprite del piso
 
-    Sprite tiles[gridSize][gridSize];
+    Sprite tiles[GRIDSIZE][GRIDSIZE];
 
     crearSpritesPiso(tiles, mapas3d[pNivel.mapaActual], texturaLozaAzul, texturaPiso, texturaLozaRoja);
 
@@ -1259,7 +1048,7 @@ int main()
     }
 
     // crear el minimapa en 2d
-    Sprite tiles2d[gridSize][gridSize];
+    Sprite tiles2d[GRIDSIZE][GRIDSIZE];
     configurarSprites(tiles2d, mapas2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d, texturaLozaRoja2d);
 
     const int frameWidth = 40;
@@ -1380,10 +1169,10 @@ int main()
     sf::Vector2i mousePos;
     //---------------------------------------------------------------------------------------
 
-    sf::Color rosa (255, 192, 203); // pink
-    sf::Color lila (182, 102, 210); // lilac / light purple
-    sf::Color amarillo (0, 0, 255); // yellow
-    sf::Color cian (0, 255, 255); // cyan
+    sf::Color rosa(255, 192, 203); // pink
+    sf::Color lila(182, 102, 210); // lilac / light purple
+    sf::Color amarillo(0, 0, 255); // yellow
+    sf::Color cian(0, 255, 255);   // cyan
 
     // Crear rectángulos
     float startY = 100;
@@ -1393,23 +1182,25 @@ int main()
     rect1.setPosition(700, startY);
     rect1.setFillColor(rosa);
 
-    sf::RectangleShape rect2(sf::Vector2f(30,133));
-    rect2.setPosition(700 , 180+ startY+ (size.x + gap) * 1);
+    sf::RectangleShape rect2(sf::Vector2f(30, 133));
+    rect2.setPosition(700, 180 + startY + (size.x + gap) * 1);
     rect2.setFillColor(lila);
 
-    sf::RectangleShape rect3(sf::Vector2f(30,60));
-    rect3.setPosition(700 ,300+ startY+ (size.x + gap) * 2);
+    sf::RectangleShape rect3(sf::Vector2f(30, 60));
+    rect3.setPosition(700, 300 + startY + (size.x + gap) * 2);
     rect3.setFillColor(amarillo);
 
-    sf::RectangleShape rect4(sf::Vector2f(30,133));
-    rect4.setPosition(700 ,50 + startY+ (133 + gap) * 3);
+    sf::RectangleShape rect4(sf::Vector2f(30, 133));
+    rect4.setPosition(700, 50 + startY + (133 + gap) * 3);
     rect4.setFillColor(cian);
+
+    bool mouseButtonlevelPressed = false;
+    bool mouseButtonlevelPressed2 = false;
 
     while (window.isOpen())
     {
-        cout << pNivel.laststate << "  estado  " << state << endl;
+        // cout << pNivel.laststate << "  estado  " << state << endl;
         mousePos = sf::Mouse::getPosition(window);
-        // Lógica de reproducción de sonido
         if (!soundPlaying)
         {
             sounds[currentSound].setVolume(2.f);
@@ -1425,7 +1216,6 @@ int main()
             soundPlaying = false;                              // Permitir que el siguiente sonido se reproduzca
         }
 
-        // gaaaaaaaaaaa
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -1436,7 +1226,6 @@ int main()
             //-------------------------intrucciones-----------------------------------------
             if (event.type == sf::Event::MouseButtonPressed)
             {
-
                 // Add menu/pausa button check
                 if (pausaButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) && !isPaused)
                 {
@@ -1453,10 +1242,10 @@ int main()
                 else if (nivel1Sprite.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) && isPaused)
                 {
                     showLevelMenu = !showLevelMenu;
+                    mouseButtonlevelPressed = true;
                     clickSound.play();
                 }
-                // Level selection
-                if (showLevelMenu && isPaused)
+                if (showLevelMenu && isPaused && mouseButtonlevelPressed2)
                 {
                     int clickedLevel = checkLevelButtonClick(mousePos);
                     if (clickedLevel != -1)
@@ -1468,7 +1257,10 @@ int main()
                         showLevelMenu = false;
                         clickSound.play();
                     }
+                    mouseButtonlevelPressed = false;
+                    mouseButtonlevelPressed2 = false;
                 }
+
                 if (!isPaused)
                 {
                     if (restart1Button.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
@@ -1495,7 +1287,7 @@ int main()
                         crearSpritesBloques(bloques, mapas3d[pNivel.mapaActual], texturaBloque);
                         configurarSprites(tiles2d, mapas2d[pNivel.mapaActual], texturaBloque2d, texturaLozaAzul2D, texturaPiso2d, texturaLozaRoja2d);
 
-                        updateBlocks(bloques2, mapas3d[pNivel.mapaActual], gridSize, texturaBloque, lado, 0, 0);
+                        updateBlocks(bloques2, mapas3d[pNivel.mapaActual], GRIDSIZE, texturaBloque, lado, 0, 0);
                         clickSound.play();
                     }
                     if (iniciarButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
@@ -1532,11 +1324,16 @@ int main()
                     }
                 }
             }
+            else // Level selection
+                if (event.type == sf::Event::MouseButtonReleased)
+
+                    if (mouseButtonlevelPressed)
+                        mouseButtonlevelPressed2 = true;
+
             // ADD hover effect handling:
             if (event.type == sf::Event::MouseMoved && showLevelMenu && isPaused)
-            {
+
                 updateLevelButtonHover(sf::Mouse::getPosition(window));
-            }
         }
         //--------------------------------Semaforo-----------------------------------------
         // Actualizar temporizador
@@ -1980,17 +1777,17 @@ int main()
                     pNivel.booliniciar = 0;
                     bloques.clear();
 
-                    for (int i = 0; i < gridSize; ++i)
+                    for (int i = 0; i < GRIDSIZE; ++i)
                     {
-                        for (int j = 0; j < gridSize; ++j)
+                        for (int j = 0; j < GRIDSIZE; ++j)
                         {
                             tiles[i][j] = Sprite(); // Reasignar un sprite por defecto
                         }
                     }
 
-                    for (int i = 0; i < gridSize; ++i)
+                    for (int i = 0; i < GRIDSIZE; ++i)
                     {
-                        for (int j = 0; j < gridSize; ++j)
+                        for (int j = 0; j < GRIDSIZE; ++j)
                         {
                             tiles2d[i][j] = Sprite(); // Reasignar un sprite por defecto
                         }
@@ -2118,17 +1915,17 @@ int main()
                 pNivel.booliniciar = false;
                 bloques.clear();
 
-                for (int i = 0; i < gridSize; ++i)
+                for (int i = 0; i < GRIDSIZE; ++i)
                 {
-                    for (int j = 0; j < gridSize; ++j)
+                    for (int j = 0; j < GRIDSIZE; ++j)
                     {
                         tiles[i][j] = Sprite(); // Reasignar un sprite por defecto
                     }
                 }
 
-                for (int i = 0; i < gridSize; ++i)
+                for (int i = 0; i < GRIDSIZE; ++i)
                 {
-                    for (int j = 0; j < gridSize; ++j)
+                    for (int j = 0; j < GRIDSIZE; ++j)
                     {
                         tiles2d[i][j] = Sprite(); // Reasignar un sprite por defecto
                     }
@@ -2141,26 +1938,12 @@ int main()
                 posYISo = 0;
                 pNivel.reset1();
 
-                for (int i = 0; i < 12; ++i)
-                {
-                    pNivel.mainbot[i] = 0;
-                }
-                for (int i = 0; i < 8; ++i)
-                {
-                    pNivel.f1bot[i] = 0;
-                }
-                for (int i = 0; i < 4; ++i)
-                {
-                    pNivel.buclebot[i] = 0;
-                }
-                for (int i = 0; i < 8; ++i)
-                {
-                    pNivel.ifbot[i] = 0;
-                }
-                for (int i = 0; i < 8; ++i)
-                {
-                    pNivel.elsebot[i] = 0;
-                }
+                pNivel.mainbot.fill(0);
+                pNivel.f1bot.fill(0);
+                pNivel.buclebot.fill(0);
+                pNivel.ifbot.fill(0);
+                pNivel.elsebot.fill(0);
+
                 contador = 0;
                 cout << "hhhhh" << endl;
 
@@ -2202,8 +1985,8 @@ int main()
 
             if (!pNivel.colisionando)
             {
-                if (!(posXIso >= 0 && posXIso < gridSize && posYISo >= 0 && posYISo < gridSize) ||
-                    (mapas[pNivel.mapaActual][posXIso][posYISo] != 0 && mapas[pNivel.mapaActual][posXIso][posYISo] != -1 && mapas[pNivel.mapaActual][posXIso][posYISo] != -2))
+                if (!(posXIso >= 0 && posXIso < GRIDSIZE && posYISo >= 0 && posYISo < GRIDSIZE) ||
+                    (mapas3d[pNivel.mapaActual][posXIso][posYISo] != 0 && mapas3d[pNivel.mapaActual][posXIso][posYISo] != -1 && mapas3d[pNivel.mapaActual][posXIso][posYISo] != -2))
                 {
                     // COLLISION DETECTED - MOSTRAR ESTRELLA Y ACTIVAR TIMER
                     cout << "COLLISION DETECTED - SHOWING STAR EFFECT" << endl;
@@ -2225,7 +2008,7 @@ int main()
                 else
                 {
                     // Normal movement logic (existing code remains the same)
-                    if (mapas[pNivel.mapaActual][posXIso][posYISo] == -2)
+                    if (mapas3d[pNivel.mapaActual][posXIso][posYISo] == -2)
                     {
                         cout << "cambio if-else" << pNivel.laststate << endl;
                         pNivel.isBlockSemaforo == 1;
@@ -2255,47 +2038,27 @@ int main()
                     makibot2D.setPosition(57.5f + 15.f * posXIso, 47.4f + 15.f * posYISo);
                     cout << "salida del moving: " << moving << endl;
 
-                    updateBlocks(bloques2, mapas[pNivel.mapaActual], gridSize, texturaBloque, lado, posXIso, posYISo);
+                    updateBlocks(bloques2, mapas3d[pNivel.mapaActual], GRIDSIZE, texturaBloque, lado, posXIso, posYISo);
                 }
             }
 
             // CUARTO: Reemplazar el manejo de colisión anterior con este nuevo código
             if (pNivel.colisionando == true)
             {
-                // Verificar si ha pasado 1 segundo desde la colisión
                 if (clockEstrella.getElapsedTime().asSeconds() > 1.0f)
                 {
-                    // Ocultar estrella y resetear nivel después de 1 segundo
                     mostrarEstrella = false;
 
-                    // RESET COMPLETO DEL NIVEL
                     cout << "RESETTING LEVEL AFTER COLLISION" << endl;
 
-                    // Reset all counters and states
                     pNivel.reset1();
                     contador = 0;
 
-                    // Clear all instruction arrays
-                    for (int i = 0; i < 12; ++i)
-                    {
-                        pNivel.mainbot[i] = 0;
-                    }
-                    for (int i = 0; i < 8; ++i)
-                    {
-                        pNivel.f1bot[i] = 0;
-                    }
-                    for (int i = 0; i < 4; ++i)
-                    {
-                        pNivel.buclebot[i] = 0;
-                    }
-                    for (int i = 0; i < 8; ++i)
-                    {
-                        pNivel.ifbot[i] = 0;
-                    }
-                    for (int i = 0; i < 8; ++i)
-                    {
-                        pNivel.elsebot[i] = 0;
-                    }
+                    pNivel.mainbot.fill(0);
+                    pNivel.f1bot.fill(0);
+                    pNivel.buclebot.fill(0);
+                    pNivel.ifbot.fill(0);
+                    pNivel.elsebot.fill(0);
 
                     // Reset robot position and orientation
                     makibot.setOrigin(20.f, 30.f);
@@ -2373,17 +2136,17 @@ int main()
         window.draw(restart1Button);
         window.draw(restartaButton);
         // dibujar piso 2d
-        for (int i = 0; i < gridSize; ++i)
+        for (int i = 0; i < GRIDSIZE; ++i)
         {
-            for (int j = 0; j < gridSize; ++j)
+            for (int j = 0; j < GRIDSIZE; ++j)
             {
                 window.draw(tiles2d[i][j]);
             }
         }
         // Dibujar el piso y los bloques
-        for (int i = 0; i < gridSize; ++i)
+        for (int i = 0; i < GRIDSIZE; ++i)
         {
-            for (int j = 0; j < gridSize; ++j)
+            for (int j = 0; j < GRIDSIZE; ++j)
             {
                 window.draw(tiles[i][j], isoTransform);
             }
