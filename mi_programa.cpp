@@ -965,7 +965,8 @@ int main()
 
     size_t currentSound = 0;
     bool soundPlaying = false;
-    sf::Clock clock; // Para medir el tiempo
+
+    sf::Clock sonidoClock; // Para medir el tiempo
 
     pNivel.mapaActual = 0; // Índice del mapa actual
 
@@ -1206,11 +1207,11 @@ int main()
             sounds[currentSound].setVolume(2.f);
             sounds[currentSound].play();
             soundPlaying = true;
-            clock.restart(); // Reiniciar el reloj
+            sonidoClock.restart(); // Reiniciar el reloj
         }
 
         // Verificar si el sonido actual ha terminado
-        if (clock.getElapsedTime() >= sounds[currentSound].getBuffer()->getDuration())
+        if (sonidoClock.getElapsedTime() >= sounds[currentSound].getBuffer()->getDuration())
         {
             currentSound = (currentSound + 1) % sounds.size(); // Cambiar al siguiente sonido
             soundPlaying = false;                              // Permitir que el siguiente sonido se reproduzca
