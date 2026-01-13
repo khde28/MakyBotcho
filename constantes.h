@@ -1,7 +1,7 @@
 #pragma once
 
 namespace Constantes{
-    inline constexpr int MAX_LEVELS = 10;
+    inline constexpr int MAX_LEVELS = 11;
     inline constexpr int GRIDSIZE = 8;
     inline constexpr int WINDOW_WIDTH = 1000;
     inline constexpr float LADOCUADRADO = 50.0f; 

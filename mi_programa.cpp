@@ -619,8 +619,8 @@ void reemplazar(array<int, N> &arr)
 // Level selection variable
 
 bool showLevelMenu = false;
-sf::RectangleShape levelButtons[10];
-sf::Text levelTexts[10];
+sf::RectangleShape levelButtons[11];
+sf::Text levelTexts[11];
 sf::Font font;
 
 // FUNCTION DEFINITIONS (before main):
@@ -674,7 +674,7 @@ void restartWithLevel(int levelNumber, ParametrosNivel &pNivel, sf::Sprite &maki
 
 int checkLevelButtonClick(sf::Vector2i mousePos)
 {
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 11; i++)
     {
         if (levelButtons[i].getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)))
         {
@@ -686,7 +686,7 @@ int checkLevelButtonClick(sf::Vector2i mousePos)
 
 void updateLevelButtonHover(sf::Vector2i mousePos)
 {
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 11; i++)
     {
         if (levelButtons[i].getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)))
         {
@@ -708,7 +708,7 @@ void setupLevelButtons()
     }
 
     // Setup level selection buttons and text
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 11; i++)
     {
         // Setup rectangles
         levelButtons[i].setSize(sf::Vector2f(80, 50));
@@ -2253,7 +2253,7 @@ int main()
                 window.draw(menuTitle);
 
                 // Draw level buttons
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 11; i++)
                 {
                     window.draw(levelButtons[i]);
                     window.draw(levelTexts[i]);
