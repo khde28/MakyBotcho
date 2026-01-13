@@ -56,12 +56,40 @@ private:
     sf::Texture pisoTextura;
     sf::Sprite pisoSprite;
 
+    sf::Transform isoTransform;
+
+    sf::Texture texturaPiso3d;
+
+    sf::Texture texturaPiso2d;
+
+    sf::Texture texturaBloque3d;
+
+    sf::Texture texturaBloque2d;
+
+    sf::Texture texturaMeta3d;
+
+    sf::Texture texturaMeta2d;
+     
+    sf::Texture texturaDecision3d;
+
+    sf::Texture texturaDecision2d;
+
+    sf::Sprite mapaPiso3d[GRIDSIZE][GRIDSIZE];
+
+    vector<sf::Sprite> bloques3dBack;
+    vector<sf::Sprite> bloques3dFore;
+    
+    // figura 2d
+    sf::CircleShape makibot2D;
 
 
 public:
     GameState(GameStatus& status);
 
     void handleInput(sf::RenderWindow& window, StateManager& manager) override;
+    void createMapaPiso3d(const int mapa[GRIDSIZE][GRIDSIZE]);
+    void createMapaBloque3d( const int mapa[GRIDSIZE][GRIDSIZE]);
+
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;
 };

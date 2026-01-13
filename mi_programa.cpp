@@ -261,6 +261,7 @@ void crearSpritesPiso(Sprite tiles[][GRIDSIZE], const int matriz3D[][GRIDSIZE], 
             tiles[i][j].setPosition(i * lado, j * lado);
         }
     }
+
 }
 
 // Función para crear los sprites de los bloques
@@ -916,9 +917,9 @@ int main()
     }
 
     std::vector<Button> buttons(6);
-    buttons[0] = {sf::Sprite(buttonTexture[6]), 6};
-    buttons[1] = {sf::Sprite(buttonTexture[5]), 5};
-    buttons[2] = {sf::Sprite(buttonTexture[4]), 4};
+    buttons[0] = {sf::Sprite(buttonTexture[4]), 4}; // condicional (foco)
+    buttons[1] = {sf::Sprite(buttonTexture[6]), 6}; // bucle
+    buttons[2] = {sf::Sprite(buttonTexture[5]), 5}; // función (f1)
     buttons[3] = {sf::Sprite(buttonTexture[3]), 3};
     buttons[4] = {sf::Sprite(buttonTexture[2]), 2};
     buttons[5] = {sf::Sprite(buttonTexture[1]), 1};
@@ -971,7 +972,7 @@ int main()
     pNivel.mapaActual = 0; // Índice del mapa actual
 
     // Crear la ventana
-    RenderWindow window(VideoMode(1000, 750), "Makibot", sf::Style::Titlebar | sf::Style::Close);
+    RenderWindow window(VideoMode(1000, 750), "MakiGame", sf::Style::Titlebar | sf::Style::Close);
     window.setFramerateLimit(60);
     // Establecer el color gris oscuro
     sf::Color grisOscuro(169, 169, 169); // RGB para pNivel.gris oscuro
@@ -1172,7 +1173,7 @@ int main()
 
     sf::Color rosa(255, 192, 203); // pink
     sf::Color lila(182, 102, 210); // lilac / light purple
-    sf::Color amarillo(0, 0, 255); // yellow
+    sf::Color azulPastel(135, 180, 235); // pastel blue
     sf::Color cian(0, 255, 255);   // cyan
 
     // Crear rectángulos
@@ -1189,7 +1190,7 @@ int main()
 
     sf::RectangleShape rect3(sf::Vector2f(30, 60));
     rect3.setPosition(700, 300 + startY + (size.x + gap) * 2);
-    rect3.setFillColor(amarillo);
+    rect3.setFillColor(azulPastel);
 
     sf::RectangleShape rect4(sf::Vector2f(30, 133));
     rect4.setPosition(700, 50 + startY + (133 + gap) * 3);
@@ -2261,7 +2262,7 @@ int main()
         }
 
         // ... rest of your rendering code
-        window.display();
+        window.display();   
     }
 
     return 0;
